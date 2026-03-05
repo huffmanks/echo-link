@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 
+import { useKeyboardVisible } from "@/hooks/use-keyboard-visible";
 import { DRAWER_MOBILE_NAV } from "@/lib/constants";
 import { getAllQueryOptions } from "@/lib/queries";
 import { checkActive, cn } from "@/lib/utils";
@@ -23,6 +24,8 @@ import {
 
 export default function AppMobileNav() {
   const { pathname } = useLocation();
+
+  const isKeyboardVisible = useKeyboardVisible();
 
   const { data: folders } = useSuspenseQuery(getAllQueryOptions.folders);
   const { data: tags } = useSuspenseQuery(getAllQueryOptions.tags);
@@ -59,7 +62,11 @@ export default function AppMobileNav() {
   }, [pathname, folders, tags]);
 
   return (
-    <nav className="bg-background/60 fixed right-0 bottom-0 left-0 z-50 h-26 rounded-b-xl border-t pb-10 backdrop-blur-md">
+    <nav
+      className={cn(
+        "bg-background/60 fixed right-0 bottom-0 left-0 z-50 h-26 rounded-b-xl border-t pb-10 backdrop-blur-md transition-transform duration-300",
+        isKeyboardVisible ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
+      )}>
       <div className="h-18 px-3 pt-4">
         <div className="flex w-full items-center gap-4">
           {items.map((item) => {
