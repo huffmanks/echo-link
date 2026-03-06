@@ -200,24 +200,26 @@ export default function BookmarkWrapper({
   function clearAllFilters() {
     setParams((prev) => ({
       ...prev,
-
       q: undefined,
-      archived: undefined,
+      read: undefined,
       unread: undefined,
       shared: undefined,
+      private: undefined,
+      archived: undefined,
+      active: undefined,
     }));
   }
 
-  if (!isOnline && !bookmarkItems.length) {
+  const isSearchingOrFiltering = activeFilters.length > 0 || (!!search.q && search.q !== "");
+  const hasResults = bookmarkItems.length > 0;
+
+  if (!isOnline && !hasResults) {
     return <EmptyCache />;
   }
 
-  if (totalCount === 0 && !search.q) {
+  if (totalCount === 0 && !isSearchingOrFiltering) {
     return emptyComponent;
   }
-
-  const isFilterEmpty =
-    (totalCount > 0 && bookmarkItems.length === 0) || (search?.q && search.q !== "");
 
   const hasFilters = activeFilters.length > 0;
 
@@ -333,11 +335,11 @@ export default function BookmarkWrapper({
         </div>
       </div>
 
-      {isFilterEmpty ? (
+      {!hasResults && isSearchingOrFiltering ? (
         <EmptyFilterResults clearAllFilters={clearAllFilters} />
       ) : (
         <>
-          {view !== "table" && (
+          {hasResults && view !== "table" && (
             <p className="text-muted-foreground mb-4 pl-2 text-sm">
               {totalCount} result{totalCount > 1 ? "s" : ""}
             </p>

@@ -1,9 +1,5 @@
 # Todos
 
-## Bookmark filters
-
-- [ ] Check empty states for: EmptyCache (offline), EmptyResults (No results from filter), EmptyBookmarks (No items exist yet.)
-
 ## Search
 
 - [ ] Searching with `#` for tags not working.
