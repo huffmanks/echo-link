@@ -13,14 +13,17 @@ export async function linkdingFetch<T>(
   const cleanEndpoint = endpoint.replace(/^\//, "");
   const normalizedPath = cleanEndpoint.endsWith("/") ? cleanEndpoint : `${cleanEndpoint}/`;
 
-  let url = `/api/${normalizedPath}`;
+  const url = new URL(`/api/${normalizedPath}`, window.location.origin);
 
   if (params) {
-    const searchParams = new URLSearchParams(params);
-    url += `?${searchParams.toString()}`;
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        url.searchParams.append(key, String(value));
+      }
+    });
   }
 
-  const response = await fetch(url, {
+  const response = await fetch(url.toString(), {
     ...options,
     signal: AbortSignal.timeout(5000),
     headers: {
@@ -29,6 +32,7 @@ export async function linkdingFetch<T>(
       ...options?.headers,
     },
   });
+
   if (response.status === 401) {
     logout();
   }

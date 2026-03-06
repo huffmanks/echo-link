@@ -50,17 +50,6 @@ export function transformData<T extends Record<string, any>>(
     return true;
   });
 
-  if (params.q) {
-    const query = params.q.toLowerCase();
-    result = result.filter((item) =>
-      Object.values(item).some(
-        (val) =>
-          (typeof val === "string" || typeof val === "number") &&
-          String(val).toLowerCase().includes(query)
-      )
-    );
-  }
-
   if (params.sort) {
     const { sort, order } = params;
     const mod = order === "desc" ? -1 : 1;
