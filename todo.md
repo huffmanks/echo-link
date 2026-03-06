@@ -23,6 +23,4 @@
 
 ## UI
 
-- [ ] Grid/list view add url below/above title.
-- [ ] Bug when submitting tag ghost focus from either drawer or modal.
 - [ ] Swap out vaul drawer for Base UI drawer.

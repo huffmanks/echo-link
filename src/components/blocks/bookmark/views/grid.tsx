@@ -6,7 +6,7 @@ import { ImageIcon } from "lucide-react";
 
 import { linkdingFetch } from "@/lib/api";
 import { useSettingsStore } from "@/lib/store";
-import { cn, getRelativeTimeString, joinUrlPath } from "@/lib/utils";
+import { cn, getCleanDomain, getRelativeTimeString, joinUrlPath } from "@/lib/utils";
 import type { Asset, Bookmark } from "@/types";
 
 import ActionDropdown from "@/components/blocks/bookmark/action-dropdown";
@@ -41,17 +41,20 @@ export default function BookmarkGridView({
           className={cn("gap-4 pt-0 pb-4", bookmark.unread && "bg-primary/10")}>
           <CardImage bookmark={bookmark} handleOpenSheet={handleOpenSheet} />
           <CardHeader className="pr-1 pl-3.5">
-            <CardTitle className="min-w-0">
-              <a
-                className="decoration-primary hover:decoration-primary/70 focus-visible:decoration-primary/70 hover:text-primary/70 focus-visible:text-primary/70 flex items-center gap-2 underline underline-offset-4 transition-colors outline-none"
-                href={bookmark.url}
-                target="_blank"
-                rel="noopener noreferrer">
-                <BookmarkFavicon bookmark={bookmark} />
-                <h2 className="truncate text-sm font-medium">{bookmark.title}</h2>
-              </a>
+            <CardTitle className="flex min-w-0 items-center gap-2">
+              <BookmarkFavicon bookmark={bookmark} />
+              <h2 className="truncate text-sm font-medium">{bookmark.title}</h2>
             </CardTitle>
             <CardDescription className="space-y-1">
+              <p>
+                <a
+                  className="decoration-primary text-foreground hover:decoration-primary/70 focus-visible:decoration-primary/70 hover:text-primary/70 focus-visible:text-primary/70 text-xs underline underline-offset-2 transition-colors outline-none"
+                  href={bookmark.url}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  {getCleanDomain(bookmark.url)}
+                </a>
+              </p>
               {bookmark?.description && (
                 <p className="text-muted-foreground mb-2 line-clamp-2 text-xs">
                   {bookmark.description}

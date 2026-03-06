@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { cn, getRelativeTimeString } from "@/lib/utils";
+import { cn, getCleanDomain, getRelativeTimeString } from "@/lib/utils";
 import type { Bookmark } from "@/types";
 
 import ActionDropdown from "@/components/blocks/bookmark/action-dropdown";
@@ -32,20 +32,27 @@ export default function BookmarkListView({
           {bookmark.unread && (
             <div className="bg-primary absolute top-1/2 right-5 size-2 -translate-y-1/2 rounded-full" />
           )}
-          <section className="mb-1 flex items-center justify-between gap-2">
-            <a
-              className="decoration-primary hover:decoration-primary/70 focus-visible:decoration-primary/70 hover:text-primary/70 focus-visible:text-primary/70 flex items-center gap-2 truncate underline underline-offset-4 transition-colors outline-none"
-              href={bookmark.url}
-              target="_blank"
-              rel="noopener noreferrer">
+          <section className="-mb-1 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
               <BookmarkFavicon bookmark={bookmark} />
               <h2 className="truncate text-sm font-medium">{bookmark.title}</h2>
-            </a>
+            </div>
             <ActionDropdown
               bookmark={bookmark}
               handleOpenSheet={handleOpenSheet}
               handleOpenChange={handleOpenChange}
             />
+          </section>
+          <section className="mb-1 flex">
+            <p>
+              <a
+                className="decoration-primary hover:decoration-primary/70 focus-visible:decoration-primary/70 hover:text-primary/70 focus-visible:text-primary/70 truncate text-xs underline underline-offset-2 transition-colors outline-none"
+                href={bookmark.url}
+                target="_blank"
+                rel="noopener noreferrer">
+                {getCleanDomain(bookmark.url)}
+              </a>
+            </p>
           </section>
           <div
             tabIndex={0}
@@ -64,7 +71,7 @@ export default function BookmarkListView({
               }
               e.stopPropagation();
             }}>
-            <section className="mb-2 space-y-1 pr-8">
+            <section className="mb-2 space-y-2 pr-8">
               {bookmark?.description && (
                 <p
                   className={cn(
