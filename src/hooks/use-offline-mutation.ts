@@ -167,28 +167,24 @@ export function useOfflineMutation<
       queryClient.setQueriesData({ queryKey: options.queryKey, exact: false }, (old: any) => {
         if (!old) return old;
 
-        if (Array.isArray(old)) {
-          return old.map((item) =>
-            item[idField] === (variables as any)[idField] &&
-            (variables as any)[idField]?.startsWith("temp-")
-              ? { ...item, ...result }
-              : item
-          );
-        }
+        const updateItem = (item: any) => {
+          const isMatch = String(item[idField]) === String((variables as any)[idField]);
+          if (!isMatch) return item;
 
+          return { ...item, ...(result as object), _isOfflinePending: false };
+        };
+
+        if (Array.isArray(old)) return old.map(updateItem);
         return {
           ...old,
-          results: old.results?.map((item: any) =>
-            item[idField] === (variables as any)[idField] &&
-            (variables as any)[idField]?.startsWith("temp-")
-              ? { ...item, ...result }
-              : item
-          ),
+          results: old.results?.map(updateItem),
         };
       });
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: options.queryKey });
+    onSettled: (_data, error) => {
+      if (error) {
+        queryClient.invalidateQueries({ queryKey: options.queryKey });
+      }
     },
   });
 }
