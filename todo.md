@@ -6,8 +6,7 @@
 
 ## Settings & preferences
 
-- [ ] Add batch deletion to folders, bookmarks.
-  - [ ] Add alert dialog confirmation.
+- [ ] Add bulk actions to folders, bookmarks.
   - [x] Table view.
   - [ ] Grid view.
   - [ ] List view.

@@ -35,6 +35,17 @@ import BookmarkGridView from "@/components/blocks/bookmark/views/grid";
 import BookmarkListView from "@/components/blocks/bookmark/views/list";
 import BookmarkTableView from "@/components/blocks/bookmark/views/table";
 import { EmptyCache } from "@/components/default-error-component";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -103,7 +114,8 @@ export default function BookmarkWrapper({
   hasPreviousCurrent,
   children,
 }: BookmarkWrapperProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedBookmark, setSelectedBookmark] = useState<Bookmark | null>(null);
 
   const anchor = useComboboxAnchor();
@@ -146,11 +158,11 @@ export default function BookmarkWrapper({
 
   function handleOpenSheet(bookmark: Bookmark) {
     setSelectedBookmark(bookmark);
-    setIsOpen(true);
+    setIsDialogOpen(true);
   }
 
   function handleOpenChange(open: boolean) {
-    setIsOpen(open);
+    setIsDialogOpen(open);
 
     if (!open) {
       setSelectedBookmark(null);
@@ -406,7 +418,7 @@ export default function BookmarkWrapper({
               disablePointerDismissal
               open={isBulkSelecting}
               onOpenChange={(open) => {
-                if (!open) stopBulkSelection();
+                if (!open && !isAlertOpen) stopBulkSelection();
               }}>
               <DialogTrigger
                 render={
@@ -430,7 +442,11 @@ export default function BookmarkWrapper({
                     </div>
                     <CollapsibleTrigger
                       render={
-                        <Button variant="secondary" size="icon-sm" className="cursor-pointer">
+                        <Button
+                          disabled={isAlertOpen}
+                          variant="secondary"
+                          size="icon-sm"
+                          className="cursor-pointer">
                           <ChevronsUpDownIcon />
                         </Button>
                       }></CollapsibleTrigger>
@@ -456,6 +472,7 @@ export default function BookmarkWrapper({
                       <DialogClose
                         render={
                           <Button
+                            disabled={isAlertOpen}
                             variant="secondary"
                             className="cursor-pointer"
                             onClick={stopBulkSelection}>
@@ -463,12 +480,36 @@ export default function BookmarkWrapper({
                           </Button>
                         }
                       />
-                      <Button
-                        className="cursor-pointer"
-                        disabled={selectedIds.size === 0 || !bulkAction}
-                        onClick={handleBulkEdit}>
-                        Execute
-                      </Button>
+
+                      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+                        <AlertDialogTrigger
+                          render={
+                            <Button
+                              className="cursor-pointer"
+                              disabled={selectedIds.size === 0 || !bulkAction || isAlertOpen}>
+                              Continue
+                            </Button>
+                          }></AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              <span>This action cannot be undone. This will permanently </span>
+                              <span>{bulkAction === "delete" ? "delete" : "modify"}</span>
+                              <span> the selected bookmarks.</span>
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              variant="destructive"
+                              className="cursor-pointer"
+                              onClick={handleBulkEdit}>
+                              Execute
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </DialogFooter>
                   </CollapsibleContent>
                 </Collapsible>
@@ -518,7 +559,7 @@ export default function BookmarkWrapper({
 
           {selectedBookmark && (
             <BookmarkSheet
-              isOpen={isOpen}
+              isOpen={isDialogOpen}
               bookmark={selectedBookmark}
               handleOpenChange={handleOpenChange}
             />
