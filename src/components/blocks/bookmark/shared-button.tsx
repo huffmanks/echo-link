@@ -3,7 +3,8 @@ import { useState } from "react";
 import { LockIcon, Share2Icon } from "lucide-react";
 import { toast } from "sonner";
 
-import { getErrorMessage } from "@/lib/utils";
+import { cn, getErrorMessage } from "@/lib/utils";
+import { useBulkSelection } from "@/providers/bulk-selection";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,8 @@ interface SharedButtonProps {
 
 export default function SharedButton({ title, text, url, isShared }: SharedButtonProps) {
   const [isSharing, setIsSharing] = useState(false);
+
+  const { isBulkSelecting } = useBulkSelection();
 
   async function handleShare() {
     setIsSharing(true);
@@ -44,15 +47,24 @@ export default function SharedButton({ title, text, url, isShared }: SharedButto
     <>
       {isShared ? (
         <Button
+          tabIndex={isBulkSelecting ? -1 : 0}
           variant="ghost"
           size="icon-xs"
-          disabled={isSharing}
+          disabled={isSharing || isBulkSelecting}
           nativeButton={false}
-          className="border-border size-5.5 cursor-pointer rounded-full border"
+          className={cn(
+            "border-border size-5.5 cursor-pointer rounded-full border",
+            isBulkSelecting && "pointer-events-none"
+          )}
           onClick={handleShare}
           render={
             <Badge size="icon" variant="outline">
-              <Share2Icon className="text-primary" />
+              <Share2Icon
+                className={cn(
+                  "transition-colors",
+                  isBulkSelecting ? "text-muted-foreground" : "text-primary"
+                )}
+              />
             </Badge>
           }
         />
@@ -60,9 +72,15 @@ export default function SharedButton({ title, text, url, isShared }: SharedButto
         <Tooltip>
           <TooltipTrigger
             className="size-5.5"
+            tabIndex={isBulkSelecting ? -1 : 0}
             render={
               <Badge size="icon" variant="outline">
-                <LockIcon className="text-primary" />
+                <LockIcon
+                  className={cn(
+                    "transition-colors",
+                    isBulkSelecting ? "text-muted-foreground" : "text-primary"
+                  )}
+                />
               </Badge>
             }
           />

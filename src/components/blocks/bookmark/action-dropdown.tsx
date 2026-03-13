@@ -8,6 +8,7 @@ import {
   useToggleShareBookmark,
 } from "@/lib/mutations";
 import { cn } from "@/lib/utils";
+import { useBulkSelection } from "@/providers/bulk-selection";
 import type { Bookmark } from "@/types";
 
 import {
@@ -45,6 +46,8 @@ export default function ActionDropdown({
   handleOpenChange,
   triggerButtonClassName,
 }: ActionDropdownProps) {
+  const { isBulkSelecting } = useBulkSelection();
+
   const { mutate: toggleReadBookmark } = useToggleReadBookmark();
   const { mutate: toggleArchiveBookmark } = useToggleArchiveBookmark();
   const { mutate: toggleShareBookmark } = useToggleShareBookmark();
@@ -61,9 +64,15 @@ export default function ActionDropdown({
         <DropdownMenuTrigger
           render={
             <Button
+              tabIndex={isBulkSelecting ? -1 : 0}
+              disabled={isBulkSelecting}
               variant="ghost"
               size="icon-sm"
-              className={cn("cursor-pointer", triggerButtonClassName)}>
+              className={cn(
+                "cursor-pointer",
+                triggerButtonClassName,
+                isBulkSelecting && "pointer-events-none"
+              )}>
               <EllipsisVerticalIcon className="text-muted-foreground size-4" />
             </Button>
           }></DropdownMenuTrigger>

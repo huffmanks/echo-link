@@ -6,10 +6,6 @@
 
 ## Settings & preferences
 
-- [ ] Add bulk actions to folders, bookmarks.
-  - [x] Table view.
-  - [ ] Grid view.
-  - [ ] List view.
 - [ ] Show stats page (like karakeep).
 
 ## Background sync

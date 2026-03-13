@@ -17,7 +17,7 @@ export default function Sidebar() {
         <div className="flex flex-1">
           {isMobile ? <AppMobileNav /> : <AppSidebar />}
           <SidebarInset className="min-w-0">
-            <div className={cn("p-4", isMobile ? "pb-28" : "pb-4")}>
+            <div className={cn(isMobile ? "p-2 pb-28" : "p-4")}>
               <Outlet />
             </div>
           </SidebarInset>

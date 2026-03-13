@@ -4,7 +4,7 @@ import type { Bookmark } from "@/types";
 
 import ActionDropdown from "@/components/blocks/bookmark/action-dropdown";
 import BookmarkFavicon from "@/components/blocks/bookmark/bookmark-favicon";
-import { Checkbox } from "@/components/ui/checkbox";
+import { AllCheckbox, ItemCheckbox } from "@/components/blocks/bookmark/checkboxes";
 import {
   Table,
   TableBody,
@@ -28,7 +28,7 @@ export default function BookmarkTableView({
   handleOpenSheet,
   handleOpenChange,
 }: BookmarkTableViewProps) {
-  const { isBulkSelecting, selectedIds } = useBulkSelection();
+  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
 
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
@@ -54,10 +54,18 @@ export default function BookmarkTableView({
               tabIndex={isBulkSelecting ? -1 : 0}
               role="button"
               className={cn(
-                "hover:bg-muted/50 focus:bg-muted border-muted outline-none",
+                "border-muted outline-none",
                 bookmark.unread && "bg-primary/10",
-                isBulkSelecting && "pointer-events-none select-none"
+
+                isBulkSelecting
+                  ? "hover:ring-primary/50 cursor-pointer hover:ring-2"
+                  : "hover:bg-muted/50 focus:bg-muted"
               )}
+              onClick={() => {
+                if (isBulkSelecting) {
+                  toggleIdSelection(bookmark.id);
+                }
+              }}
               onKeyDown={(e) => {
                 if (isBulkSelecting) return;
 
@@ -72,20 +80,30 @@ export default function BookmarkTableView({
               <TableCell
                 role="button"
                 className="cursor-pointer"
-                onClick={() => handleOpenSheet(bookmark)}>
+                onClick={() => {
+                  if (!isBulkSelecting) {
+                    handleOpenSheet(bookmark);
+                  }
+                }}>
                 <BookmarkFavicon bookmark={bookmark} />
               </TableCell>
               <TableCell
                 role="button"
                 className="cursor-pointer truncate"
-                onClick={() => handleOpenSheet(bookmark)}>
+                onClick={() => {
+                  if (!isBulkSelecting) {
+                    handleOpenSheet(bookmark);
+                  }
+                }}>
                 {bookmark.title}
               </TableCell>
               <TableCell className="truncate">
                 <a
                   className={cn(
-                    "text-primary focus-visible:text-primary/80 underline-offset-2 transition-all outline-none hover:underline focus-visible:underline",
-                    isBulkSelecting && "pointer-events-none"
+                    "underline-offset-2 transition-all outline-none hover:underline focus-visible:underline",
+                    isBulkSelecting
+                      ? "text-foreground pointer-events-none"
+                      : "text-primary focus-visible:text-primary/80"
                   )}
                   href={bookmark.url}
                   target="_blank"
@@ -97,7 +115,11 @@ export default function BookmarkTableView({
               <TableCell
                 role="button"
                 className="min-w-0 cursor-pointer truncate"
-                onClick={() => handleOpenSheet(bookmark)}>
+                onClick={() => {
+                  if (!isBulkSelecting) {
+                    handleOpenSheet(bookmark);
+                  }
+                }}>
                 {bookmark?.description ? (
                   bookmark.description
                 ) : (
@@ -123,47 +145,5 @@ export default function BookmarkTableView({
         </TableFooter>
       </Table>
     </div>
-  );
-}
-
-function ItemCheckbox({ id }: { id: number }) {
-  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
-
-  const isChecked = selectedIds.has(id);
-
-  if (!isBulkSelecting) return null;
-
-  return (
-    <Checkbox
-      className="pointer-events-auto cursor-pointer"
-      checked={isChecked}
-      onCheckedChange={() => toggleIdSelection(id)}
-    />
-  );
-}
-
-function AllCheckbox({ allIds }: { allIds: number[] }) {
-  const { isBulkSelecting, selectedIds, selectAll, clearSelection } = useBulkSelection();
-
-  const isAllSelected = allIds.length > 0 && selectedIds.size === allIds.length;
-  const isAnySelected = selectedIds.size > 0 && !isAllSelected;
-
-  function handleHeaderChange(checked: boolean) {
-    if (checked) {
-      selectAll(allIds);
-    } else {
-      clearSelection();
-    }
-  }
-
-  if (!isBulkSelecting) return null;
-
-  return (
-    <Checkbox
-      className="pointer-events-auto cursor-pointer"
-      checked={isAllSelected}
-      indeterminate={isAnySelected}
-      onCheckedChange={handleHeaderChange}
-    />
   );
 }

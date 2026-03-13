@@ -280,12 +280,11 @@ export default function BookmarkWrapper({
         loading: `Executing ${bulkAction} on ${selectedIds.size} items...`,
         success: () => {
           stopBulkSelection();
+          setIsAlertOpen(false);
           return "Bulk actions completed!";
         },
         error: "Error, something went wrong!",
       });
-
-      stopBulkSelection();
     } catch (error) {}
   }
 
@@ -431,7 +430,7 @@ export default function BookmarkWrapper({
                   </Button>
                 }></DialogTrigger>
               <DialogContent
-                className="bg-card top-auto! right-4! bottom-12! left-auto! translate-x-0! translate-y-0! p-0 sm:max-w-sm"
+                className="bg-card top-auto! right-4! bottom-6! left-auto! translate-x-0! translate-y-0! p-0 sm:bottom-12! sm:max-w-sm"
                 showCloseButton={false}
                 showDialogOverlay={false}>
                 <Collapsible defaultOpen>
@@ -523,17 +522,11 @@ export default function BookmarkWrapper({
         <EmptyFilterResults clearAllFilters={clearAllFilters} />
       ) : (
         <>
-          {hasResults && view !== "table" && (
-            <p className="text-muted-foreground mb-4 pl-2 text-sm">
-              {isBulkSelecting
-                ? `${selectedIds.size} selected`
-                : `${totalCount} result${totalCount > 1 ? "s" : ""}`}
-            </p>
-          )}
           <div className="view-content overflow-hidden">
             {view === "grid" && (
               <BookmarkGridView
                 bookmarks={bookmarkItems}
+                count={totalCount}
                 handleOpenSheet={handleOpenSheet}
                 handleOpenChange={handleOpenChange}
               />
@@ -542,6 +535,7 @@ export default function BookmarkWrapper({
             {view === "list" && (
               <BookmarkListView
                 bookmarks={bookmarkItems}
+                count={totalCount}
                 handleOpenSheet={handleOpenSheet}
                 handleOpenChange={handleOpenChange}
               />
