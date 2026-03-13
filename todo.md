@@ -3,6 +3,8 @@
 ## Search
 
 - [ ] When typing `#` in search, show a dropdown of existing tags.
+  - [ ] [UI component](src/components/ui/autocomplete.tsx)
+  - [ ] [Search component](src/components/blocks/sidebar/search-autocomplete.tsx)
 
 ## Settings & preferences
 
