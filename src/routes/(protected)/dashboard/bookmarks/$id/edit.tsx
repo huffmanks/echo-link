@@ -14,7 +14,7 @@ export const Route = createFileRoute("/(protected)/dashboard/bookmarks/$id/edit"
     const cached = queryClient.getQueryData(query.queryKey);
     if (cached) return;
 
-    const lists = queryClient.getQueriesData<{ results?: Bookmark[] }>({
+    const lists = queryClient.getQueriesData<{ results?: Array<Bookmark> }>({
       queryKey: ["bookmarks"],
     });
 
@@ -40,7 +40,7 @@ function RouteComponent() {
   const { data: bookmark } = useSuspenseQuery(getAllQueryOptions.bookmarkById(id));
 
   return (
-    <div className="max-w-lg pb-8 sm:px-4">
+    <div className="max-w-lg px-4 pt-4 pb-8 md:pt-0">
       <h1 className="mb-4 text-2xl font-medium">Edit bookmark</h1>
       <BookmarkForm bookmark={bookmark} />
     </div>

@@ -46,7 +46,7 @@ export const SIDEBAR_NAV_MAIN = [
     isActive: false,
     icon: BookmarkIcon,
   },
-] as SidebarNavItem[];
+] as Array<SidebarNavItem>;
 
 export const SIDEBAR_NAV_SECONDARY = [
   {
@@ -70,7 +70,7 @@ export const SIDEBAR_NAV_SECONDARY = [
     isExternal: true,
     icon: LinkdingIcon,
   },
-] as SidebarNavItem[];
+] as Array<SidebarNavItem>;
 
 export const DRAWER_MOBILE_NAV = [
   {
@@ -106,7 +106,7 @@ export const DRAWER_MOBILE_NAV = [
     isActive: false,
     icon: SettingsIcon,
   },
-] as SidebarNavItem[];
+] as Array<SidebarNavItem>;
 
 export const FILTER_OPTIONS = [
   {

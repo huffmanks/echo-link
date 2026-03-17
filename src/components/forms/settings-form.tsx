@@ -101,7 +101,7 @@ export function SettingsForm({ className, ...props }: SettingsFormProps) {
       appCache: false,
       linkdingCache: false,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       try {
         setUsername(value.username);
         setLinkdingUrl(value.linkdingUrl);
@@ -132,7 +132,7 @@ export function SettingsForm({ className, ...props }: SettingsFormProps) {
       return;
     }
 
-    const cachesToPurge: CacheName[] = [];
+    const cachesToPurge: Array<CacheName> = [];
 
     if (isAppCache) {
       cachesToPurge.push("app-assets");

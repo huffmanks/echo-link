@@ -23,7 +23,7 @@ export function AllCheckbox({
   allIds,
   showLabel = false,
 }: {
-  allIds: number[];
+  allIds: Array<number>;
   showLabel?: boolean;
 }) {
   const { isBulkSelecting, selectedIds, selectAll, clearSelection } = useBulkSelection();

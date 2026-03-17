@@ -54,7 +54,7 @@ export default function ActionDropdown({
 
   const { mutate: deleteBookmark } = useDeleteBookmark();
 
-  async function handleDelete() {
+  function handleDelete() {
     deleteBookmark(bookmark.id);
     handleOpenChange(false);
   }

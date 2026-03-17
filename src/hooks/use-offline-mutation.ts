@@ -12,7 +12,7 @@ interface BaseEntity {
 }
 
 interface OfflineMutationOptions<TVariables> {
-  queryKey: string[];
+  queryKey: Array<string>;
   url: string;
   method: "POST" | "PUT" | "PATCH" | "DELETE";
   updateLocalCache?: (oldData: any, newVariables: TVariables) => any;

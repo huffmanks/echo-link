@@ -46,7 +46,7 @@ export function EmptyTag({ name }: { name: string }) {
 }
 
 export function EmptyTags() {
-  const { setActiveGlobalModal } = useGlobalModal();
+  const { setActiveGlobalDialog } = useGlobalModal();
   return (
     <Empty>
       <EmptyHeader>
@@ -58,7 +58,7 @@ export function EmptyTags() {
       </EmptyHeader>
       <EmptyContent>
         <div className="flex gap-2">
-          <Button onClick={() => setActiveGlobalModal("tag-form")}>Create tag</Button>
+          <Button onClick={() => setActiveGlobalDialog("tag-form")}>Create tag</Button>
         </div>
       </EmptyContent>
     </Empty>

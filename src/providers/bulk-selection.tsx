@@ -15,7 +15,7 @@ interface BulkSelectionContextType {
   bulkAction: BulkAction | null;
   toggleBulkSelection: () => void;
   toggleIdSelection: (id: number) => void;
-  selectAll: (allIds: number[]) => void;
+  selectAll: (allIds: Array<number>) => void;
   clearSelection: () => void;
   stopBulkSelection: () => void;
   setCurrentBulkAction: (action: BulkAction | null) => void;
@@ -53,7 +53,7 @@ export function BulkSelectionProvider({ children }: { children: React.ReactNode 
     });
   }, []);
 
-  const selectAll = useCallback((allIds: number[]) => {
+  const selectAll = useCallback((allIds: Array<number>) => {
     setSelectedIds(new Set(allIds));
   }, []);
 

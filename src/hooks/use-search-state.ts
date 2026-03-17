@@ -28,7 +28,7 @@ export function useSearchState<TID extends AppRouteId>(routeId: TID) {
   };
 
   const toggleArrayValue = (key: keyof SearchParams, value: string) => {
-    const current = (search[key] as string[]) || [];
+    const current = (search[key] as Array<string>) || [];
     const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
 
     setParams((prev) => ({ ...prev, [key]: next, page: 1 }));

@@ -27,6 +27,7 @@ import { useSettingsStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { useBackgroundSync } from "@/providers/background-sync";
 import { type BulkAction, useBulkSelection } from "@/providers/bulk-selection";
+import { useGlobalModal } from "@/providers/global-modal-context";
 import type { Bookmark, View } from "@/types";
 
 import SelectGroups from "@/components/blocks/bookmark/select-groups";
@@ -94,7 +95,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 interface BookmarkWrapperProps {
   appRouteId: AppRouteId;
   heading: string;
-  bookmarkItems: Bookmark[];
+  bookmarkItems: Array<Bookmark>;
   totalCount: number;
   totalPages: number;
   hasNextCurrent: boolean;
@@ -114,10 +115,10 @@ export default function BookmarkWrapper({
   hasPreviousCurrent,
   children,
 }: BookmarkWrapperProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [selectedBookmark, setSelectedBookmark] = useState<Bookmark | null>(null);
 
+  const { setActiveGlobalDrawer } = useGlobalModal();
   const anchor = useComboboxAnchor();
   const { isOnline } = useBackgroundSync();
   const { mutate: editBookmark } = useBulkEditBookmarks();
@@ -158,18 +159,17 @@ export default function BookmarkWrapper({
 
   function handleOpenSheet(bookmark: Bookmark) {
     setSelectedBookmark(bookmark);
-    setIsDialogOpen(true);
+    setActiveGlobalDrawer(String(bookmark.id));
   }
 
   function handleOpenChange(open: boolean) {
-    setIsDialogOpen(open);
-
     if (!open) {
       setSelectedBookmark(null);
+      setActiveGlobalDrawer(null);
     }
   }
 
-  function handleValueChange(values: string[]) {
+  function handleValueChange(values: Array<string>) {
     const nextView = values[values.length - 1] as View;
     if (!nextView) return;
 
@@ -186,7 +186,7 @@ export default function BookmarkWrapper({
   }
 
   const activeFilters = useMemo(() => {
-    const active: string[] = [];
+    const active: Array<string> = [];
     if (search.read === true) active.push("read");
     if (search.unread === true) active.push("unread");
     if (search.shared === true) active.push("shared");
@@ -196,7 +196,7 @@ export default function BookmarkWrapper({
     return active;
   }, [search]);
 
-  function handleComboboxChange(values: string[]) {
+  function handleComboboxChange(values: Array<string>) {
     setParams((prev) => {
       const newAddition = values.find((v) => !activeFilters.includes(v));
 
@@ -215,7 +215,7 @@ export default function BookmarkWrapper({
     });
   }
 
-  function handleSortChange(field: SortField[]) {
+  function handleSortChange(field: Array<SortField>) {
     const clickedField = field[0];
 
     setParams((prev) => {
@@ -315,7 +315,7 @@ export default function BookmarkWrapper({
               variant="outline"
               multiple={false}
               value={search.sort ? [search.sort] : []}
-              onValueChange={(val) => handleSortChange(val as SortField[])}>
+              onValueChange={(val) => handleSortChange(val as Array<SortField>)}>
               <ToggleGroupItem value="title" aria-label="Sort by title">
                 {search.sort === "title" ? (
                   search.order === "asc" ? (
@@ -375,7 +375,7 @@ export default function BookmarkWrapper({
               autoHighlight
               items={FILTER_OPTIONS}
               value={activeFilters}
-              onValueChange={(val) => handleComboboxChange(val as string[])}>
+              onValueChange={(val) => handleComboboxChange(val as Array<string>)}>
               <div className="relative">
                 <ComboboxTrigger
                   render={
@@ -553,8 +553,8 @@ export default function BookmarkWrapper({
 
           {selectedBookmark && (
             <BookmarkSheet
-              isOpen={isDialogOpen}
               bookmark={selectedBookmark}
+              isOpen={!!selectedBookmark.id}
               handleOpenChange={handleOpenChange}
             />
           )}

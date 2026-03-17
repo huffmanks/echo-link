@@ -32,7 +32,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
+  DrawerPopup,
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -57,15 +57,15 @@ export default function BookmarkSheet({ bookmark, isOpen, handleOpenChange }: Bo
   if (isMobile) {
     return (
       <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-        <DrawerContent className="gap-0">
-          <DrawerHeader>
+        <DrawerPopup className="px-0">
+          <DrawerContent>
             <DrawerTitle className="text-base font-medium">Details</DrawerTitle>
             <DrawerDescription className="sr-only">Bookmark information</DrawerDescription>
-          </DrawerHeader>
-          <div className="scrollbar overflow-y-auto pb-8">
-            <Content bookmark={bookmark} handleOpenChange={handleOpenChange} />
-          </div>
-        </DrawerContent>
+            <div className="scrollbar overflow-y-auto pb-8">
+              <Content bookmark={bookmark} handleOpenChange={handleOpenChange} />
+            </div>
+          </DrawerContent>
+        </DrawerPopup>
       </Drawer>
     );
   }
@@ -94,7 +94,7 @@ function Content({
 }) {
   const { data, isLoading } = useQuery({
     queryKey: ["assets", bookmark.id],
-    queryFn: () => linkdingFetch<{ results: Asset[] }>(`bookmarks/${bookmark.id}/assets`),
+    queryFn: () => linkdingFetch<{ results: Array<Asset> }>(`bookmarks/${bookmark.id}/assets`),
   });
 
   const { linkdingUrl, autoMarkRead } = useSettingsStore(
@@ -107,7 +107,7 @@ function Content({
 
   const { mutate } = useDeleteBookmark();
 
-  async function handleDelete() {
+  function handleDelete() {
     mutate(bookmark.id);
     handleOpenChange(false);
   }

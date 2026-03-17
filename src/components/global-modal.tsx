@@ -4,11 +4,11 @@ import { CreateTagForm } from "@/components/forms/create-tag-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function GlobalModal() {
-  const { activeGlobalModal, closeGlobalModal } = useGlobalModal();
+  const { activeGlobalDialog, closeGlobalDialog } = useGlobalModal();
   return (
     <>
-      {activeGlobalModal === "tag-form" && (
-        <Dialog open onOpenChange={closeGlobalModal}>
+      {activeGlobalDialog === "tag-form" && (
+        <Dialog open onOpenChange={closeGlobalDialog}>
           <DialogContent className="flex flex-col">
             <CreateTagForm />
           </DialogContent>

@@ -87,7 +87,7 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
+    return isMobile ? setOpenMobile((o) => !o) : setOpen((o) => !o);
   }, [isMobile, setOpen, setOpenMobile]);
 
   // Adds a keyboard shortcut "meta + b" to toggle the sidebar.

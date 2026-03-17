@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 
 export function CreateTagForm() {
   const { mutateAsync, isPending } = useCreateTag();
-  const { closeGlobalModal } = useGlobalModal();
+  const { closeGlobalDialog } = useGlobalModal();
   const { data } = useSuspenseQuery(getAllQueryOptions.tags);
 
   const form = useForm({
@@ -38,7 +38,7 @@ export function CreateTagForm() {
       }
 
       form.reset();
-      closeGlobalModal();
+      closeGlobalDialog();
     },
   });
 

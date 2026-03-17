@@ -11,7 +11,7 @@ import SharedButton from "@/components/blocks/bookmark/shared-button";
 import { Badge } from "@/components/ui/badge";
 
 interface BookmarkListViewProps {
-  bookmarks: Bookmark[];
+  bookmarks: Array<Bookmark>;
   count: number;
   handleOpenSheet: (bookmark: Bookmark) => void;
   handleOpenChange: (open: boolean) => void;

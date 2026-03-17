@@ -86,7 +86,7 @@ export function NavMain() {
       isCollapsible: true,
       items: tagHasItems ? tagItems : undefined,
     },
-  ] as SidebarNavItem[];
+  ] as Array<SidebarNavItem>;
 
   function handleCloseSidebar() {
     if (isMobile) {
@@ -141,14 +141,14 @@ function SubNavItems({
   items = [],
   handleCloseSidebar,
 }: {
-  items?: SidebarSubNavItem[];
+  items?: Array<SidebarSubNavItem>;
   handleCloseSidebar: () => void;
 }) {
-  const { setActiveGlobalModal } = useGlobalModal();
+  const { setActiveGlobalDialog } = useGlobalModal();
 
   function handleClick() {
     handleCloseSidebar();
-    setActiveGlobalModal("tag-form");
+    setActiveGlobalDialog("tag-form");
   }
   return (
     <>

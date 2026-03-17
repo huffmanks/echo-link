@@ -43,7 +43,7 @@ export function transformData<T extends Record<string, any>>(
     if (isPrivate === true && item.shared !== false) return false;
 
     if (tags && tags.length > 0) {
-      const itemTags = (item.tag_names as string[]) || [];
+      const itemTags = (item.tag_names as Array<string>) || [];
       if (!tags.every((t) => itemTags.includes(t))) return false;
     }
 

@@ -35,7 +35,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [searchValue, setSearchValue] = useState(search?.q ?? "");
-  const [searchResults, setSearchResults] = useState<TagAutocompleteItem[]>([]);
+  const [searchResults, setSearchResults] = useState<Array<TagAutocompleteItem>>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const { data: allTags } = useSuspenseQuery(getAllQueryOptions.tags);

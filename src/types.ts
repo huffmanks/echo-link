@@ -7,7 +7,7 @@ export interface SidebarNavItem {
   isActive: boolean;
   isExternal?: boolean;
   isCollapsible?: boolean;
-  items?: SidebarSubNavItem[];
+  items?: Array<SidebarSubNavItem>;
 }
 
 export interface SidebarSubNavItem {
@@ -26,7 +26,7 @@ export interface PaginatedResponse<T> {
   count: number;
   next: string | null;
   previous: string | null;
-  results: T[];
+  results: Array<T>;
 }
 
 export type Bookmark = BookmarkInsert & {
@@ -48,7 +48,7 @@ export type BookmarkInsert = {
   is_archived: boolean;
   unread: boolean;
   shared: boolean;
-  tag_names: string[];
+  tag_names: Array<string>;
 };
 
 export type BookmarkCheck = {

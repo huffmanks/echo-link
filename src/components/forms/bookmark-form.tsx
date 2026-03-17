@@ -78,9 +78,7 @@ export function BookmarkForm({ bookmark, className, ...props }: BookmarkFormProp
         }
         return false;
       } else {
-        return bookmarks.results.some(
-          (bookmark) => bookmark.url.toLowerCase() === url.toLowerCase()
-        );
+        return bookmarks.results.some((b) => b.url.toLowerCase() === url.toLowerCase());
       }
     } catch (_error) {}
     return false;

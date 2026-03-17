@@ -25,7 +25,7 @@ function RouteComponent() {
   const { data: folder } = useSuspenseQuery(getAllQueryOptions.folderById(id));
 
   return (
-    <div className="max-w-lg pb-8 sm:px-4">
+    <div className="max-w-lg px-4 pt-4 pb-8 md:pt-0">
       <h1 className="mb-4 text-2xl font-medium">Edit folder</h1>
       <FolderForm folder={folder} />
     </div>

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table";
 
 interface BookmarkTableViewProps {
-  bookmarks: Bookmark[];
+  bookmarks: Array<Bookmark>;
   count: number;
   handleOpenSheet: (bookmark: Bookmark) => void;
   handleOpenChange: (open: boolean) => void;

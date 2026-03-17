@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/card";
 
 interface BookmarkGridViewProps {
-  bookmarks: Bookmark[];
+  bookmarks: Array<Bookmark>;
   count: number;
   handleOpenSheet: (bookmark: Bookmark) => void;
   handleOpenChange: (open: boolean) => void;
@@ -163,7 +163,7 @@ function CardImage({
 }) {
   const { data, isLoading } = useQuery({
     queryKey: ["assets", bookmark.id],
-    queryFn: () => linkdingFetch<{ results: Asset[] }>(`bookmarks/${bookmark.id}/assets`),
+    queryFn: () => linkdingFetch<{ results: Array<Asset> }>(`bookmarks/${bookmark.id}/assets`),
   });
 
   const linkdingUrl = useSettingsStore((state) => state.linkdingUrl);

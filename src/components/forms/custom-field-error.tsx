@@ -6,13 +6,13 @@ import { FieldError } from "@/components/ui/field";
 type ZodError = z.core.$ZodIssueInvalidStringFormat | z.core.$ZodIssueTooSmall;
 
 interface CustomFieldErrorProps {
-  errors: ValidationError[];
+  errors: Array<ValidationError>;
 }
 
 export default function CustomFieldError({ errors }: CustomFieldErrorProps) {
   if (!errors || errors.length === 0) return null;
 
-  const issues = errors as ZodError[];
+  const issues = errors as Array<ZodError>;
 
   const tooSmall = issues.find((err) => err.code === "too_small");
   const invalidFormat = issues.find((err) => err.code === "invalid_format");

@@ -15,13 +15,13 @@ export function getCleanDomain(url: string): string {
 }
 
 interface Value {
-  [key: string]: string | string[];
+  [key: string]: string | Array<string>;
 }
 
 type ReturnType = "string" | "string_array";
 
 type ProcessedValue<T, R extends ReturnType> = {
-  [K in keyof T]: R extends "string" ? (T[K] extends string[] ? string : T[K]) : T[K];
+  [K in keyof T]: R extends "string" ? (T[K] extends Array<string> ? string : T[K]) : T[K];
 };
 
 export function processValue<T extends Value, R extends ReturnType>({

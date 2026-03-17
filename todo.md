@@ -8,7 +8,3 @@
 
 - [ ] If offline, hard refresh crashes.
 - [ ] If offline, make search query the cache.
-
-## UI
-
-- [ ] Swap out vaul drawer for Base UI drawer.

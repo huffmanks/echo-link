@@ -16,8 +16,7 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
+  DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
@@ -25,6 +24,7 @@ import {
 export default function AppMobileNav() {
   const { pathname } = useLocation();
 
+  const { activeGlobalDrawer, setActiveGlobalDrawer, closeGlobalDrawer } = useGlobalModal();
   const isKeyboardVisible = useKeyboardVisible();
 
   const { data: folders } = useSuspenseQuery(getAllQueryOptions.folders);
@@ -34,7 +34,7 @@ export default function AppMobileNav() {
     return DRAWER_MOBILE_NAV.map((item) => {
       const newItem = { ...item };
 
-      let subItems: SubItem[] | undefined = undefined;
+      let subItems: Array<SubItem> | undefined = undefined;
       if (newItem.name === "Folders" && folders?.results) {
         subItems = folders.results
           .map((f) => ({
@@ -65,13 +65,22 @@ export default function AppMobileNav() {
     <nav
       className={cn(
         "bg-background/60 fixed right-0 bottom-0 left-0 z-50 h-26 rounded-b-xl border-t pb-10 backdrop-blur-md transition-transform duration-300",
-        isKeyboardVisible ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
+        isKeyboardVisible || !!activeGlobalDrawer
+          ? "translate-y-full opacity-0"
+          : "translate-y-0 opacity-100"
       )}>
       <div className="h-18 px-3 pt-4">
         <div className="flex w-full items-center gap-4">
           {items.map((item) => {
             if (!!item.isCollapsible) {
-              return <NavDrawer key={item.name} item={item} />;
+              return (
+                <NavDrawer
+                  key={item.name}
+                  item={item}
+                  isOpen={activeGlobalDrawer === item.name}
+                  onOpenChange={(open) => setActiveGlobalDrawer(open ? item.name : null)}
+                />
+              );
             }
 
             return (
@@ -81,7 +90,7 @@ export default function AppMobileNav() {
                 size="icon-nav"
                 nativeButton={false}
                 render={
-                  <Link to={item.url} className="flex flex-col gap-1!">
+                  <Link to={item.url} className="flex flex-col gap-1!" onClick={closeGlobalDrawer}>
                     <div
                       className={cn(
                         "flex items-center justify-center rounded-full p-1.5 transition-colors",
@@ -107,7 +116,7 @@ export default function AppMobileNav() {
 }
 
 type ExtendedSidebarNavItem = SidebarNavItem & {
-  subItems?: SubItem[];
+  subItems?: Array<SubItem>;
 };
 
 type SubItem = (Folder | Tag) & {
@@ -118,100 +127,106 @@ type SubItem = (Folder | Tag) & {
   };
 };
 
-function NavDrawer({ item }: { item: ExtendedSidebarNavItem }) {
-  const [isOpen, setIsOpen] = useState(false);
+function NavDrawer({
+  item,
+  isOpen,
+  onOpenChange,
+}: {
+  item: ExtendedSidebarNavItem;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const [pendingModal, setPendingModal] = useState(false);
 
-  const { setActiveGlobalModal } = useGlobalModal();
-
-  function closeDrawer() {
-    setIsOpen(false);
-  }
+  const { setActiveGlobalDialog, closeGlobalDrawer } = useGlobalModal();
 
   return (
-    <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger asChild>
-        <Button
-          variant="ghost-no-events"
-          size="icon-nav"
-          className="flex cursor-pointer flex-col gap-1!">
-          <div
-            className={cn(
-              "flex items-center justify-center rounded-full p-2 transition-colors",
-              item.isActive && "bg-muted text-primary dark:bg-muted/50",
-              item.name === "Add" && "bg-foreground text-background",
-              item.isActive && item.name === "Add" && "text-primary"
-            )}>
-            <item.icon className="size-6" />
-          </div>
-          <p
-            className={cn(
-              "text-muted-foreground text-xs font-normal transition-colors",
-              item.isActive && "text-foreground font-medium"
-            )}>
-            {item.name}
-          </p>
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent
-        className={cn("max-h-[80vh]", pendingModal && "data-vaul-drawer:animation-duration-250!")}>
-        <DrawerHeader>
+    <Drawer open={isOpen} onOpenChange={onOpenChange}>
+      <DrawerTrigger
+        render={
+          <Button
+            variant="ghost-no-events"
+            size="icon-nav"
+            className="flex cursor-pointer flex-col gap-1!">
+            <div
+              className={cn(
+                "flex items-center justify-center rounded-full p-2 transition-colors",
+                item.isActive && "bg-muted text-primary dark:bg-muted/50",
+                item.name === "Add" && "bg-foreground text-background",
+                item.isActive && item.name === "Add" && "text-primary"
+              )}>
+              <item.icon className="size-6" />
+            </div>
+            <p
+              className={cn(
+                "text-muted-foreground text-xs font-normal transition-colors",
+                item.isActive && "text-foreground font-medium"
+              )}>
+              {item.name}
+            </p>
+          </Button>
+        }></DrawerTrigger>
+      <DrawerPopup
+        className={cn(
+          "flex max-h-dvh flex-col px-0 shadow-[0_2px_50px_rgb(0_0_0/0.15)] dark:shadow-[0_2px_200px_rgb(0_0_0/0.9)]",
+          "pb-[max(0px,calc(var(--drawer-snap-point-offset)+var(--drawer-swipe-movement-y)+var(--bleed)))]!"
+        )}>
+        <div className="border-b px-4 pb-4">
           <DrawerTitle>{item.name}</DrawerTitle>
           <DrawerDescription className="sr-only">List of options to choose from.</DrawerDescription>
-        </DrawerHeader>
-
-        {!item.subItems?.length ? (
-          <div className="flex flex-col gap-3 p-4">
-            <DrawerButtonLink
-              closeDrawer={closeDrawer}
-              name="Bookmark"
-              link="/dashboard/add/bookmark"
-            />
-            <DrawerButtonLink
-              closeDrawer={closeDrawer}
-              name="Folder"
-              link="/dashboard/add/folder"
-            />
-            <Button
-              className="cursor-pointer"
-              variant="secondary"
-              onClick={() => {
-                setPendingModal(true);
-                closeDrawer();
-                setTimeout(() => {
-                  setActiveGlobalModal("tag-form");
-                  setPendingModal(false);
-                }, 300);
-              }}>
-              Tag
-            </Button>
+        </div>
+        <DrawerContent
+          className={cn(
+            "w-full flex-1 overflow-y-auto overscroll-contain px-4 pt-4",
+            "pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]",
+            pendingModal ? "duration-250!" : "duration-300"
+          )}>
+          <div className="mx-auto mb-4 max-w-lg">
+            {!item.subItems?.length ? (
+              <div className="flex flex-col gap-3 p-4">
+                <DrawerButtonLink name="Bookmark" link="/dashboard/add/bookmark" />
+                <DrawerButtonLink name="Folder" link="/dashboard/add/folder" />
+                <Button
+                  className="bg-muted/80 border-muted h-12 cursor-pointer rounded-xl border"
+                  variant="secondary"
+                  onClick={() => {
+                    setPendingModal(true);
+                    closeGlobalDrawer();
+                    setTimeout(() => {
+                      setActiveGlobalDialog("tag-form");
+                      setPendingModal(false);
+                    }, 300);
+                  }}>
+                  Tag
+                </Button>
+              </div>
+            ) : (
+              <div className="scrollbar overflow-y-auto p-4">
+                <div className="flex flex-col gap-2">
+                  {item.subItems.map((subItem) => (
+                    <DrawerButtonLink
+                      key={subItem.id}
+                      name={subItem.name}
+                      params={subItem.params}
+                      link={`/dashboard/${subItem.entityType}/${subItem.entityType === "tags" ? subItem.params.tagName : subItem.params.id}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="scrollbar overflow-y-auto pr-4 pb-4 pl-6">
-            <div className="flex flex-col gap-2">
-              {item.subItems.map((subItem) => (
-                <DrawerButtonLink
-                  key={subItem.id}
-                  closeDrawer={closeDrawer}
-                  name={subItem.name}
-                  params={subItem.params}
-                  link={`/dashboard/${subItem.entityType}/${subItem.entityType === "tags" ? subItem.params.tagName : subItem.params.id}`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
 
-        <DrawerFooter className="mb-4">
-          <DrawerClose
-            className={cn(
-              "cursor-pointer",
-              buttonVariants({ variant: "default", size: "default" })
-            )}>
-            Close
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
+          <div className="mb-4 px-4">
+            <DrawerClose
+              className={cn(
+                "w-full cursor-pointer rounded-xl!",
+                buttonVariants({ variant: "default", size: "default" })
+              )}>
+              Close
+            </DrawerClose>
+          </div>
+        </DrawerContent>
+      </DrawerPopup>
     </Drawer>
   );
 }
@@ -220,19 +235,18 @@ function DrawerButtonLink({
   name,
   link,
   params,
-  closeDrawer,
 }: {
   name: string;
   link: string;
   params?: { id?: string; tagName?: string };
-  closeDrawer: () => void;
 }) {
+  const { closeGlobalDrawer } = useGlobalModal();
   return (
     <Button
-      className="cursor-pointer"
+      className="bg-muted/80 border-muted h-12 cursor-pointer rounded-xl border"
       variant="secondary"
       nativeButton={false}
-      onClick={closeDrawer}
+      onClick={closeGlobalDrawer}
       render={
         <Link to={link} params={params}>
           {name}

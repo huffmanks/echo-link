@@ -38,7 +38,7 @@ export default function FolderActionDropdown({ id, name }: ActionDropdownProps) 
     navigate({ to: "/dashboard/folders/$id/edit", params: { id: String(id) } });
   }
 
-  async function handleDelete() {
+  function handleDelete() {
     mutate(id);
 
     navigate({ to: "/dashboard" });

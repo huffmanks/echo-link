@@ -21,10 +21,10 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface ComboboxCreateProps {
-  value: string[];
+  value: Array<string>;
   entityName?: string;
-  initialItems?: string[];
-  onChange: (value: string[]) => void;
+  initialItems?: Array<string>;
+  onChange: (value: Array<string>) => void;
 }
 
 export function ComboboxCreate({
@@ -118,7 +118,7 @@ export function ComboboxCreate({
   );
 }
 
-function DisplaySelected({ value }: { value: string[] }) {
+function DisplaySelected({ value }: { value: Array<string> }) {
   const isMobile = useIsMobile();
 
   const items = value.filter(Boolean);

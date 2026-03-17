@@ -8,7 +8,7 @@ export const Route = createFileRoute("/(protected)/dashboard/add/bookmark")({
 
 function RouteComponent() {
   return (
-    <div className="max-w-lg pb-8 sm:px-4">
+    <div className="max-w-lg px-4 pt-4 pb-8 md:pt-0">
       <h1 className="mb-4 text-2xl font-medium">Add bookmark</h1>
       <BookmarkForm />
     </div>

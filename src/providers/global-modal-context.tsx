@@ -1,25 +1,41 @@
 import { createContext, useContext, useState } from "react";
 
-export type ActiveGlobalModal = "tag-form" | null;
+export type ActiveGlobalDialog = "tag-form" | null;
+export type ActiveGlobalDrawer = string | null;
 
 interface GlobalModalContextType {
-  activeGlobalModal: ActiveGlobalModal;
-  setActiveGlobalModal: (modal: ActiveGlobalModal) => void;
-  closeGlobalModal: () => void;
+  activeGlobalDialog: ActiveGlobalDialog;
+  activeGlobalDrawer: ActiveGlobalDrawer;
+  setActiveGlobalDialog: (dialog: ActiveGlobalDialog) => void;
+  setActiveGlobalDrawer: (drawer: ActiveGlobalDrawer) => void;
+  closeGlobalDialog: () => void;
+  closeGlobalDrawer: () => void;
 }
 
 const GlobalModalContext = createContext<GlobalModalContextType | undefined>(undefined);
 
 export function GlobalModalProvider({ children }: { children: React.ReactNode }) {
-  const [activeGlobalModal, setActiveGlobalModal] = useState<ActiveGlobalModal>(null);
+  const [activeGlobalDialog, setActiveGlobalDialog] = useState<ActiveGlobalDialog>(null);
+  const [activeGlobalDrawer, setActiveGlobalDrawer] = useState<ActiveGlobalDrawer>(null);
 
-  function closeGlobalModal() {
-    setActiveGlobalModal(null);
+  function closeGlobalDialog() {
+    setActiveGlobalDialog(null);
+  }
+
+  function closeGlobalDrawer() {
+    setActiveGlobalDrawer(null);
   }
 
   return (
     <GlobalModalContext.Provider
-      value={{ activeGlobalModal, setActiveGlobalModal, closeGlobalModal }}>
+      value={{
+        activeGlobalDialog,
+        activeGlobalDrawer,
+        setActiveGlobalDialog,
+        setActiveGlobalDrawer,
+        closeGlobalDialog,
+        closeGlobalDrawer,
+      }}>
       {children}
     </GlobalModalContext.Provider>
   );

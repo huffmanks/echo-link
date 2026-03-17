@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 
 interface TagCloudProps {
-  tags: string[];
+  tags: Array<string>;
   handleOpenChange: (open: boolean) => void;
 }
 
