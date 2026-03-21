@@ -28,13 +28,8 @@
 
 - [ ] Add support to upload bookmark assets.
 
-## Styles
-
-- [ ] Drawer needs header room, scrollbar extends to top of drawer.
-
 ## Issues
 
-- [ ] Changing limit does not work for pagination, etc.
 - [ ] When onboarding, sometimes redirects to /dashboard and throws errors because of missing API token.
 - [ ] When creating a tag or folder, sidebar is not optimistically updated.
 - [ ] [Folder form](src/components/forms/folder-form.tsx) keyword/tag selection, has a ghost checked item.

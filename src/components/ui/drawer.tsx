@@ -61,7 +61,8 @@ function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
 export const drawerPopupClassName = ({ swipeDirection }: DrawerPrimitive.Popup.State) => {
   return cn(
     "group/popup relative",
-    "[--bleed:3rem] outline-1 outline-foreground/5 bg-background text-foreground dark:outline-border overflow-y-auto overscroll-contain touch-auto data-swiping:select-none",
+    "[--bleed:3rem] outline-1 outline-foreground/5 bg-background text-foreground dark:outline-border   touch-auto data-swiping:select-none",
+    "overflow-hidden overscroll-contain",
     "data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)]",
     // Nested drawer stacking variables (no-ops when not nested)
     "[--peek:1rem] [--stack-progress:clamp(0,var(--drawer-swipe-progress),1)] [--stack-step:0.05] [--stack-peek-offset:max(0px,calc((var(--nested-drawers)-var(--stack-progress))*var(--peek)))] [--scale-base:calc(max(0,1-(var(--nested-drawers)*var(--stack-step))))] [--scale:clamp(0,calc(var(--scale-base)+(var(--stack-step)*var(--stack-progress))),1)] [--shrink:calc(1-var(--scale))] [--height:max(0px,calc(var(--drawer-frontmost-height,var(--drawer-height))-var(--bleed)))]",

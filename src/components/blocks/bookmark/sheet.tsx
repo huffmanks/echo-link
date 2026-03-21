@@ -59,9 +59,13 @@ export default function BookmarkSheet({ bookmark, isOpen, handleOpenChange }: Bo
       <Drawer open={isOpen} onOpenChange={handleOpenChange}>
         <DrawerPopup className="px-0">
           <DrawerContent>
-            <DrawerTitle className="text-base font-medium">Details</DrawerTitle>
-            <DrawerDescription className="sr-only">Bookmark information</DrawerDescription>
-            <div className="scrollbar overflow-y-auto pb-8">
+            <div className="mb-2">
+              <DrawerTitle className="text-base font-medium">Details</DrawerTitle>
+              <DrawerDescription className="sr-only">Bookmark information</DrawerDescription>
+            </div>
+            <div
+              className="scrollbar mr-2 max-h-[70vh] overflow-y-auto pb-8"
+              style={{ scrollbarGutter: "stable" }}>
               <Content bookmark={bookmark} handleOpenChange={handleOpenChange} />
             </div>
           </DrawerContent>
