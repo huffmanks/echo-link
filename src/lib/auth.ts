@@ -44,25 +44,22 @@ export function logout() {
 }
 
 export async function checkAuth() {
-  const { token, isAuthenticated } = useSettingsStore.getState();
+  const { token, isAuthenticated, setIsAuthenticated } = useSettingsStore.getState();
 
   try {
-    if (!token) throw new Error("Missing credentials.");
+    if (!token) {
+      if (isAuthenticated) setIsAuthenticated(false);
+      return { isValid: false, errorMessage: "Missing credentials." };
+    }
 
-    if (!navigator.onLine || isAuthenticated) {
+    if (!navigator.onLine) {
       return {
-        isValid: true,
+        isValid: isAuthenticated,
         errorMessage: null,
       };
     }
 
-    const { isValid, errorMessage } = await validate({ token });
-
-    if (!isValid && errorMessage) throw new Error(errorMessage);
-    return {
-      isValid,
-      errorMessage: null,
-    };
+    return await validate({ token });
   } catch (error) {
     const errorMessage = getErrorMessage(error);
     return {

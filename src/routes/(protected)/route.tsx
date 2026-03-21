@@ -13,7 +13,7 @@ export const Route = createFileRoute("/(protected)")({
     const { isValid } = await checkAuth();
 
     if (!isValid) {
-      throw redirect({ to: "/" });
+      throw redirect({ to: "/", replace: true });
     }
   },
   loader: async ({ context: { queryClient } }) => {

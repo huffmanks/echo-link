@@ -52,7 +52,7 @@ export function NavUser() {
   function handleLogout() {
     logout();
 
-    navigate({ to: "/" });
+    navigate({ to: "/", replace: true });
   }
 
   useEffect(() => {
