@@ -11,10 +11,6 @@
 - [ ] If offline, hard refresh crashes.
 - [ ] If offline, make search query the cache.
 
-## Folders
-
-- [x] Sort by order in sidebar.
-
 ## Table view
 
 - [ ] Add more fields, (tags, date created, etc.)
@@ -27,8 +23,3 @@
 ## Upload assets
 
 - [ ] Add support to upload bookmark assets.
-
-## Issues
-
-- [x] When creating a tag or folder, sidebar is not optimistically updated.
-- [ ] [Folder form](src/components/forms/folder-form.tsx) keyword/tag selection, has a ghost checked item.

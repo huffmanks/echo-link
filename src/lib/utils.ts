@@ -134,8 +134,9 @@ export function getPageNumbers(current: number, total: number) {
 }
 
 export function stringToStringArray(string?: string) {
-  if (!string) return [""];
-  return string.split(" ");
+  if (!string || string.trim() === "") return [];
+
+  return string.split(" ").filter(Boolean);
 }
 
 export function joinUrlPath(url: string | null, path: string | null) {
