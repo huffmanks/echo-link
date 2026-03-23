@@ -5,6 +5,9 @@
 - [ ] Show stats page (like karakeep).
 - [ ] Add default sorting option for date. Allow user to select created_at or modified_at.
 - [ ] Add option to when bulk editing after executing to keep in editing mode or not.
+- [ ] When changing limit, results don't change until hard refresh.
+- [ ] Limit input allow empty to be 0, when clearing it keeps 0.
+- [ ] Split up setting sections in their own tab.
 
 ## Background sync
 
@@ -23,3 +26,12 @@
 ## Upload assets
 
 - [ ] Add support to upload bookmark assets.
+
+## Filters
+
+- [ ] Archived doesn't work because API doesn't return archived. Have to use this endpoint `/api/bookmarks/archived/`.
+
+## API token
+
+- [ ] Switch to using on go server instead.
+
