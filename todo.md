@@ -39,3 +39,9 @@
 ## Mobile nav
 
 - [ ] When no folders or tags drawer opens the create drawer. Should disable button.
+
+## Tags and folder manager pages
+
+- [ ] Show all items and count of each bookmark in each one.
+- [ ] Folders page, allow drag to reorder.
+- [ ] Tags page, edit/remove should cascade updates to all bookmarks. Check Linkding web ui for API call to see if there is a way to target that.
