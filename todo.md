@@ -30,8 +30,12 @@
 ## Filters
 
 - [ ] Archived doesn't work because API doesn't return archived. Have to use this endpoint `/api/bookmarks/archived/`.
+- [ ] When searching using tags, should allow multiple comma separated tags and show auto complete on those.
 
 ## API token
 
 - [ ] Switch to using on go server instead.
 
+## Mobile nav
+
+- [ ] When no folders or tags drawer opens the create drawer. Should disable button.
