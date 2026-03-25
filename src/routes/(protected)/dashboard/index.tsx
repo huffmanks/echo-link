@@ -7,6 +7,7 @@ import { BookmarkIcon } from "lucide-react";
 import { safeEnsure } from "@/lib/api";
 import { getAllQueryOptions } from "@/lib/queries";
 import { SearchSchema, transformData } from "@/lib/search";
+import { useSettingsStore } from "@/lib/store";
 
 import BookmarkWrapper from "@/components/blocks/bookmark";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,15 @@ import {
 
 export const Route = createFileRoute("/(protected)/dashboard/")({
   component: RouteComponent,
-  validateSearch: (search) => SearchSchema.parse(search),
+  validateSearch: (search) => {
+    const parsed = SearchSchema.parse(search);
+    const limit = useSettingsStore.getState().limit;
+
+    return {
+      ...parsed,
+      limit: parsed.limit ?? limit,
+    };
+  },
   loaderDeps: ({ search: { q } }) => ({
     q: q ?? "",
   }),

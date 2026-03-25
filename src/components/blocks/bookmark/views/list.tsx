@@ -11,14 +11,14 @@ import { Badge } from "@/components/ui/badge";
 
 interface BookmarkListViewProps {
   bookmarks: Array<Bookmark>;
-  count: number;
+  paginationLabel: string;
   handleOpenSheet: (bookmark: Bookmark) => void;
   handleOpenChange: (open: boolean) => void;
 }
 
 export default function BookmarkListView({
   bookmarks,
-  count,
+  paginationLabel,
   handleOpenSheet,
   handleOpenChange,
 }: BookmarkListViewProps) {
@@ -38,9 +38,7 @@ export default function BookmarkListView({
         </div>
 
         <p className="text-muted-foreground pl-2 text-sm">
-          {isBulkSelecting
-            ? `${selectedIds.size} selected`
-            : `${count} result${count > 1 ? "s" : ""}`}
+          {isBulkSelecting ? `${selectedIds.size} selected` : paginationLabel}
         </p>
       </div>
       {bookmarks.map((bookmark) => (

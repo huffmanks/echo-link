@@ -24,7 +24,7 @@ import { ALL_BULK_SELECT_OPTIONS, FILTER_OPTIONS } from "@/lib/constants";
 import { type BulkUpdatePayload, useBulkEditBookmarks, useDeleteBookmark } from "@/lib/mutations";
 import type { SortField } from "@/lib/search";
 import { useSettingsStore } from "@/lib/store";
-import { cn } from "@/lib/utils";
+import { cn, getPaginationLabel } from "@/lib/utils";
 import { useBackgroundSync } from "@/providers/background-sync";
 import { type BulkAction, useBulkSelection } from "@/providers/bulk-selection";
 import { useGlobalModal } from "@/providers/global-modal-context";
@@ -291,6 +291,8 @@ export default function BookmarkWrapper({
   const isSearchingOrFiltering = activeFilters.length > 0 || (!!search.q && search.q !== "");
   const hasResults = bookmarkItems.length > 0;
 
+  const paginationLabel = getPaginationLabel({ count: totalCount, limit, currentPage });
+
   if (!isOnline && !hasResults) {
     return <EmptyCache />;
   }
@@ -530,7 +532,7 @@ export default function BookmarkWrapper({
             {view === "grid" && (
               <BookmarkGridView
                 bookmarks={bookmarkItems}
-                count={totalCount}
+                paginationLabel={paginationLabel}
                 handleOpenSheet={handleOpenSheet}
                 handleOpenChange={handleOpenChange}
               />
@@ -539,7 +541,7 @@ export default function BookmarkWrapper({
             {view === "list" && (
               <BookmarkListView
                 bookmarks={bookmarkItems}
-                count={totalCount}
+                paginationLabel={paginationLabel}
                 handleOpenSheet={handleOpenSheet}
                 handleOpenChange={handleOpenChange}
               />
@@ -548,8 +550,7 @@ export default function BookmarkWrapper({
             {view === "table" && (
               <BookmarkTableView
                 bookmarks={bookmarkItems}
-                count={totalCount}
-                currentPage={currentPage}
+                paginationLabel={paginationLabel}
                 handleOpenSheet={handleOpenSheet}
                 handleOpenChange={handleOpenChange}
               />

@@ -1,5 +1,4 @@
-import { useSettingsStore } from "@/lib/store";
-import { cn, formatToLocalTime, getCleanDomain, getPaginationLabel } from "@/lib/utils";
+import { cn, formatToLocalTime, getCleanDomain } from "@/lib/utils";
 import { useBulkSelection } from "@/providers/bulk-selection";
 import type { Bookmark } from "@/types";
 
@@ -19,24 +18,18 @@ import {
 
 interface BookmarkTableViewProps {
   bookmarks: Array<Bookmark>;
-  count: number;
-  currentPage: number;
+  paginationLabel: string;
   handleOpenSheet: (bookmark: Bookmark) => void;
   handleOpenChange: (open: boolean) => void;
 }
 
 export default function BookmarkTableView({
   bookmarks,
-  count,
-  currentPage,
+  paginationLabel,
   handleOpenSheet,
   handleOpenChange,
 }: BookmarkTableViewProps) {
   const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
-
-  const limit = useSettingsStore((state) => state.limit);
-
-  const paginationLabel = getPaginationLabel({ count, limit, currentPage });
 
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 

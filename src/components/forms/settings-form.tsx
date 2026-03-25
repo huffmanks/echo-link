@@ -338,12 +338,17 @@ export function SettingsForm({ className, ...props }: SettingsFormProps) {
                     id="limit"
                     name={field.name}
                     type="number"
-                    value={field.state.value}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={field.state.value === 0 ? "" : field.state.value}
                     aria-invalid={!field.state.meta.isValid}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      field.handleChange(val === "" ? 0 : Number(val));
+                    }}
                   />
-                  {!field.state.meta.isValid && (
+                  {!field.state.meta.isValid && field.state.value !== 0 && (
                     <CustomFieldError errors={field.state.meta.errors} />
                   )}
                 </Field>

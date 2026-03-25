@@ -6,13 +6,22 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { safeEnsure } from "@/lib/api";
 import { getAllQueryOptions } from "@/lib/queries";
 import { SearchSchema, transformData } from "@/lib/search";
+import { useSettingsStore } from "@/lib/store";
 import { EmptyFolder } from "@/routes/(protected)/dashboard/folders/-components/empty-folder";
 import FolderActionDropdown from "@/routes/(protected)/dashboard/folders/-components/folder-action-dropdown";
 
 import BookmarkWrapper from "@/components/blocks/bookmark";
 
 export const Route = createFileRoute("/(protected)/dashboard/folders/$id/")({
-  validateSearch: (search) => SearchSchema.parse(search),
+  validateSearch: (search) => {
+    const parsed = SearchSchema.parse(search);
+    const limit = useSettingsStore.getState().limit;
+
+    return {
+      ...parsed,
+      limit: parsed.limit ?? limit,
+    };
+  },
   loader: async ({ context: { queryClient }, params: { id } }) => {
     try {
       await safeEnsure(queryClient, getAllQueryOptions.folderById(id));

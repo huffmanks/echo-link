@@ -26,14 +26,14 @@ import {
 
 interface BookmarkGridViewProps {
   bookmarks: Array<Bookmark>;
-  count: number;
+  paginationLabel: string;
   handleOpenSheet: (bookmark: Bookmark) => void;
   handleOpenChange: (open: boolean) => void;
 }
 
 export default function BookmarkGridView({
   bookmarks,
-  count,
+  paginationLabel,
   handleOpenSheet,
   handleOpenChange,
 }: BookmarkGridViewProps) {
@@ -53,9 +53,7 @@ export default function BookmarkGridView({
         </div>
 
         <p className="text-muted-foreground pl-2 text-sm">
-          {isBulkSelecting
-            ? `${selectedIds.size} selected`
-            : `${count} result${count > 1 ? "s" : ""}`}
+          {isBulkSelecting ? `${selectedIds.size} selected` : paginationLabel}
         </p>
       </div>
       <div className="grid gap-4 px-1 pb-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
