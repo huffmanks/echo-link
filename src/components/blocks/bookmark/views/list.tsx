@@ -1,3 +1,4 @@
+import { useSettingsStore } from "@/lib/store";
 import { cn, getCleanDomain, getRelativeTimeString } from "@/lib/utils";
 import { useBulkSelection } from "@/providers/bulk-selection";
 import type { Bookmark } from "@/types";
@@ -23,6 +24,8 @@ export default function BookmarkListView({
   handleOpenChange,
 }: BookmarkListViewProps) {
   const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
+
+  const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
 
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
@@ -117,7 +120,9 @@ export default function BookmarkListView({
               )}
               {bookmark?.date_added && (
                 <p className={cn("text-xs", !bookmark?.description && "mt-2")}>
-                  {getRelativeTimeString(new Date(bookmark.date_added))}
+                  {defaultSortDate === "date_added"
+                    ? getRelativeTimeString(new Date(bookmark.date_added))
+                    : getRelativeTimeString(new Date(bookmark.date_modified))}
                 </p>
               )}
             </section>

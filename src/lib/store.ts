@@ -2,7 +2,7 @@ import z from "zod";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import type { Theme, View } from "@/types";
+import type { DefaultSortDate, Theme, View } from "@/types";
 
 export const TokenSchema = z
   .hash("sha1", { error: "API token is not valid." })
@@ -21,8 +21,10 @@ type SettingsStoreState = {
   token: Token | null;
   view: View;
   theme: Theme;
-  sidebarAddOpen: boolean;
+  sidebarAddCollapsed: boolean;
+  defaultSortDate: DefaultSortDate;
   limit: number;
+  exitBulkEditOnAction: boolean;
   archivedDefault: boolean;
   unreadDefault: boolean;
   sharedDefault: boolean;
@@ -36,8 +38,10 @@ type SettingsStoreActions = {
   setToken: (token: Token | null) => void;
   setView: (view: View) => void;
   setTheme: (theme: Theme) => void;
-  setSidebarAddOpen: (sidebarAddOpen: boolean) => void;
+  setSidebarAddCollapsed: (sidebarAddCollapsed: boolean) => void;
+  setDefaultSortDate: (defaultSortDate: DefaultSortDate) => void;
   setLimit: (limit: number) => void;
+  setExitBulkEditOnAction: (exitBulkEditOnAction: boolean) => void;
   setArchivedDefault: (archivedDefault: boolean) => void;
   setUnreadDefault: (unreadDefault: boolean) => void;
   setSharedDefault: (sharedDefault: boolean) => void;
@@ -52,8 +56,10 @@ const initialSettingsStoreState: SettingsStoreState = {
   token: null,
   view: "grid",
   theme: "system",
-  sidebarAddOpen: true,
+  sidebarAddCollapsed: false,
+  defaultSortDate: "date_modified",
   limit: 10,
+  exitBulkEditOnAction: true,
   archivedDefault: false,
   unreadDefault: false,
   sharedDefault: false,
@@ -70,8 +76,10 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
       setToken: (token) => set({ token }),
       setView: (view) => set({ view }),
       setTheme: (theme) => set({ theme }),
-      setSidebarAddOpen: (sidebarAddOpen) => set({ sidebarAddOpen }),
+      setSidebarAddCollapsed: (sidebarAddCollapsed) => set({ sidebarAddCollapsed }),
+      setDefaultSortDate: (defaultSortDate) => set({ defaultSortDate }),
       setLimit: (limit) => set({ limit }),
+      setExitBulkEditOnAction: (exitBulkEditOnAction) => set({ exitBulkEditOnAction }),
       setArchivedDefault: (archivedDefault) => set({ archivedDefault }),
       setUnreadDefault: (unreadDefault) => set({ unreadDefault }),
       setSharedDefault: (sharedDefault) => set({ sharedDefault }),

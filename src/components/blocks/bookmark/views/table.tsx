@@ -1,3 +1,4 @@
+import { useSettingsStore } from "@/lib/store";
 import { cn, formatToLocalTime, getCleanDomain } from "@/lib/utils";
 import { useBulkSelection } from "@/providers/bulk-selection";
 import type { Bookmark } from "@/types";
@@ -31,6 +32,8 @@ export default function BookmarkTableView({
 }: BookmarkTableViewProps) {
   const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
 
+  const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
+
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
   return (
@@ -45,7 +48,9 @@ export default function BookmarkTableView({
             <TableHead className="w-64">Title</TableHead>
             <TableHead className="w-64">Link</TableHead>
             <TableHead className="w-64">Tags</TableHead>
-            <TableHead className="w-48">Created at</TableHead>
+            <TableHead className="w-48">
+              {defaultSortDate === "date_added" ? "Created" : "Updated"}
+            </TableHead>
             <TableHead className="w-12"></TableHead>
           </TableRow>
         </TableHeader>
@@ -124,7 +129,11 @@ export default function BookmarkTableView({
                     handleOpenSheet(bookmark);
                   }
                 }}>
-                <span>{formatToLocalTime(bookmark.date_added)}</span>
+                <span>
+                  {defaultSortDate === "date_added"
+                    ? formatToLocalTime(bookmark.date_added)
+                    : formatToLocalTime(bookmark.date_modified)}
+                </span>
               </TableCell>
               <TableCell className="flex items-center justify-end">
                 <ActionDropdown
@@ -138,7 +147,7 @@ export default function BookmarkTableView({
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={7} className="px-2 py-2.5">
+            <TableCell colSpan={7} className="text-muted-foreground px-2 py-2.5">
               {isBulkSelecting ? `Selected: ${selectedIds.size}` : paginationLabel}
             </TableCell>
           </TableRow>

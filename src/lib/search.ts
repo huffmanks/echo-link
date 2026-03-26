@@ -9,7 +9,7 @@ export const SearchSchema = z.object({
   q: z.string().optional().catch(""),
   page: z.coerce.number().optional().catch(1),
   limit: z.coerce.number().optional().catch(limit),
-  sort: z.enum(["title", "date_modified"]).optional().catch("title"),
+  sort: z.enum(["title", "date_added", "date_modified"]).optional().catch("title"),
   order: z.enum(["asc", "desc"]).optional().catch("asc"),
   unread: z.coerce.boolean().optional(),
   read: z.coerce.boolean().optional(),
@@ -22,7 +22,7 @@ export const SearchSchema = z.object({
 
 export type SearchParams = z.infer<typeof SearchSchema>;
 
-export type SortField = "title" | "date_modified";
+export type SortField = "title" | "date_added" | "date_modified";
 
 export function transformData<T extends Record<string, any>>(
   rawData: PaginatedResponse<T>,
@@ -58,7 +58,7 @@ export function transformData<T extends Record<string, any>>(
       let aVal = a[sort];
       let bVal = b[sort];
 
-      if (sort === "date_modified") {
+      if (sort === "date_modified" || sort === "date_added") {
         aVal = new Date(aVal || 0).getTime();
         bVal = new Date(bVal || 0).getTime();
       }

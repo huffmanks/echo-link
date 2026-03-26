@@ -39,6 +39,8 @@ export default function BookmarkGridView({
 }: BookmarkGridViewProps) {
   const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
 
+  const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
+
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
   return (
@@ -99,7 +101,9 @@ export default function BookmarkGridView({
                 )}
                 {bookmark?.date_added && (
                   <p className={cn("text-foreground text-xs", !bookmark?.description && "mt-2")}>
-                    {getRelativeTimeString(new Date(bookmark.date_added))}
+                    {defaultSortDate === "date_added"
+                      ? getRelativeTimeString(new Date(bookmark.date_added))
+                      : getRelativeTimeString(new Date(bookmark.date_modified))}
                   </p>
                 )}
               </CardDescription>

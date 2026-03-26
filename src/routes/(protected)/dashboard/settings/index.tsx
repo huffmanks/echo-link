@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { SettingsForm } from "@/components/forms/settings-form";
+import { BookmarkSettingsForm } from "@/components/forms/settings/bookmark-settings-form";
+import { CacheSettingsForm } from "@/components/forms/settings/cache-settings-form";
+import { UiSettingsForm } from "@/components/forms/settings/ui-settings-form";
+import { UserSettingsForm } from "@/components/forms/settings/user-settings-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/(protected)/dashboard/settings/")({
@@ -13,24 +16,32 @@ function RouteComponent() {
       <h1 className="mb-4 text-2xl font-medium">Settings</h1>
 
       <Tabs defaultValue="user">
-        <TabsList>
-          <TabsTrigger value="user">User</TabsTrigger>
-          <TabsTrigger value="ui">UI</TabsTrigger>
-          <TabsTrigger value="bookmark">Bookmark</TabsTrigger>
-          <TabsTrigger value="cache">Cache</TabsTrigger>
+        <TabsList className="w-full p-0">
+          <TabsTrigger value="user" className="cursor-pointer">
+            User
+          </TabsTrigger>
+          <TabsTrigger value="ui" className="cursor-pointer">
+            UI
+          </TabsTrigger>
+          <TabsTrigger value="bookmark" className="cursor-pointer">
+            Bookmark
+          </TabsTrigger>
+          <TabsTrigger value="cache" className="cursor-pointer">
+            Cache
+          </TabsTrigger>
         </TabsList>
         <div className="pt-4">
           <TabsContent value="user">
-            <SettingsForm />
+            <UserSettingsForm />
           </TabsContent>
           <TabsContent value="ui">
-            <SettingsForm />
+            <UiSettingsForm />
           </TabsContent>
           <TabsContent value="bookmark">
-            <SettingsForm />
+            <BookmarkSettingsForm />
           </TabsContent>
           <TabsContent value="cache">
-            <SettingsForm />
+            <CacheSettingsForm />
           </TabsContent>
         </div>
       </Tabs>

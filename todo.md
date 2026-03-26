@@ -1,36 +1,53 @@
 # Todos
 
-## Settings & preferences
+## Issues
 
-- [ ] Show stats page (like karakeep).
-- [ ] Add default sorting option for date. Allow user to select created_at or modified_at.
-- [ ] Add option to when bulk editing after executing to keep in editing mode or not.
-- [ ] Split up setting sections in their own tab.
-
-## Background sync
+### Background sync
 
 - [ ] If offline, hard refresh crashes.
-- [ ] If offline, make search query the cache.
+- [ ] Use cached results for search when offline.
+- [ ] Clearing cache in settings does not work.
 
-## Bulk edit
+### Filters
 
-- [ ] Add ability to remove/add tags to bookmarks.
+- [ ] Archived filter broken, API does not return archived from normal endpoint. Use `/api/bookmarks/archived/`.
+- [ ] Tag search should support multiple comma-separated tags with autocomplete.
 
-## Upload assets
+---
 
-- [ ] Add support to upload bookmark assets.
+## New features
 
-## Filters
+### API token
 
-- [ ] Archived doesn't work because API doesn't return archived. Have to use this endpoint `/api/bookmarks/archived/`.
-- [ ] When searching using tags, should allow multiple comma separated tags and show auto complete on those.
+- [ ] Move token handling to Go server.
 
-## API token
+### Bulk edit
 
-- [ ] Switch to using on go server instead.
+- [ ] Add ability to remove/add tags for selected bookmarks.
+- [ ] If `exitBulkEditOnAction` is true, allow option to keep current selection. [form](src/components/forms/settings/bookmark-settings-form.tsx#L166)
 
-## Tags and folder manager pages
+### Upload assets
 
-- [ ] Show all items and count of each bookmark in each one.
-- [ ] Folders page, allow drag to reorder.
-- [ ] Tags page, edit/remove should cascade updates to all bookmarks. Check Linkding web ui for API call to see if there is a way to target that.
+- [ ] Support uploading bookmark assets.
+
+---
+
+## New pages
+
+### Stats
+
+- [ ] Stats page (like karakeep).
+
+### Tags
+
+- [ ] Table view only.
+- [ ] Show total count.
+- [ ] Show bookmark count per tag.
+- [ ] Editing/removing should cascade to bookmarks. Check Linkding UI/API for support.
+
+### Folders
+
+- [ ] Table view only.
+- [ ] Show total count.
+- [ ] Show bookmark count per folder.
+- [ ] Support drag-and-drop reordering.

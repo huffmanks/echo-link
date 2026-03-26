@@ -129,15 +129,18 @@ export default function BookmarkWrapper({
     isBulkSelecting,
     selectedIds,
     bulkAction,
+    clearSelection,
     toggleBulkSelection,
     setCurrentBulkAction,
     stopBulkSelection,
   } = useBulkSelection();
 
-  const { limit, view, setView } = useSettingsStore(
+  const { limit, view, defaultSortDate, exitBulkEditOnAction, setView } = useSettingsStore(
     useShallow((state) => ({
       limit: state.limit,
       view: state.view,
+      defaultSortDate: state.defaultSortDate,
+      exitBulkEditOnAction: state.exitBulkEditOnAction,
       setView: state.setView,
     }))
   );
@@ -279,8 +282,8 @@ export default function BookmarkWrapper({
       toast.promise(batchPromise, {
         loading: `Executing ${bulkAction} on ${selectedIds.size} items...`,
         success: () => {
-          stopBulkSelection();
-          setIsAlertOpen(false);
+          handlePostBulkAction();
+
           return "Bulk actions completed!";
         },
         error: "Error, something went wrong!",
@@ -288,10 +291,21 @@ export default function BookmarkWrapper({
     } catch (error) {}
   }
 
+  function handlePostBulkAction() {
+    if (exitBulkEditOnAction) {
+      stopBulkSelection();
+    } else {
+      clearSelection();
+    }
+
+    setIsAlertOpen(false);
+  }
+
   const isSearchingOrFiltering = activeFilters.length > 0 || (!!search.q && search.q !== "");
   const hasResults = bookmarkItems.length > 0;
 
   const paginationLabel = getPaginationLabel({ count: totalCount, limit, currentPage });
+  const activeDateKey = defaultSortDate ?? "date_modified";
 
   if (!isOnline && !hasResults) {
     return <EmptyCache />;
@@ -343,8 +357,8 @@ export default function BookmarkWrapper({
                 )}
               </ToggleGroupItem>
 
-              <ToggleGroupItem value="date_modified" aria-label="Sort by date">
-                {search.sort === "date_modified" ? (
+              <ToggleGroupItem value={activeDateKey} aria-label="Sort by date">
+                {search.sort === activeDateKey ? (
                   search.order === "asc" ? (
                     <CalendarArrowUpIcon />
                   ) : (
@@ -419,7 +433,7 @@ export default function BookmarkWrapper({
               disablePointerDismissal
               open={isBulkSelecting}
               onOpenChange={(open) => {
-                if (!open && !isAlertOpen) stopBulkSelection();
+                if (!open && !isAlertOpen) handlePostBulkAction();
               }}>
               <DialogTrigger
                 render={

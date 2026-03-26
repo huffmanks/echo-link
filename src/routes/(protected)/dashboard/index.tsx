@@ -24,7 +24,7 @@ export const Route = createFileRoute("/(protected)/dashboard/")({
   component: RouteComponent,
   validateSearch: (search) => {
     const parsed = SearchSchema.parse(search);
-    const limit = useSettingsStore.getState().limit;
+    const { limit } = useSettingsStore.getState();
 
     return {
       ...parsed,
