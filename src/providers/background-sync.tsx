@@ -216,32 +216,15 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
         } catch {}
       } finally {
         setIsSyncing(false);
+        queryClient.invalidateQueries();
       }
     }
 
     window.addEventListener("online", flushOutbox);
     flushOutbox();
 
-    const hasSW = "serviceWorker" in navigator && navigator.serviceWorker.controller;
-
-    function handleMessage(event: MessageEvent) {
-      if (event.data?.type === "CACHE_PURGED") {
-        try {
-          toast.success("Service worker cache cleared");
-        } catch (e) {}
-      }
-    }
-
-    if (hasSW) {
-      navigator.serviceWorker.addEventListener("message", handleMessage);
-    }
-
     return () => {
       window.removeEventListener("online", flushOutbox);
-
-      if (hasSW) {
-        navigator.serviceWorker.removeEventListener("message", handleMessage);
-      }
     };
   }, [queryClient, isOnline]);
 

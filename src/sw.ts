@@ -17,7 +17,6 @@ self.addEventListener("message", (event: ExtendableMessageEvent) => {
 
   if (event.data?.type === "PURGE_CACHE") {
     event.waitUntil(caches.delete(event.data.cacheName));
-    event.source?.postMessage({ type: "CACHE_PURGED" });
   }
 });
 

@@ -4,9 +4,8 @@
 
 ### Background sync
 
-- [ ] [Refactor useEffect](src/providers/background-sync.tsx#L51)
+- [ ] [Refactor useEffect](src/providers/background-sync.tsx#L51). Works but needs to be cleaned up.
 - [ ] Use cached results for search when offline.
-- [ ] Clearing cache in settings does not work.
 
 ### Filters
 

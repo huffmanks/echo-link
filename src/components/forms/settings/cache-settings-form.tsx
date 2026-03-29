@@ -48,13 +48,15 @@ export function CacheSettingsForm({ className, ...props }: CacheSettingsFormProp
       }
 
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        cachesToPurge.forEach((cache) => purgeAssets(cache));
+        for (const cache of cachesToPurge) {
+          purgeAssets(cache);
+        }
 
         form.setFieldValue("appCache", false);
         form.setFieldValue("linkdingCache", false);
 
-        toast.success("Requested cache clear", {
-          description: "The selected data will be refreshed on next load.",
+        toast.success("Cache cleared", {
+          description: "The selected cache has been cleared.",
         });
       } else {
         toast.error("Service Worker not active. Cannot clear cache.");
