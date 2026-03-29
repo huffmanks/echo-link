@@ -190,15 +190,15 @@ function NavCollapsibleItem({
   item: SidebarNavItem;
   handleCloseSidebar: () => void;
 }) {
-  const sidebarAddOpen = useSettingsStore((state) => state.sidebarAddOpen);
+  const sidebarAddCollapsed = useSettingsStore((state) => state.sidebarAddCollapsed);
   const isAdd = item.name === "Add";
-  const [isOpen, setIsOpen] = useState(isAdd ? sidebarAddOpen : item.isActive);
+  const [isOpen, setIsOpen] = useState(isAdd ? sidebarAddCollapsed : item.isActive);
 
   useEffect(() => {
     if (isAdd) {
-      setIsOpen(sidebarAddOpen);
+      setIsOpen(sidebarAddCollapsed);
     }
-  }, [sidebarAddOpen, isAdd]);
+  }, [sidebarAddCollapsed, isAdd]);
 
   const hasItems = !!item.items?.length;
 
