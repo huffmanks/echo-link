@@ -1,9 +1,9 @@
 import { type QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
+import { useBackgroundSync } from "@/hooks/use-background-sync";
 import { linkdingFetch } from "@/lib/api";
 import { db } from "@/lib/db";
-import { useBackgroundSync } from "@/providers/background-sync";
 
 const generateTempId = () => `temp-${nanoid()}`;
 
@@ -164,6 +164,8 @@ export function useOfflineMutation<
       }
     },
     onSuccess: (result: OfflineResult<TResult>, variables: TVariables) => {
+      if ((result as any)?.offline) return;
+
       queryClient.setQueriesData({ queryKey: options.queryKey, exact: false }, (old: any) => {
         if (!old) return old;
 

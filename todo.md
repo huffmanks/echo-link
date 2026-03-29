@@ -4,7 +4,7 @@
 
 ### Background sync
 
-- [ ] If offline, hard refresh crashes.
+- [ ] [Refactor useEffect](src/providers/background-sync.tsx#L51)
 - [ ] Use cached results for search when offline.
 - [ ] Clearing cache in settings does not work.
 

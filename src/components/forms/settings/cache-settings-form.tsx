@@ -1,8 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 
+import { useBackgroundSync } from "@/hooks/use-background-sync";
 import { cn } from "@/lib/utils";
-import { useBackgroundSync } from "@/providers/background-sync";
 import type { CacheName } from "@/types";
 
 import { Button } from "@/components/ui/button";

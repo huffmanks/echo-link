@@ -6,6 +6,9 @@ export interface OutboxItem {
   method: "POST" | "PUT" | "PATCH" | "DELETE";
   body: any;
   timestamp: number;
+  lockedBy?: string | null;
+  lockedAt?: number | null;
+  attempts?: number;
 }
 
 export class MyDatabase extends Dexie {
