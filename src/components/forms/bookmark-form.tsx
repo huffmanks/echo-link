@@ -5,11 +5,11 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useShallow } from "zustand/react/shallow";
 
+import { useBackgroundSync } from "@/hooks/use-background-sync";
 import { useCreateBookmark, useEditBookmark } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store";
 import { cn, getErrorMessage } from "@/lib/utils";
-import { useBackgroundSync } from "@/providers/background-sync";
 import type { Bookmark } from "@/types";
 
 import { ComboboxCreate } from "@/components/forms/combobox-create";

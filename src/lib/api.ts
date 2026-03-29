@@ -25,7 +25,7 @@ export async function linkdingFetch<T>(
 
   const response = await fetch(url.toString(), {
     ...options,
-    signal: AbortSignal.timeout(5000),
+    signal: AbortSignal.timeout(10000),
     headers: {
       Authorization: `Token ${token}`,
       "Content-Type": "application/json",
@@ -38,7 +38,15 @@ export async function linkdingFetch<T>(
   }
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData = await response.json().catch(async () => {
+      try {
+        const text = await response.text();
+        return { detail: text };
+      } catch {
+        return {};
+      }
+    });
+
     const error = new Error(errorData.detail || `API Error: ${response.status}`) as any;
     error.status = response.status;
     error.response = response;
@@ -64,7 +72,7 @@ export async function safeEnsure(queryClient: QueryClient, options: any) {
   try {
     return await queryClient.ensureQueryData(options);
   } catch {
-    const fallback = { results: [], offline: true };
+    const fallback = { count: 0, next: null, previous: null, results: [], offline: true };
     queryClient.setQueryData(options.queryKey, fallback);
     return fallback;
   }

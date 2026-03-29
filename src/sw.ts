@@ -3,12 +3,12 @@ import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import { NetworkFirst, NetworkOnly, StaleWhileRevalidate } from "workbox-strategies";
 
+const DEFAULT_TTL = 60 * 60 * 24 * 90;
+
 declare const self: ServiceWorkerGlobalScope & { __WB_MANIFEST: any };
 
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);
-
-const DEFAULT_TTL = 60 * 60 * 24 * 90;
 
 self.addEventListener("message", (event: ExtendableMessageEvent) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
@@ -26,7 +26,7 @@ const networkFirstNavigation = new NetworkFirst({
   plugins: [
     {
       handlerDidError: async () => {
-        return await caches.match(new Request(self.registration.scope, { mode: "navigate" }));
+        return await caches.match(self.registration.scope);
       },
     },
   ],
@@ -52,9 +52,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({ url, request }) =>
-    (url.pathname.startsWith("/api") || url.pathname.includes("/assets")) &&
-    request.method === "GET",
+  ({ url, request }) => url.pathname.startsWith("/api") && request.method === "GET",
   new NetworkFirst({
     cacheName: "linkding-api-cache",
     plugins: [

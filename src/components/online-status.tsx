@@ -1,5 +1,5 @@
+import { useBackgroundSync } from "@/hooks/use-background-sync";
 import { cn } from "@/lib/utils";
-import { useBackgroundSync } from "@/providers/background-sync";
 
 interface OnlineStatusProps {
   isOnline: boolean;
