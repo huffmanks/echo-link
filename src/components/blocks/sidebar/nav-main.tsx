@@ -192,11 +192,11 @@ function NavCollapsibleItem({
 }) {
   const sidebarAddCollapsed = useSettingsStore((state) => state.sidebarAddCollapsed);
   const isAdd = item.name === "Add";
-  const [isOpen, setIsOpen] = useState(isAdd ? sidebarAddCollapsed : item.isActive);
+  const [isOpen, setIsOpen] = useState(isAdd ? !sidebarAddCollapsed : item.isActive);
 
   useEffect(() => {
     if (isAdd) {
-      setIsOpen(sidebarAddCollapsed);
+      setIsOpen(!sidebarAddCollapsed);
     }
   }, [sidebarAddCollapsed, isAdd]);
 

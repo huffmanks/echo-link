@@ -228,3 +228,12 @@ export function getPaginationLabel({
 
   return `Showing ${start}–${end} of ${count} items`;
 }
+
+export function getActiveHashSegment(value: string, cursorPos: number): [number, number] | null {
+  const before = value.slice(0, cursorPos);
+  const match = before.match(/(^|\s)(#\S*)$/);
+  if (!match) return null;
+  const start = before.lastIndexOf(match[2]);
+  const end = cursorPos + (value.slice(cursorPos).match(/^\S*/) ?? [""])[0].length;
+  return [start, end];
+}

@@ -10,7 +10,6 @@
 ### Filters
 
 - [ ] Archived filter broken, API does not return archived from normal endpoint. Use `/api/bookmarks/archived/`.
-- [ ] Tag search should support multiple space-separated tags with autocomplete.
 
 ---
 

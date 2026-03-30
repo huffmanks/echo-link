@@ -7,7 +7,7 @@ import { SearchIcon, XIcon } from "lucide-react";
 
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { getAllQueryOptions } from "@/lib/queries";
-import { cn } from "@/lib/utils";
+import { cn, getActiveHashSegment } from "@/lib/utils";
 import type { Tag } from "@/types";
 
 import {
@@ -35,7 +35,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [searchValue, setSearchValue] = useState(search?.q ?? "");
-  const [searchResults, setSearchResults] = useState<Array<TagAutocompleteItem>>([]);
+  const [searchResults, setSearchResults] = useState<TagAutocompleteItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const { data: allTags } = useSuspenseQuery(getAllQueryOptions.tags);
@@ -48,59 +48,62 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
     inputRef.current?.select();
   }
 
-  function handleInputChange(value: string) {
-    if (value === "") {
+  function handleOnOpenChange(open: boolean) {
+    const cursorPos = inputRef.current?.selectionStart ?? searchValue.length;
+    const segment = getActiveHashSegment(searchValue, cursorPos);
+    if (!segment) return;
+    setIsOpen(open);
+  }
+
+  function handleValueChange(value: string) {
+    setSearchValue(value);
+
+    if (!value) {
+      setIsOpen(false);
       clearSearch();
       return;
     }
 
-    setSearchValue(value);
+    const cursorPos = inputRef.current?.selectionStart ?? value.length;
+    const segment = getActiveHashSegment(value, cursorPos);
 
-    if (value.startsWith("#")) {
-      const cleanQuery = value.slice(1);
-
-      const tags = allTags.results
-        .filter((tag) => contains(tag.name, cleanQuery))
-        .map((tag: Tag) => ({
-          id: tag.id,
-          value: tag.name,
-        }));
-      setSearchResults(tags);
-      setIsOpen(value.length > 0);
+    if (segment) {
+      const query = value.slice(segment[0] + 1, segment[1]);
+      const alreadyUsed = [...value.matchAll(/#(\S+)/g)].map((m) => m[1]);
+      const results = allTags.results
+        .filter((tag) => contains(tag.name, query) && !alreadyUsed.includes(tag.name))
+        .map((tag: Tag) => ({ id: tag.id, value: tag.name }));
+      setSearchResults(results);
+      setIsOpen(results.length > 0);
     } else {
       setIsOpen(false);
     }
+  }
+
+  function handleItemToStringValue(item: TagAutocompleteItem) {
+    const current = inputRef.current?.value ?? searchValue;
+    const cursorPos = inputRef.current?.selectionStart ?? current.length;
+    const segment = getActiveHashSegment(current, cursorPos);
+    if (!segment || !item) return current;
+    const [start, end] = segment;
+    return current.slice(0, start) + `#${item.value} ` + current.slice(end);
   }
 
   function clearSearch() {
     setSearchValue("");
     navigate({
       to: "/dashboard",
-      search: (prev) => {
-        return {
-          ...prev,
-          q: undefined,
-        };
-      },
+      search: (prev) => ({ ...prev, q: undefined }),
       replace: true,
     });
   }
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-
     if (!inputRef.current) return;
-
-    const newSearchValue = inputRef.current.value;
-
     navigate({
       to: "/dashboard",
-      search: (prev) => {
-        return {
-          ...prev,
-          q: newSearchValue || undefined,
-        };
-      },
+      search: (prev) => ({ ...prev, q: inputRef.current!.value || undefined }),
     });
   }
 
@@ -121,13 +124,13 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
 
         <Autocomplete
           autoHighlight
-          mode="both"
-          open={isOpen && searchValue.startsWith("#")}
-          onOpenChange={setIsOpen}
+          mode="list"
+          open={isOpen}
+          onOpenChange={handleOnOpenChange}
           items={searchResults}
           value={searchValue}
-          itemToStringValue={(item: TagAutocompleteItem) => (item ? `#${item.value}` : searchValue)}
-          onValueChange={handleInputChange}>
+          itemToStringValue={handleItemToStringValue}
+          onValueChange={handleValueChange}>
           <Label htmlFor="search" className="sr-only">
             Search
           </Label>
@@ -135,7 +138,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
             ref={inputRef}
             id="search"
             autoComplete="off"
-            placeholder="Search..."
+            placeholder="Search... or #tag"
             className="h-8 w-full border-none bg-transparent! p-0! ring-0!"
             onFocus={() => inputRef.current?.select()}
           />
@@ -146,7 +149,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
               <AutocompleteList>
                 {(tag) => (
                   <AutocompleteItem key={tag.id} value={tag}>
-                    {tag.value}
+                    #{tag.value}
                   </AutocompleteItem>
                 )}
               </AutocompleteList>
@@ -163,7 +166,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
             <XIcon />
           </InputGroupButton>
         </InputGroupAddon>
-        <InputGroupAddon align="inline-end">
+        <InputGroupAddon align="inline-end" className="hidden sm:flex">
           <Kbd>⌘K</Kbd>
         </InputGroupAddon>
       </InputGroup>
