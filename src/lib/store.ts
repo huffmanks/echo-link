@@ -4,21 +4,15 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { DefaultSortDate, Theme, View } from "@/types";
 
-export const TokenSchema = z
-  .hash("sha1", { error: "API token is not valid." })
-  .min(1, { error: "API token is required." });
-
 export const UrlSchema = z
   .url({ error: "Url is not valid." })
   .min(1, { error: "Url is required." });
 
-export type Token = z.infer<typeof TokenSchema>;
 export type Url = z.infer<typeof UrlSchema>;
 
 type SettingsStoreState = {
   username: string;
   linkdingUrl: Url;
-  token: Token | null;
   view: View;
   theme: Theme;
   sidebarAddCollapsed: boolean;
@@ -30,13 +24,12 @@ type SettingsStoreState = {
   unreadDefault: boolean;
   sharedDefault: boolean;
   autoMarkRead: boolean;
-  isAuthenticated: boolean;
+  isSetupComplete: boolean;
 };
 
 type SettingsStoreActions = {
   setUsername: (username: string) => void;
   setLinkdingUrl: (linkdingUrl: Url) => void;
-  setToken: (token: Token | null) => void;
   setView: (view: View) => void;
   setTheme: (theme: Theme) => void;
   setSidebarAddCollapsed: (sidebarAddCollapsed: boolean) => void;
@@ -48,14 +41,13 @@ type SettingsStoreActions = {
   setUnreadDefault: (unreadDefault: boolean) => void;
   setSharedDefault: (sharedDefault: boolean) => void;
   setAutoMarkRead: (autoMarkRead: boolean) => void;
-  setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setIsSetupComplete: (isSetupComplete: boolean) => void;
   reset: () => void;
 };
 
 const initialSettingsStoreState: SettingsStoreState = {
-  username: "admin",
-  linkdingUrl: "http://localhost:9090",
-  token: null,
+  username: import.meta.env.VITE_USER_NAME ?? "User",
+  linkdingUrl: import.meta.env.VITE_LINKDING_EXTERNAL_URL ?? "http://localhost:9090",
   view: "grid",
   theme: "system",
   sidebarAddCollapsed: false,
@@ -67,7 +59,7 @@ const initialSettingsStoreState: SettingsStoreState = {
   unreadDefault: false,
   sharedDefault: false,
   autoMarkRead: true,
-  isAuthenticated: false,
+  isSetupComplete: false,
 };
 
 export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions>()(
@@ -76,7 +68,6 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
       ...initialSettingsStoreState,
       setUsername: (username) => set({ username }),
       setLinkdingUrl: (linkdingUrl) => set({ linkdingUrl }),
-      setToken: (token) => set({ token }),
       setView: (view) => set({ view }),
       setTheme: (theme) => set({ theme }),
       setSidebarAddCollapsed: (sidebarAddCollapsed) => set({ sidebarAddCollapsed }),
@@ -88,7 +79,7 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
       setUnreadDefault: (unreadDefault) => set({ unreadDefault }),
       setSharedDefault: (sharedDefault) => set({ sharedDefault }),
       setAutoMarkRead: (autoMarkRead) => set({ autoMarkRead }),
-      setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+      setIsSetupComplete: (isSetupComplete) => set({ isSetupComplete }),
       reset: () => set(initialSettingsStoreState),
     }),
     {

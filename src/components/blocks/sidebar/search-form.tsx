@@ -7,6 +7,7 @@ import { SearchIcon, XIcon } from "lucide-react";
 
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
 import { getAllQueryOptions } from "@/lib/queries";
+import { useSettingsStore } from "@/lib/store";
 import { cn, getActiveHashSegment } from "@/lib/utils";
 import type { Tag } from "@/types";
 
@@ -39,6 +40,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { data: allTags } = useSuspenseQuery(getAllQueryOptions.tags);
+  const limit = useSettingsStore((state) => state.limit);
   const { contains } = AutocompletePrimitive.useFilter({ sensitivity: "base" });
 
   useKeyboardShortcut("k", toggleFocus, { mod: true });
@@ -93,7 +95,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
     setSearchValue("");
     navigate({
       to: "/dashboard",
-      search: (prev) => ({ ...prev, q: undefined }),
+      search: (prev) => ({ ...prev, q: undefined, limit }),
       replace: true,
     });
   }
@@ -103,7 +105,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
     if (!inputRef.current) return;
     navigate({
       to: "/dashboard",
-      search: (prev) => ({ ...prev, q: inputRef.current!.value || undefined }),
+      search: (prev) => ({ ...prev, q: inputRef.current!.value || undefined, limit }),
     });
   }
 

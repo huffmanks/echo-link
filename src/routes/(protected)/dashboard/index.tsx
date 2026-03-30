@@ -28,7 +28,7 @@ export const Route = createFileRoute("/(protected)/dashboard/")({
 
     return {
       ...parsed,
-      limit: parsed.limit ?? limit,
+      limit: limit ?? parsed.limit,
     };
   },
   loaderDeps: ({ search: { q } }) => ({

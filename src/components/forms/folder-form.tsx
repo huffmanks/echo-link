@@ -6,6 +6,7 @@ import z from "zod";
 
 import { useCreateFolder, useEditFolder } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
+import { useSettingsStore } from "@/lib/store";
 import { cn, getErrorMessage, processValue, stringToStringArray } from "@/lib/utils";
 import type { Folder } from "@/types";
 
@@ -33,6 +34,7 @@ export function FolderForm({ folder, className, ...props }: FolderFormProps) {
 
   const { data } = useSuspenseQuery(getAllQueryOptions.tags);
   const { data: folders } = useSuspenseQuery(getAllQueryOptions.folders);
+  const limit = useSettingsStore((state) => state.limit);
 
   const defaultValues = {
     name: folder?.name ?? "",
@@ -86,7 +88,7 @@ export function FolderForm({ folder, className, ...props }: FolderFormProps) {
         if (canGoBack) {
           router.history.back();
         } else {
-          router.navigate({ to: "/dashboard" });
+          router.navigate({ to: "/dashboard", search: { limit } });
         }
       } catch (error) {
         const errorMessage = getErrorMessage(error);

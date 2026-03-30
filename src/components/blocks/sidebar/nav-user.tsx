@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ExternalLinkIcon, LogOutIcon } from "lucide-react";
-import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 import { logout } from "@/lib/auth";
@@ -24,7 +23,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function NavUser() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const navigate = useNavigate();
 
   const { linkdingUrl, username } = useSettingsStore(
@@ -55,27 +53,6 @@ export function NavUser() {
     navigate({ to: "/", replace: true });
   }
 
-  useEffect(() => {
-    function toggleStatus() {
-      const status = navigator.onLine;
-      setIsOnline(status);
-
-      if (status) {
-        toast.success("Back online", { description: "Connection restored." });
-      } else {
-        toast.error("Offline mode", { description: "Changes will be synced later." });
-      }
-    }
-
-    window.addEventListener("online", toggleStatus);
-    window.addEventListener("offline", toggleStatus);
-
-    return () => {
-      window.removeEventListener("online", toggleStatus);
-      window.removeEventListener("offline", toggleStatus);
-    };
-  }, []);
-
   return (
     <div className="w-auto">
       <DropdownMenu>
@@ -87,7 +64,7 @@ export function NavUser() {
                 <Avatar className="size-8">
                   <AvatarFallback className="bg-background">{initial}</AvatarFallback>
                 </Avatar>
-                <OnlineStatus isOnline={isOnline} />
+                <OnlineStatus />
               </div>
             </Button>
           }></DropdownMenuTrigger>
@@ -105,7 +82,7 @@ export function NavUser() {
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{username}</span>
                 </div>
-                <OnlineStatus isOnline={isOnline} justIndicator={false} />
+                <OnlineStatus justIndicator={false} />
               </div>
             </DropdownMenuLabel>
           </DropdownMenuGroup>

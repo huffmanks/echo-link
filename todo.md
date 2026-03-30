@@ -11,13 +11,13 @@
 
 - [ ] Archived filter broken, API does not return archived from normal endpoint. Use `/api/bookmarks/archived/`.
 
+### API
+
+- [ ] Uploaded assets from API have a cold start, initially start with 404.
+
 ---
 
 ## New features
-
-### API token
-
-- [ ] Move token handling to Go server.
 
 ### Bulk edit
 

@@ -26,10 +26,11 @@ services:
     volumes:
       - ./data:/etc/linkding/data
     environment:
-      LD_SUPERUSER_NAME: ${LD_SUPERUSER_NAME}
-      LD_SUPERUSER_PASSWORD: ${LD_SUPERUSER_PASSWORD}
       LD_CSRF_TRUSTED_ORIGINS: ${LD_CSRF_TRUSTED_ORIGINS}
       LD_USE_X_FORWARDED_HOST: "true"
+      # optional
+      LD_SUPERUSER_NAME: ${LD_SUPERUSER_NAME}
+      LD_SUPERUSER_PASSWORD: ${LD_SUPERUSER_PASSWORD}
     restart: unless-stopped
   echo-link:
     image: huffmanks/echo-link:latest
@@ -39,6 +40,7 @@ services:
     environment:
       APP_PORT: ${APP_PORT}
       LINKDING_CONTAINER_URL: ${LINKDING_CONTAINER_URL}
+      LINKDING_API_TOKEN: ${LINKDING_API_TOKEN}
     depends_on:
       - linkding
     restart: unless-stopped
@@ -47,11 +49,22 @@ services:
 ### .env
 
 ```txt
-APP_PORT=3002
+# --- ECHOLINK ---
+APP_PORT=3000
 LINKDING_CONTAINER_URL=http://linkding:9090
+LINKDING_API_TOKEN=
+
+# Optional
+VITE_USER_NAME=
+VITE_LINKDING_EXTERNAL_URL=http://localhost:9090
+
+# --- LINKDING ---
+# see https://linkding.link/options/#ld_csrf_trusted_origins
+LD_CSRF_TRUSTED_ORIGINS=http://localhost:3000,https://echo.lan.domain.com
+
+# Optional
 LD_SUPERUSER_NAME=
 LD_SUPERUSER_PASSWORD=
-LD_CSRF_TRUSTED_ORIGINS=http://localhost:3002,https://echo.lan.domain.com
 ```
 
 ## Start container

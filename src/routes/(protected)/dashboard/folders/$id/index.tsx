@@ -19,7 +19,7 @@ export const Route = createFileRoute("/(protected)/dashboard/folders/$id/")({
 
     return {
       ...parsed,
-      limit: parsed.limit ?? limit,
+      limit: limit ?? parsed.limit,
     };
   },
   loader: async ({ context: { queryClient }, params: { id } }) => {

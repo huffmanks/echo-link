@@ -8,7 +8,7 @@ const { limit } = useSettingsStore.getState();
 export const SearchSchema = z.object({
   q: z.string().optional().catch(""),
   page: z.coerce.number().optional().catch(1),
-  limit: z.coerce.number().optional().catch(limit),
+  limit: z.coerce.number().catch(limit),
   sort: z.enum(["title", "date_added", "date_modified"]).optional().catch("title"),
   order: z.enum(["asc", "desc"]).optional().catch("asc"),
   unread: z.coerce.boolean().optional(),
@@ -74,7 +74,7 @@ export function transformData<T extends Record<string, any>>(
   }
 
   const paramsPage = params?.page ?? 1;
-  const paramsLimit = params?.limit ?? limit;
+  const paramsLimit = limit ?? params?.limit;
 
   const totalCount = result.length;
   const totalPages = Math.ceil(totalCount / paramsLimit);

@@ -20,7 +20,7 @@ export const Route = createFileRoute("/(protected)/dashboard/tags/$tagName")({
 
     return {
       ...parsed,
-      limit: parsed.limit ?? limit,
+      limit: limit ?? parsed.limit,
     };
   },
   loader: async ({ context: { queryClient }, params: { tagName } }) => {

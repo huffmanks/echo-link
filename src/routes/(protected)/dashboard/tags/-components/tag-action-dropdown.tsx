@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { EllipsisVerticalIcon } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 
 import { useSettingsStore } from "@/lib/store";
 import { joinUrlPath } from "@/lib/utils";
@@ -20,7 +21,12 @@ interface ActionDropdownProps {
 }
 
 export default function TagActionDropdown({ tag }: ActionDropdownProps) {
-  const linkdingUrl = useSettingsStore((state) => state.linkdingUrl);
+  const { linkdingUrl, limit } = useSettingsStore(
+    useShallow((state) => ({
+      linkdingUrl: state.linkdingUrl,
+      limit: state.limit,
+    }))
+  );
 
   return (
     <DropdownMenu>
@@ -37,7 +43,7 @@ export default function TagActionDropdown({ tag }: ActionDropdownProps) {
             className="cursor-pointer"
             nativeButton={false}
             render={
-              <Link to="/dashboard/tags/$tagName" params={{ tagName: tag.name }}>
+              <Link to="/dashboard/tags/$tagName" params={{ tagName: tag.name }} search={{ limit }}>
                 View
               </Link>
             }

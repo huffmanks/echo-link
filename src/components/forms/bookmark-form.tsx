@@ -42,8 +42,9 @@ export function BookmarkForm({ bookmark, className, ...props }: BookmarkFormProp
   const { data } = useSuspenseQuery(getAllQueryOptions.tags);
   const { data: bookmarks } = useSuspenseQuery(getAllQueryOptions.bookmarks);
 
-  const { unreadDefault, archivedDefault, sharedDefault } = useSettingsStore(
+  const { limit, unreadDefault, archivedDefault, sharedDefault } = useSettingsStore(
     useShallow((state) => ({
+      limit: state.limit,
       unreadDefault: state.unreadDefault,
       archivedDefault: state.archivedDefault,
       sharedDefault: state.sharedDefault,
@@ -113,7 +114,7 @@ export function BookmarkForm({ bookmark, className, ...props }: BookmarkFormProp
         if (canGoBack) {
           router.history.back();
         } else {
-          router.navigate({ to: "/dashboard" });
+          router.navigate({ to: "/dashboard", search: { limit } });
         }
       } catch (error) {
         const errorMessage = getErrorMessage(error);

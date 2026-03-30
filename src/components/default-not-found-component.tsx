@@ -1,5 +1,6 @@
 import { Link, type NotFoundRouteProps, useCanGoBack, useRouter } from "@tanstack/react-router";
 
+import { useSettingsStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 import FullScreenWrapper from "@/components/full-screen-wrapper";
@@ -8,6 +9,8 @@ import { Button } from "@/components/ui/button";
 export default function DefaultNotFoundComponent(props: NotFoundRouteProps) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
+
+  const limit = useSettingsStore((state) => state.limit);
 
   const isDashboardRoute = props?.routeId && props.routeId.startsWith("/(protected)/dashboard");
   return (
@@ -27,7 +30,11 @@ export default function DefaultNotFoundComponent(props: NotFoundRouteProps) {
         <Button
           nativeButton={false}
           className="cursor-pointer"
-          render={<Link to="/dashboard">Dashboard</Link>}></Button>
+          render={
+            <Link to="/dashboard" search={{ limit }}>
+              Dashboard
+            </Link>
+          }></Button>
       </div>
     </FullScreenWrapper>
   );

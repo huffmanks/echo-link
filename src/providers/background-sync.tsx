@@ -37,7 +37,16 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
   }
 
   useEffect(() => {
-    const updateStatus = () => setIsOnline(navigator.onLine);
+    function updateStatus() {
+      const newStatus = navigator.onLine;
+      setIsOnline(newStatus);
+
+      if (newStatus) {
+        toast.success("Back online", { description: "Connection restored." });
+      } else {
+        toast.error("Offline mode", { description: "Changes will be synced later." });
+      }
+    }
 
     window.addEventListener("online", updateStatus);
     window.addEventListener("offline", updateStatus);

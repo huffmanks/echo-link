@@ -1,17 +1,22 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { checkAuth } from "@/lib/auth";
+import { validate } from "@/lib/auth";
+import { useSettingsStore } from "@/lib/store";
 
-import { LoginForm } from "@/components/forms/login-form";
+import { SetupForm } from "@/components/forms/setup-form";
 import FullScreenWrapper from "@/components/full-screen-wrapper";
 
 export const Route = createFileRoute("/")({
   component: App,
   beforeLoad: async () => {
-    const { isValid } = await checkAuth();
+    const { isSetupComplete, limit } = useSettingsStore.getState();
+
+    if (!isSetupComplete) return;
+
+    const { isValid } = await validate();
 
     if (isValid) {
-      throw redirect({ to: "/dashboard" });
+      throw redirect({ to: "/dashboard", search: { limit } });
     }
   },
 });
@@ -19,7 +24,7 @@ export const Route = createFileRoute("/")({
 function App() {
   return (
     <FullScreenWrapper className="min-h-svh justify-center">
-      <LoginForm />
+      <SetupForm />
     </FullScreenWrapper>
   );
 }

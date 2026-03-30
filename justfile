@@ -1,7 +1,7 @@
 BASE_COMPOSE := "docker compose -f docker-compose.yml"
 BUILDER := "echolink-builder"
 IMAGE_NAME := "huffmanks/echo-link"
-VERSION := "1.0.0"
+VERSION := "1.1.0"
 
 # --- Public Recipes ---
 
@@ -20,7 +20,7 @@ down profile="development":
     @just -E .env.{{profile}} _down-{{profile}}
 
 # Setup pre-reqs
-init domain="":
+init:
     @for env in development staging production; do \
         if [ ! -f .env.$env ]; then \
             cp .env.example .env.$env; \
@@ -29,11 +29,6 @@ init domain="":
             echo ".env.$env already exists, skipping..."; \
         fi; \
     done
-    @{{ if domain != "" { \
-        "mkcert -install " + domain \
-    } else { \
-        "echo 'No domain provided, skipping mkcert.'" \
-    } }}
 
 # Build the docker image
 build push="false":
@@ -46,7 +41,7 @@ build push="false":
         "-t " + IMAGE_NAME + ":" + VERSION + " " + \
         "-t " + IMAGE_NAME + ":latest --push ." \
     } else { \
-        "docker buildx build -t " + IMAGE_NAME + ":" + VERSION + " --load ." \
+        "docker buildx build -t " + IMAGE_NAME + ":local" + VERSION + " --load ." \
     } }}
     @docker buildx rm {{BUILDER}} || true
     @echo "Build complete."
@@ -61,7 +56,6 @@ _up-staging:
     pnpm staging
 
 _up-production:
-    sudo caddy start
     {{BASE_COMPOSE}} up -d
 
 _down-base:
@@ -72,5 +66,4 @@ _down-development: _down-base
 _down-staging: _down-base
 
 _down-production:
-    -sudo caddy stop
     {{BASE_COMPOSE}} down

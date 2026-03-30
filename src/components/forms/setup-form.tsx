@@ -1,34 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { toast } from "sonner";
 import z from "zod";
 import { useShallow } from "zustand/react/shallow";
 
-import { login } from "@/lib/auth";
-import { TokenSchema, UrlSchema, useSettingsStore } from "@/lib/store";
-import { cn, getErrorMessage, joinUrlPath } from "@/lib/utils";
+import { handleSetup, validate } from "@/lib/auth";
+import { UrlSchema, useSettingsStore } from "@/lib/store";
+import { cn, joinUrlPath } from "@/lib/utils";
 
 import CustomFieldError from "@/components/forms/custom-field-error";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
-type LoginFormProps = React.ComponentProps<"div">;
+type SetupFormProps = React.ComponentProps<"div">;
 
-export function LoginForm({ className, ...props }: LoginFormProps) {
+export function SetupForm({ className, ...props }: SetupFormProps) {
+  const [isValid, setIsValid] = useState(false);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>("");
   const navigate = useNavigate();
 
-  const [showToken, setShowToken] = useState(false);
-
-  const { username, linkdingUrl } = useSettingsStore(
+  const { username, linkdingUrl, limit } = useSettingsStore(
     useShallow((state) => ({
       username: state.username,
       linkdingUrl: state.linkdingUrl,
+      limit: state.limit,
     }))
   );
 
@@ -36,22 +36,29 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     defaultValues: {
       username,
       linkdingUrl,
-      token: import.meta.env.VITE_LD_API_KEY ?? "",
     },
-    onSubmit: async ({ value }) => {
-      try {
-        const { isValid, errorMessage } = await login({ ...value });
-
-        if (!isValid && errorMessage) {
-          throw new Error(errorMessage);
-        }
-        navigate({ to: "/dashboard" });
-      } catch (error) {
-        const errorMessage = getErrorMessage(error);
+    onSubmit: ({ value }) => {
+      if (!isValid && errorMessage) {
         toast.error(errorMessage);
+        return;
       }
+
+      handleSetup({ ...value });
+      navigate({ to: "/dashboard", search: { limit } });
     },
   });
+
+  useEffect(() => {
+    async function checkAuth() {
+      const { isValid: initialIsValid, errorMessage: initialErrorMessage } = await validate();
+
+      setIsValid(initialIsValid);
+      setErrorMessage(initialErrorMessage);
+      setHasCheckedAuth(true);
+    }
+
+    checkAuth();
+  }, []);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -70,7 +77,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 <path d="M16.455 9.695q-.545-.436-1.042-.777C14.297 8.155 13.23 7.689 12 7.689s-2.297.466-3.413 1.229c-1.081.738-2.306 1.828-3.843 3.193l-.052.047l-2.356 2.094a1 1 0 1 0 1.328 1.495l2.357-2.094c1.6-1.423 2.731-2.426 3.694-3.084c.94-.642 1.613-.88 2.285-.88s1.345.238 2.285.88q.304.21.636.464c.446-.377.949-.82 1.534-1.338m3.804 3.308l-.068.061q-.753.672-1.442 1.273l1.587 1.41a1 1 0 0 0 1.328-1.495z" />
               </g>
             </svg>
-            <h1>EchoLink</h1>
+            <h1>EchoLink setup</h1>
           </CardTitle>
           <CardDescription>Enter your Linkding connection settings.</CardDescription>
         </CardHeader>
@@ -114,7 +121,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 }}
                 children={(field) => (
                   <Field data-invalid={!field.state.meta.isValid}>
-                    <FieldLabel htmlFor="linkdingUrl">Linkding URL</FieldLabel>
+                    <FieldLabel htmlFor="linkdingUrl">Linkding external URL</FieldLabel>
                     <Input
                       id="linkdingUrl"
                       type="text"
@@ -132,59 +139,32 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 )}
               />
 
-              <form.Field
-                name="token"
-                validators={{
-                  onBlur: TokenSchema,
-                }}
-                children={(field) => (
-                  <Field data-invalid={!field.state.meta.isValid}>
-                    <div className="flex items-center">
-                      <FieldLabel htmlFor="token">Linkding API token</FieldLabel>
-                      <a
-                        href={joinUrlPath(
-                          field.form.getFieldValue("linkdingUrl"),
-                          "/settings/integrations"
-                        )}
-                        className="text-foreground/70 hover:text-primary focus-within:text-primary ml-auto inline-block text-sm underline-offset-4 outline-none focus-within:underline hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Need an API token?
-                      </a>
-                    </div>
-
-                    <InputGroup>
-                      <InputGroupInput
-                        id="token"
-                        type={showToken ? "text" : "password"}
-                        autoComplete="new-password"
-                        value={field.state.value}
-                        aria-invalid={!field.state.meta.isValid}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
-                      <InputGroupAddon
-                        className="cursor-pointer"
-                        align="inline-end"
-                        onClick={() => setShowToken((prev) => !prev)}>
-                        {showToken ? (
-                          <EyeIcon className="stroke-foreground size-4" />
-                        ) : (
-                          <EyeOffIcon className="stroke-foreground size-4" />
-                        )}
-                      </InputGroupAddon>
-                    </InputGroup>
-
-                    {!field.state.meta.isValid && (
-                      <CustomFieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                )}
-              />
+              {hasCheckedAuth && !isValid && (
+                <div>
+                  <h2 className="text-destructive font-medium">LINKDING_API_TOKEN</h2>
+                  <p className="text-sm">
+                    <span>
+                      API token is invalid or missing. Provide a valid token in your .env to
+                      continue.
+                    </span>
+                    <span> </span>
+                    <a
+                      href={joinUrlPath(
+                        form.getFieldValue("linkdingUrl"),
+                        "/settings/integrations"
+                      )}
+                      className="text-primary text-sm underline-offset-4 outline-none focus-within:underline hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer">
+                      Need an API token?
+                    </a>
+                  </p>
+                </div>
+              )}
 
               <Field>
-                <Button className="text-foreground cursor-pointer" type="submit">
-                  Login
+                <Button className="cursor-pointer" type="submit" disabled={!isValid}>
+                  Finish
                 </Button>
               </Field>
             </FieldGroup>

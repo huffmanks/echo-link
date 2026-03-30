@@ -2,12 +2,11 @@ import { useBackgroundSync } from "@/hooks/use-background-sync";
 import { cn } from "@/lib/utils";
 
 interface OnlineStatusProps {
-  isOnline: boolean;
   justIndicator?: boolean;
 }
 
-export function OnlineStatus({ isOnline, justIndicator = true }: OnlineStatusProps) {
-  const { isSyncing } = useBackgroundSync();
+export function OnlineStatus({ justIndicator = true }: OnlineStatusProps) {
+  const { isOnline, isSyncing } = useBackgroundSync();
 
   if (justIndicator) {
     return <IndicatorDot isOnline={isOnline} isSyncing={isSyncing} />;

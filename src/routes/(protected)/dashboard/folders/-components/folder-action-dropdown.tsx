@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { EllipsisVerticalIcon } from "lucide-react";
 
 import { useDeleteFolder } from "@/lib/mutations";
+import { useSettingsStore } from "@/lib/store";
 
 import {
   AlertDialog,
@@ -34,6 +35,8 @@ export default function FolderActionDropdown({ id, name }: ActionDropdownProps) 
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
+  const limit = useSettingsStore((state) => state.limit);
+
   function handleEdit() {
     navigate({ to: "/dashboard/folders/$id/edit", params: { id: String(id) } });
   }
@@ -41,7 +44,7 @@ export default function FolderActionDropdown({ id, name }: ActionDropdownProps) 
   function handleDelete() {
     mutate(id);
 
-    navigate({ to: "/dashboard" });
+    navigate({ to: "/dashboard", search: { limit } });
   }
 
   const isFoldersPath = pathname === "/dashboard/folders";
@@ -63,7 +66,7 @@ export default function FolderActionDropdown({ id, name }: ActionDropdownProps) 
                 className="cursor-pointer"
                 onClick={handleEdit}
                 render={
-                  <Link to="/dashboard/folders/$id" params={{ id: String(id) }}>
+                  <Link to="/dashboard/folders/$id" params={{ id: String(id) }} search={{ limit }}>
                     View
                   </Link>
                 }></DropdownMenuItem>

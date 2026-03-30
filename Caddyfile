@@ -1,9 +1,0 @@
-echo.lan.huffmanks.com {
-    reverse_proxy localhost:3000
-    tls echo.lan.huffmanks.com.pem echo.lan.huffmanks.com-key.pem
-}
-
-link.lan.huffmanks.com {
-    reverse_proxy localhost:9090
-    tls link.lan.huffmanks.com.pem link.lan.huffmanks.com-key.pem
-}

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { useSettingsStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { useBulkSelection } from "@/providers/bulk-selection";
 
@@ -19,6 +20,7 @@ interface TagCellProps {
 
 export default function TagCell({ tags, handleOpenChange, variant = "secondary" }: TagCellProps) {
   const { isBulkSelecting } = useBulkSelection();
+  const limit = useSettingsStore((state) => state.limit);
 
   if (tags.length === 0) {
     return (
@@ -46,6 +48,7 @@ export default function TagCell({ tags, handleOpenChange, variant = "secondary" 
             <Link
               to="/dashboard/tags/$tagName"
               params={{ tagName: tag }}
+              search={{ limit }}
               tabIndex={isBulkSelecting ? -1 : 0}
               className={cn(isBulkSelecting && "pointer-events-none opacity-70")}
               onClick={() => handleOpenChange(false)}>
@@ -86,6 +89,7 @@ export default function TagCell({ tags, handleOpenChange, variant = "secondary" 
                   <Link
                     to="/dashboard/tags/$tagName"
                     params={{ tagName: tag }}
+                    search={{ limit }}
                     className="w-full cursor-pointer"
                     onClick={() => handleOpenChange(false)}>
                     <span className="inline-flex gap-px">

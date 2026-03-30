@@ -4,6 +4,8 @@ import * as React from "react";
 
 import { Link } from "@tanstack/react-router";
 
+import { useSettingsStore } from "@/lib/store";
+
 import { NavMain } from "@/components/blocks/sidebar/nav-main";
 import { NavSecondary } from "@/components/blocks/sidebar/nav-secondary";
 import {
@@ -19,6 +21,8 @@ import {
 type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
+  const limit = useSettingsStore((state) => state.limit);
+
   return (
     <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
       <SidebarHeader>
@@ -27,7 +31,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             <SidebarMenuButton
               size="lg"
               render={
-                <Link className="gap-3" to="/dashboard">
+                <Link className="gap-3" to="/dashboard" search={{ limit }}>
                   <div className="bg-primary flex aspect-square size-8 items-center justify-center rounded-full">
                     <svg
                       className="fill-primary size-6! stroke-white"

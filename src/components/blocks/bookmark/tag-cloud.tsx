@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
+import { useSettingsStore } from "@/lib/store";
+
 import { Badge } from "@/components/ui/badge";
 
 interface TagCloudProps {
@@ -8,6 +10,8 @@ interface TagCloudProps {
 }
 
 export default function TagCloud({ tags, handleOpenChange }: TagCloudProps) {
+  const limit = useSettingsStore((state) => state.limit);
+
   return (
     <div className="border-input bg-accent/14 rounded-lg border border-dashed p-3 transition-colors outline-none select-none">
       <div className="flex flex-wrap items-center gap-1">
@@ -19,6 +23,7 @@ export default function TagCloud({ tags, handleOpenChange }: TagCloudProps) {
                 <Link
                   to="/dashboard/tags/$tagName"
                   params={{ tagName: tag }}
+                  search={{ limit }}
                   onClick={() => handleOpenChange(false)}>
                   {tag}
                 </Link>

@@ -1,15 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 
 import { logout } from "@/lib/auth";
-import { useSettingsStore } from "@/lib/store";
 import { cleanUrl } from "@/lib/utils";
 
 export async function linkdingFetch<T>(
   endpoint: string,
   { params, ...options }: RequestInit & { params?: Record<string, string> } = {}
 ): Promise<T> {
-  const { token } = useSettingsStore.getState();
-
   const cleanEndpoint = endpoint.replace(/^\//, "");
   const normalizedPath = cleanEndpoint.endsWith("/") ? cleanEndpoint : `${cleanEndpoint}/`;
 
@@ -27,7 +24,9 @@ export async function linkdingFetch<T>(
     ...options,
     signal: AbortSignal.timeout(10000),
     headers: {
-      Authorization: `Token ${token}`,
+      ...(import.meta.env.DEV && {
+        Authorization: `Token ${import.meta.env.VITE_LINKDING_API_TOKEN}`,
+      }),
       "Content-Type": "application/json",
       ...options?.headers,
     },

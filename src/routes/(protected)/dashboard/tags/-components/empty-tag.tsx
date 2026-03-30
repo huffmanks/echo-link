@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { BookmarkIcon } from "lucide-react";
 
+import { useSettingsStore } from "@/lib/store";
 import { useGlobalModal } from "@/providers/global-modal-context";
 
 import CodeSpan from "@/components/code-span";
@@ -15,6 +16,8 @@ import {
 } from "@/components/ui/empty";
 
 export function EmptyTag({ name }: { name: string }) {
+  const limit = useSettingsStore((state) => state.limit);
+
   return (
     <Empty>
       <EmptyHeader>
@@ -34,7 +37,11 @@ export function EmptyTag({ name }: { name: string }) {
           <Button
             nativeButton={false}
             variant="outline"
-            render={<Link to="/dashboard">Go to bookmarks</Link>}></Button>
+            render={
+              <Link to="/dashboard" search={{ limit }}>
+                Go to bookmarks
+              </Link>
+            }></Button>
 
           <Button
             nativeButton={false}

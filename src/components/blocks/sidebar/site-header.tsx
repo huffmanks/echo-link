@@ -3,6 +3,8 @@
 import { Link } from "@tanstack/react-router";
 import { SidebarIcon } from "lucide-react";
 
+import { useSettingsStore } from "@/lib/store";
+
 import { NavUser } from "@/components/blocks/sidebar/nav-user";
 import { SearchForm } from "@/components/blocks/sidebar/search-form";
 import { Button } from "@/components/ui/button";
@@ -12,12 +14,14 @@ import { useSidebar } from "@/components/ui/sidebar";
 export function SiteHeader() {
   const { toggleSidebar, isMobile } = useSidebar();
 
+  const limit = useSettingsStore((state) => state.limit);
+
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
       <div className="flex h-(--header-height) w-full items-center gap-2 px-3">
         <div className="pr-1">
           {isMobile ? (
-            <Link to="/dashboard">
+            <Link to="/dashboard" search={{ limit }}>
               <div className="bg-primary flex aspect-square size-8 items-center justify-center rounded-full">
                 <svg
                   className="fill-primary size-6! stroke-white"
