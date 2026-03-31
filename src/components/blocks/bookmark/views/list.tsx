@@ -48,7 +48,7 @@ export default function BookmarkListView({
         <div key={bookmark.id} className="flex gap-2 pr-2">
           <div
             className={cn(
-              "mt-4 overflow-hidden transition-[width] [interpolate-size:allow-keywords]",
+              "mt-4 shrink-0 overflow-hidden transition-[width] [interpolate-size:allow-keywords]",
               isBulkSelecting ? "w-auto" : "w-0"
             )}>
             <ItemCheckbox id={bookmark.id} />
@@ -56,7 +56,7 @@ export default function BookmarkListView({
 
           <div
             className={cn(
-              "relative block w-full flex-1 rounded-md p-2 text-left transition-colors",
+              "relative block w-full min-w-0 flex-1 rounded-md p-2 text-left transition-colors",
               bookmark.unread && "bg-primary/15",
               isBulkSelecting && "hover:ring-primary/50 cursor-pointer hover:ring-2"
             )}
@@ -68,11 +68,11 @@ export default function BookmarkListView({
             {bookmark.unread && (
               <div className="bg-primary absolute top-1/2 right-5 size-2 -translate-y-1/2 rounded-full" />
             )}
-            <section className="-mb-1 flex items-center justify-between gap-2">
+            <section className="-mb-1 flex min-w-0 items-center justify-between gap-2">
               <div
                 role="button"
                 className={cn(
-                  "flex items-center gap-2",
+                  "flex min-w-0 items-center gap-2",
                   isBulkSelecting ? "pointer-events-none" : "cursor-pointer"
                 )}
                 tabIndex={isBulkSelecting ? -1 : 0}
