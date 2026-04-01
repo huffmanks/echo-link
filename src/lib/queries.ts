@@ -6,20 +6,12 @@ import type { Bookmark, BookmarkCheck, Folder, PaginatedResponse, Tag } from "@/
 export const getAllQueryOptions = {
   bookmarks: queryOptions({
     queryKey: ["bookmarks"],
-    queryFn: () =>
-      linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks", {
-        params: { limit: String(10000) },
-      }),
+    queryFn: () => fetchAllBookmarks({ limit: String(10000) }),
   }),
   bookmarkList: (q: string = "") =>
     queryOptions({
       queryKey: ["bookmarks", { q: String(q).trim() }],
-      queryFn: () =>
-        linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks", {
-          params: {
-            q: String(q).trim(),
-          },
-        }),
+      queryFn: () => fetchAllBookmarks({ q: String(q).trim() }),
     }),
   bookmarkById: (id: string) =>
     queryOptions({
@@ -46,10 +38,7 @@ export const getAllQueryOptions = {
   bookmarksByFolderId: (id: string) =>
     queryOptions({
       queryKey: ["bookmarks", { bundle: id }],
-      queryFn: () =>
-        linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks", {
-          params: { bundle: id },
-        }),
+      queryFn: () => fetchAllBookmarks({ bundle: id }),
     }),
   tags: queryOptions({
     queryKey: ["tags"],
@@ -58,9 +47,20 @@ export const getAllQueryOptions = {
   bookmarksByTagName: (tagName: string) =>
     queryOptions({
       queryKey: ["bookmarks", { q: `#${tagName}` }],
-      queryFn: () =>
-        linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks", {
-          params: { q: `#${tagName}` },
-        }),
+      queryFn: () => fetchAllBookmarks({ q: `#${tagName}` }),
     }),
 };
+
+async function fetchAllBookmarks(params?: Record<string, string>) {
+  const [regular, archived] = await Promise.all([
+    linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks", { params }),
+    linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks/archived", { params }),
+  ]);
+
+  return {
+    count: regular.count + archived.count,
+    next: null,
+    previous: null,
+    results: [...regular.results, ...archived.results],
+  };
+}

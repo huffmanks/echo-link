@@ -2,17 +2,10 @@
 
 ## Issues
 
-### Background sync
+### Data/Background sync
 
 - [ ] [Refactor useEffect](src/providers/background-sync.tsx#L51). Works but needs to be cleaned up.
 - [ ] Use cached results for search when offline.
-
-### Filters
-
-- [ ] Archived filter broken, API does not return archived from normal endpoint. Use `/api/bookmarks/archived/`.
-
-### API
-
 - [ ] Uploaded assets from API have a cold start, initially start with 404.
 
 ---
