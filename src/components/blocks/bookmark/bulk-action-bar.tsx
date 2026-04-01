@@ -1,13 +1,16 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 
-import { ChevronsUpDownIcon, GripVerticalIcon, SquareDashedMousePointerIcon } from "lucide-react";
-import { AnimatePresence } from "motion/react";
+import {
+  ArrowDownFromLineIcon,
+  ArrowUpFromLineIcon,
+  ChevronsUpDownIcon,
+  SquareDashedMousePointerIcon,
+} from "lucide-react";
 
 import { ALL_BULK_SELECT_OPTIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { type BulkAction, useBulkSelection } from "@/providers/bulk-selection";
 
-import { DragWrapper } from "@/components/blocks/bookmark/drag-wrapper";
 import SelectGroups from "@/components/blocks/bookmark/select-groups";
 import {
   AlertDialog,
@@ -38,6 +41,8 @@ export default function BulkActionBar({
   handleBulkEdit,
   handlePostBulkAction,
 }: BulkActionBarProps) {
+  const [isOnBottom, setIsOnBottom] = useState(true);
+
   const {
     isBulkSelecting,
     selectedIds,
@@ -48,7 +53,7 @@ export default function BulkActionBar({
   } = useBulkSelection();
 
   return (
-    <>
+    <div className="relative">
       <Button
         variant="outline"
         className={cn(
@@ -62,120 +67,123 @@ export default function BulkActionBar({
       </Button>
 
       {isBulkSelecting && (
-        <AnimatePresence>
-          <DragWrapper onDismiss={stopBulkSelection}>
-            <div
-              className={cn(
-                "bg-card ring-foreground/10 grid gap-6 rounded-xl text-sm shadow-2xl ring-1 outline-none",
-                "animate-in fade-in-0 zoom-in-95 duration-200"
-              )}
-              onPointerDown={(e) => e.stopPropagation()}>
-              <Collapsible defaultOpen>
-                <div className="flex items-center justify-between gap-2 py-4 pr-4 pl-2">
-                  <div className="flex items-center gap-1">
-                    <GripVerticalIcon className="text-muted-foreground" />
-                    <div>
-                      <h2 className="flex items-center gap-2 leading-none font-medium">
-                        Bulk edit
-                      </h2>
-                      <p className="text-muted-foreground text-sm">
-                        {selectedIds.size > 0 ? (
-                          <span>{selectedIds.size} selected</span>
-                        ) : (
-                          <span>No items selected</span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {bulkAction ? (
-                      <Badge variant="outline" className="font-normal uppercase">
-                        {bulkAction}
-                      </Badge>
+        <div
+          className={cn(
+            "bg-card ring-foreground/10 grid gap-6 rounded-xl text-sm shadow-2xl ring-1 outline-none",
+            "fixed right-4 z-100 w-full max-w-[calc(100%-2rem)] sm:max-w-sm",
+            "transition-transform duration-500 ease-in-out",
+            isOnBottom ? "top-0 translate-y-[calc(100vh-110%)]" : "top-6 translate-y-0 sm:top-12"
+          )}>
+          <Collapsible defaultOpen>
+            <div className="flex justify-between gap-2 py-4 pr-4 pl-2">
+              <div className="flex gap-1">
+                <Button
+                  variant="secondary"
+                  size="icon-sm"
+                  className="cursor-pointer"
+                  onClick={() => setIsOnBottom((prev) => !prev)}>
+                  {isOnBottom ? (
+                    <ArrowUpFromLineIcon className="text-muted-foreground" />
+                  ) : (
+                    <ArrowDownFromLineIcon className="text-muted-foreground" />
+                  )}
+                </Button>
+                <div>
+                  <h2 className="flex items-center gap-2 leading-none font-medium">Bulk edit</h2>
+                  <p className="text-muted-foreground text-sm">
+                    {selectedIds.size > 0 ? (
+                      <span>{selectedIds.size} selected</span>
                     ) : (
-                      <Badge
-                        variant="outline"
-                        className="text-muted-foreground font-normal uppercase">
-                        No action
-                      </Badge>
+                      <span>No items selected</span>
                     )}
-                    <CollapsibleTrigger
-                      render={
-                        <Button
-                          disabled={isAlertOpen}
-                          variant="secondary"
-                          size="icon-sm"
-                          className="cursor-pointer">
-                          <ChevronsUpDownIcon />
-                        </Button>
-                      }></CollapsibleTrigger>
-                  </div>
+                  </p>
                 </div>
-                <CollapsibleContent>
-                  <div className="px-4 pb-4">
-                    <Select
-                      items={ALL_BULK_SELECT_OPTIONS}
-                      value={bulkAction}
-                      onValueChange={(value) => setCurrentBulkAction(value as BulkAction)}>
-                      <SelectTrigger className="w-full cursor-pointer">
-                        <SelectValue
-                          placeholder="Select Action"
-                          className={cn(bulkAction === "delete" && "text-destructive")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent alignItemWithTrigger={false} align="end" sideOffset={6}>
-                        <SelectGroups />
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex flex-col-reverse gap-2 px-4 py-3 sm:flex-row sm:justify-end">
+              </div>
+              <div className="flex items-center gap-2">
+                {bulkAction ? (
+                  <Badge variant="outline" className="font-normal uppercase">
+                    {bulkAction}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-muted-foreground font-normal uppercase">
+                    No action
+                  </Badge>
+                )}
+                <CollapsibleTrigger
+                  render={
                     <Button
                       disabled={isAlertOpen}
                       variant="secondary"
-                      className="cursor-pointer"
-                      onClick={stopBulkSelection}>
-                      Cancel
+                      size="icon-sm"
+                      className="cursor-pointer">
+                      <ChevronsUpDownIcon />
                     </Button>
-
-                    <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-                      <AlertDialogTrigger
-                        render={
-                          <Button
-                            className="cursor-pointer"
-                            disabled={selectedIds.size === 0 || !bulkAction || isAlertOpen}>
-                            Continue
-                          </Button>
-                        }></AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            <span>This action cannot be undone. This will permanently </span>
-                            <span>{bulkAction === "delete" ? "delete" : "modify"}</span>
-                            <span> the selected bookmarks.</span>
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            variant="destructive"
-                            className="cursor-pointer"
-                            onClick={() => {
-                              handleBulkEdit();
-                              handlePostBulkAction();
-                            }}>
-                            Execute
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
+                  }></CollapsibleTrigger>
+              </div>
             </div>
-          </DragWrapper>
-        </AnimatePresence>
+            <CollapsibleContent>
+              <div className="px-4 pb-4">
+                <Select
+                  items={ALL_BULK_SELECT_OPTIONS}
+                  value={bulkAction}
+                  onValueChange={(value) => setCurrentBulkAction(value as BulkAction)}>
+                  <SelectTrigger className="w-full cursor-pointer">
+                    <SelectValue
+                      placeholder="Select Action"
+                      className={cn(bulkAction === "delete" && "text-destructive")}
+                    />
+                  </SelectTrigger>
+                  <SelectContent alignItemWithTrigger={false} align="end" sideOffset={6}>
+                    <SelectGroups />
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col-reverse gap-2 px-4 py-3 sm:flex-row sm:justify-end">
+                <Button
+                  disabled={isAlertOpen}
+                  variant="secondary"
+                  className="cursor-pointer"
+                  onClick={stopBulkSelection}>
+                  Cancel
+                </Button>
+
+                <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+                  <AlertDialogTrigger
+                    render={
+                      <Button
+                        className="cursor-pointer"
+                        disabled={selectedIds.size === 0 || !bulkAction || isAlertOpen}>
+                        Continue
+                      </Button>
+                    }></AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        <span>This action cannot be undone. This will permanently </span>
+                        <span>{bulkAction === "delete" ? "delete" : "modify"}</span>
+                        <span> the selected bookmarks.</span>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        variant="destructive"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          handleBulkEdit();
+                          handlePostBulkAction();
+                        }}>
+                        Execute
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
       )}
-    </>
+    </div>
   );
 }

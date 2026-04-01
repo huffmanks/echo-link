@@ -15,7 +15,6 @@
 ### Bulk edit
 
 - [ ] Add ability to remove/add tags for selected bookmarks.
-- [ ] Make floating action dialog moveable and closable if pulled down and dropped in x. Maybe switch to toggle switch it to go to to/bottom.
 
 ### Upload assets
 
