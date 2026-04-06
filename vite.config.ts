@@ -89,7 +89,7 @@ export default defineConfig(({ mode }) => {
     ],
     server: {
       proxy: {
-        "^/(api|favicons|media|previews|static)": {
+        "^/(api|assets|favicons|media|previews|static)": {
           target: "http://127.0.0.1:9090",
           changeOrigin: true,
         },

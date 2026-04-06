@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { ImageIcon } from "lucide-react";
@@ -148,6 +148,8 @@ function CardImage({
   bookmark: Bookmark;
   handleOpenSheet: (bookmark: Bookmark) => void;
 }) {
+  const [hasError, setHasError] = useState(false);
+
   const { data, isLoading } = useQuery({
     queryKey: ["assets", bookmark.id],
     queryFn: () => linkdingFetch<{ results: Array<Asset> }>(`bookmarks/${bookmark.id}/assets`),
@@ -202,11 +204,12 @@ function CardImage({
         </div>
       </div>
 
-      {assets?.image ? (
+      {assets?.image && !hasError ? (
         <img
           className="bg-muted h-40 w-full rounded-t-lg object-cover"
           src={assets.image}
           alt={bookmark.title}
+          onError={() => setHasError(true)}
         />
       ) : (
         <div className="bg-muted flex aspect-21/9 h-40 w-full items-center justify-center rounded-t-lg">

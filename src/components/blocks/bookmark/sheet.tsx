@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -96,6 +96,8 @@ function Content({
   bookmark: Bookmark;
   handleOpenChange: (open: boolean) => void;
 }) {
+  const [hasError, setHasError] = useState(false);
+
   const { data, isLoading } = useQuery({
     queryKey: ["assets", bookmark.id],
     queryFn: () => linkdingFetch<{ results: Array<Asset> }>(`bookmarks/${bookmark.id}/assets`),
@@ -156,11 +158,12 @@ function Content({
   return (
     <div className="mt-3 px-4">
       <div className="mb-3">
-        {assets?.image && (
+        {assets?.image && !hasError && (
           <img
             className="max-h-64 w-full rounded-lg object-cover"
             src={assets.image}
             alt={bookmark.title}
+            onError={() => setHasError(true)}
           />
         )}
       </div>

@@ -6,7 +6,7 @@
 
 - [ ] [Refactor useEffect](src/providers/background-sync.tsx#L51). Works but needs to be cleaned up.
 - [ ] Use cached results for search when offline.
-- [ ] Uploaded assets from API have a cold start, initially start with 404.
+- [ ] Uploaded assets from Linkding don't work unless signed in with a session cookie.
 
 ---
 

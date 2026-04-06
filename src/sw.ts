@@ -1,3 +1,4 @@
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
 import { ExpirationPlugin } from "workbox-expiration";
 import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
@@ -42,6 +43,9 @@ registerRoute(
   new StaleWhileRevalidate({
     cacheName: "linkding-assets",
     plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
       new ExpirationPlugin({
         maxEntries: 5000,
         maxAgeSeconds: DEFAULT_TTL,
