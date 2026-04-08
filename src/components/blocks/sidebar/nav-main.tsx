@@ -208,28 +208,7 @@ function NavCollapsibleItem({
       onOpenChange={setIsOpen}
       render={
         <SidebarMenuItem>
-          <CollapsibleTrigger
-            disabled={!hasItems}
-            nativeButton={false}
-            render={
-              <SidebarMenuAction
-                className="group relative top-0 right-0 flex aspect-auto h-8 w-full items-center justify-between gap-2 p-2 text-sm [&_svg]:size-4 [&_svg]:shrink-0"
-                render={
-                  <div>
-                    <span className="flex items-center gap-2 text-sm">
-                      <item.icon />
-                      <span>{item.name}</span>
-                    </span>
-                    {hasItems && (
-                      <ChevronRightIcon
-                        aria-label="toggle"
-                        className="transition-transform group-data-panel-open:rotate-90"
-                      />
-                    )}
-                  </div>
-                }></SidebarMenuAction>
-            }></CollapsibleTrigger>
-
+          <NavCollapsibleItemWithLinkOrFullToggle item={item} isAdd={isAdd} hasItems={hasItems} />
           {hasItems && (
             <CollapsibleContent className="py-2">
               <SidebarMenuSub className="scrollbar max-h-48 overflow-y-auto">
@@ -239,5 +218,68 @@ function NavCollapsibleItem({
           )}
         </SidebarMenuItem>
       }></Collapsible>
+  );
+}
+
+function NavCollapsibleItemWithLinkOrFullToggle({
+  item,
+  isAdd,
+  hasItems,
+}: {
+  item: SidebarNavItem;
+  isAdd: boolean;
+  hasItems: boolean;
+}) {
+  if (isAdd) {
+    return (
+      <CollapsibleTrigger
+        disabled={!hasItems}
+        nativeButton={false}
+        render={
+          <SidebarMenuAction
+            className="group relative top-0 right-0 flex aspect-auto h-8 w-full items-center justify-between gap-2 p-2 text-sm [&_svg]:size-4 [&_svg]:shrink-0"
+            render={
+              <div>
+                <span className="flex items-center gap-2 text-sm">
+                  <item.icon />
+                  <span>{item.name}</span>
+                </span>
+                {hasItems && (
+                  <ChevronRightIcon
+                    aria-label="toggle"
+                    className="transition-transform group-data-panel-open:rotate-90"
+                  />
+                )}
+              </div>
+            }></SidebarMenuAction>
+        }></CollapsibleTrigger>
+    );
+  }
+
+  return (
+    <>
+      <SidebarMenuButton
+        className="py-0"
+        render={
+          <Link to={item.url} className="flex items-center gap-2 text-sm">
+            <item.icon />
+            <span>{item.name}</span>
+          </Link>
+        }></SidebarMenuButton>
+
+      <CollapsibleTrigger
+        disabled={!hasItems}
+        nativeButton={false}
+        className="group top-0! size-8"
+        render={
+          <SidebarMenuAction
+            aria-label="toggle"
+            render={
+              <div>
+                <ChevronRightIcon className="transition-transform group-data-panel-open:rotate-90" />
+              </div>
+            }></SidebarMenuAction>
+        }></CollapsibleTrigger>
+    </>
   );
 }

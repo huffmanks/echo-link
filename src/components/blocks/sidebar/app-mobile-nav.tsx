@@ -176,7 +176,15 @@ function NavDrawer({
           "pb-[max(0px,calc(var(--drawer-snap-point-offset)+var(--drawer-swipe-movement-y)+var(--bleed)))]!"
         )}>
         <div className="border-b px-4 pb-4">
-          <DrawerTitle>{item.name}</DrawerTitle>
+          <DrawerTitle className="px-6">
+            <Button
+              className="h-10 w-full cursor-pointer rounded-xl"
+              variant="outline"
+              nativeButton={false}
+              onClick={closeGlobalDrawer}
+              render={<Link to={item.url}>{item.name}</Link>}
+            />
+          </DrawerTitle>
           <DrawerDescription className="sr-only">List of options to choose from.</DrawerDescription>
         </div>
         <DrawerContent

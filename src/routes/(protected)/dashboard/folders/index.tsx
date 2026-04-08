@@ -9,10 +9,9 @@ import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store";
 import { useBulkSelection } from "@/providers/bulk-selection";
 import { EmptyFolders } from "@/routes/(protected)/dashboard/folders/-components/empty-folder";
+import FolderTable from "@/routes/(protected)/dashboard/folders/-components/folder-table";
 
 import BulkActionBar from "@/components/blocks/bookmark/bulk-action-bar";
-
-import FolderTable from "./-components/table";
 
 export const Route = createFileRoute("/(protected)/dashboard/folders/")({
   component: RouteComponent,

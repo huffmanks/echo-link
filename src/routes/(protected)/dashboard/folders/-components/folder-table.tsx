@@ -61,7 +61,7 @@ export default function FolderTable({
 
   return (
     <>
-      <Table className="w-full table-fixed">
+      <Table className={cn("w-full table-fixed", activeId !== null && "select-none")}>
         <TableHeader>
           <TableRow>
             <TableHead className="w-9 p-0">
@@ -129,9 +129,7 @@ function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRo
       onDragEnd={onDragEnd}
       className={cn(
         "relative border-b transition-colors",
-        activeId === folder.id
-          ? "bg-accent/50 z-50 shadow-lg select-none"
-          : "hover:bg-muted/50 z-0",
+        activeId === folder.id ? "bg-accent/50 z-50 shadow-lg" : "hover:bg-muted/50 z-0",
         activeId !== null && activeId !== folder.id && "hover:bg-transparent"
       )}
       data-dragging={undefined}>
@@ -141,7 +139,7 @@ function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRo
             <ItemCheckbox id={folder.id} />
           ) : (
             <div
-              className="flex cursor-grab items-center justify-center p-2 active:cursor-grabbing"
+              className="flex cursor-grab touch-none items-center justify-center p-2 active:cursor-grabbing"
               onPointerDown={(e) => controls.start(e)}>
               <GripVerticalIcon className="text-muted-foreground size-5" />
             </div>
