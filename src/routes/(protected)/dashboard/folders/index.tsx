@@ -5,9 +5,9 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useShallow } from "zustand/react/shallow";
 
 import { safeEnsure } from "@/lib/api";
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store";
-import { useBulkSelection } from "@/providers/bulk-selection";
 import { EmptyFolders } from "@/routes/(protected)/dashboard/folders/-components/empty-folder";
 import FolderTable from "@/routes/(protected)/dashboard/folders/-components/folder-table";
 
@@ -15,6 +15,11 @@ import BulkActionBar from "@/components/blocks/bookmark/bulk-action-bar";
 
 export const Route = createFileRoute("/(protected)/dashboard/folders/")({
   component: RouteComponent,
+  beforeLoad: ({ preload }) => {
+    if (!preload) {
+      useBulkSelectionStore.getState().stopBulkSelection();
+    }
+  },
   loader: async ({ context: { queryClient } }) => {
     try {
       await safeEnsure(queryClient, getAllQueryOptions.folders);
@@ -33,7 +38,15 @@ function RouteComponent() {
   const { data: folders } = useSuspenseQuery(getAllQueryOptions.folders);
 
   const { selectedIds, bulkAction, clearSelection, setCurrentBulkAction, stopBulkSelection } =
-    useBulkSelection();
+    useBulkSelectionStore(
+      useShallow((state) => ({
+        selectedIds: state.selectedIds,
+        bulkAction: state.bulkAction,
+        clearSelection: state.clearSelection,
+        setCurrentBulkAction: state.setCurrentBulkAction,
+        stopBulkSelection: state.stopBulkSelection,
+      }))
+    );
   const { continueBulkEdit, keepBulkSelection } = useSettingsStore(
     useShallow((state) => ({
       continueBulkEdit: state.continueBulkEdit,

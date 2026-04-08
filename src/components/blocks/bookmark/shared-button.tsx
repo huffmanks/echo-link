@@ -3,8 +3,8 @@ import { useState } from "react";
 import { LockIcon, Share2Icon } from "lucide-react";
 import { toast } from "sonner";
 
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { cn, getErrorMessage } from "@/lib/utils";
-import { useBulkSelection } from "@/providers/bulk-selection";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ interface SharedButtonProps {
 export default function SharedButton({ title, text, url, isShared }: SharedButtonProps) {
   const [isSharing, setIsSharing] = useState(false);
 
-  const { isBulkSelecting } = useBulkSelection();
+  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
 
   async function handleShare() {
     setIsSharing(true);

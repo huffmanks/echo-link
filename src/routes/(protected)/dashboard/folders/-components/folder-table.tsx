@@ -5,10 +5,10 @@ import { GripVerticalIcon } from "lucide-react";
 import { Reorder, useDragControls } from "motion/react";
 
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { useEditFolder } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { cn } from "@/lib/utils";
-import { useBulkSelection } from "@/providers/bulk-selection";
 import FolderActionDropdown from "@/routes/(protected)/dashboard/folders/-components/folder-action-dropdown";
 import type { Folder, PaginatedResponse } from "@/types";
 
@@ -116,7 +116,7 @@ interface FolderRowProps {
 
 function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRowProps) {
   const controls = useDragControls();
-  const { isBulkSelecting } = useBulkSelection();
+  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
 
   return (
     <Reorder.Item

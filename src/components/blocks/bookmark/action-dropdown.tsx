@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { EllipsisVerticalIcon } from "lucide-react";
 
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import {
   useDeleteBookmark,
   useToggleArchiveBookmark,
@@ -8,7 +9,6 @@ import {
   useToggleShareBookmark,
 } from "@/lib/mutations";
 import { cn } from "@/lib/utils";
-import { useBulkSelection } from "@/providers/bulk-selection";
 import type { Bookmark } from "@/types";
 
 import {
@@ -46,7 +46,7 @@ export default function ActionDropdown({
   handleOpenChange,
   triggerButtonClassName,
 }: ActionDropdownProps) {
-  const { isBulkSelecting } = useBulkSelection();
+  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
 
   const { mutate: toggleReadBookmark } = useToggleReadBookmark();
   const { mutate: toggleArchiveBookmark } = useToggleArchiveBookmark();

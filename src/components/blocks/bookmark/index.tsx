@@ -19,12 +19,12 @@ import { useShallow } from "zustand/react/shallow";
 import { useBackgroundSync } from "@/hooks/use-background-sync";
 import { usePagination } from "@/hooks/use-pagination";
 import { type AppRouteId, useSearchState } from "@/hooks/use-search-state";
+import { type BulkAction, useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { FILTER_OPTIONS } from "@/lib/constants";
 import { type BulkUpdatePayload, useBulkEditBookmarks, useDeleteBookmark } from "@/lib/mutations";
 import type { SortField } from "@/lib/search";
 import { useSettingsStore } from "@/lib/store";
 import { getPaginationLabel } from "@/lib/utils";
-import { type BulkAction, useBulkSelection } from "@/providers/bulk-selection";
 import { useGlobalModal } from "@/providers/global-modal-context";
 import type { Bookmark, View } from "@/types";
 
@@ -101,7 +101,15 @@ export default function BookmarkWrapper({
 
   const { search, setParams } = useSearchState(appRouteId);
   const { selectedIds, bulkAction, clearSelection, setCurrentBulkAction, stopBulkSelection } =
-    useBulkSelection();
+    useBulkSelectionStore(
+      useShallow((state) => ({
+        selectedIds: state.selectedIds,
+        bulkAction: state.bulkAction,
+        clearSelection: state.clearSelection,
+        setCurrentBulkAction: state.setCurrentBulkAction,
+        stopBulkSelection: state.stopBulkSelection,
+      }))
+    );
 
   const { limit, view, defaultSortDate, continueBulkEdit, keepBulkSelection, setView } =
     useSettingsStore(

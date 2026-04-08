@@ -6,10 +6,11 @@ import {
   ChevronsUpDownIcon,
   SquareDashedMousePointerIcon,
 } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 
+import { type BulkAction, useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { ALL_BULK_SELECT_OPTIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { type BulkAction, useBulkSelection } from "@/providers/bulk-selection";
 
 import SelectGroups from "@/components/blocks/bookmark/select-groups";
 import {
@@ -50,7 +51,16 @@ export default function BulkActionBar({
     toggleBulkSelection,
     setCurrentBulkAction,
     stopBulkSelection,
-  } = useBulkSelection();
+  } = useBulkSelectionStore(
+    useShallow((state) => ({
+      isBulkSelecting: state.isBulkSelecting,
+      selectedIds: state.selectedIds,
+      bulkAction: state.bulkAction,
+      toggleBulkSelection: state.toggleBulkSelection,
+      setCurrentBulkAction: state.setCurrentBulkAction,
+      stopBulkSelection: state.stopBulkSelection,
+    }))
+  );
 
   return (
     <div className="relative">

@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { useSettingsStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import { useBulkSelection } from "@/providers/bulk-selection";
 
 import { Badge, type BadgeVariants } from "@/components/ui/badge";
 import {
@@ -19,7 +19,7 @@ interface TagCellProps {
 }
 
 export default function TagCell({ tags, handleOpenChange, variant = "secondary" }: TagCellProps) {
-  const { isBulkSelecting } = useBulkSelection();
+  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
   const limit = useSettingsStore((state) => state.limit);
 
   if (tags.length === 0) {

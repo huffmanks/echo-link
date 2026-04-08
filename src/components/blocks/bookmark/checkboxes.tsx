@@ -1,10 +1,18 @@
-import { useBulkSelection } from "@/providers/bulk-selection";
+import { useShallow } from "zustand/react/shallow";
+
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
 export function ItemCheckbox({ id }: { id: number }) {
-  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
+  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelectionStore(
+    useShallow((state) => ({
+      isBulkSelecting: state.isBulkSelecting,
+      selectedIds: state.selectedIds,
+      toggleIdSelection: state.toggleIdSelection,
+    }))
+  );
 
   const isChecked = selectedIds.has(id);
 
@@ -26,7 +34,14 @@ export function AllCheckbox({
   allIds: Array<number>;
   showLabel?: boolean;
 }) {
-  const { isBulkSelecting, selectedIds, selectAll, clearSelection } = useBulkSelection();
+  const { isBulkSelecting, selectedIds, selectAll, clearSelection } = useBulkSelectionStore(
+    useShallow((state) => ({
+      isBulkSelecting: state.isBulkSelecting,
+      selectedIds: state.selectedIds,
+      selectAll: state.selectAll,
+      clearSelection: state.clearSelection,
+    }))
+  );
 
   const isAllSelected = allIds.length > 0 && selectedIds.size === allIds.length;
   const isAnySelected = selectedIds.size > 0 && !isAllSelected;

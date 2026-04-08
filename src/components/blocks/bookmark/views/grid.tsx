@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { ImageIcon } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 
 import { linkdingFetch } from "@/lib/api";
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { useSettingsStore } from "@/lib/store";
 import { cn, getCleanDomain, getRelativeTimeString, joinUrlPath } from "@/lib/utils";
-import { useBulkSelection } from "@/providers/bulk-selection";
 import type { Asset, Bookmark } from "@/types";
 
 import ActionDropdown from "@/components/blocks/bookmark/action-dropdown";
@@ -37,7 +38,13 @@ export default function BookmarkGridView({
   handleOpenSheet,
   handleOpenChange,
 }: BookmarkGridViewProps) {
-  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
+  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelectionStore(
+    useShallow((state) => ({
+      isBulkSelecting: state.isBulkSelecting,
+      selectedIds: state.selectedIds,
+      toggleIdSelection: state.toggleIdSelection,
+    }))
+  );
 
   const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
 
@@ -155,8 +162,8 @@ function CardImage({
     queryFn: () => linkdingFetch<{ results: Array<Asset> }>(`bookmarks/${bookmark.id}/assets`),
   });
 
+  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
   const linkdingUrl = useSettingsStore((state) => state.linkdingUrl);
-  const { isBulkSelecting } = useBulkSelection();
 
   const assets = useMemo(() => {
     if (isLoading || !data?.results) return null;

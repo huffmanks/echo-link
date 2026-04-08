@@ -5,6 +5,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { BookmarkIcon } from "lucide-react";
 
 import { safeEnsure } from "@/lib/api";
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { getAllQueryOptions } from "@/lib/queries";
 import { SearchSchema, transformData } from "@/lib/search";
 import { useSettingsStore } from "@/lib/store";
@@ -30,6 +31,11 @@ export const Route = createFileRoute("/(protected)/dashboard/")({
       ...parsed,
       limit: limit ?? parsed.limit,
     };
+  },
+  beforeLoad: ({ preload }) => {
+    if (!preload) {
+      useBulkSelectionStore.getState().stopBulkSelection();
+    }
   },
   loaderDeps: ({ search: { q } }) => ({
     q: q ?? "",

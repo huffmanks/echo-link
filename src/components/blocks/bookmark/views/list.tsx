@@ -1,6 +1,8 @@
+import { useShallow } from "zustand/react/shallow";
+
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { useSettingsStore } from "@/lib/store";
 import { cn, getCleanDomain, getRelativeTimeString } from "@/lib/utils";
-import { useBulkSelection } from "@/providers/bulk-selection";
 import type { Bookmark } from "@/types";
 
 import ActionDropdown from "@/components/blocks/bookmark/action-dropdown";
@@ -23,7 +25,13 @@ export default function BookmarkListView({
   handleOpenSheet,
   handleOpenChange,
 }: BookmarkListViewProps) {
-  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelection();
+  const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelectionStore(
+    useShallow((state) => ({
+      isBulkSelecting: state.isBulkSelecting,
+      selectedIds: state.selectedIds,
+      toggleIdSelection: state.toggleIdSelection,
+    }))
+  );
 
   const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
 
