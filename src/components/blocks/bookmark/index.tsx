@@ -20,7 +20,7 @@ import { useBackgroundSync } from "@/hooks/use-background-sync";
 import { usePagination } from "@/hooks/use-pagination";
 import { type AppRouteId, useSearchState } from "@/hooks/use-search-state";
 import { type BulkAction, useBulkSelectionStore } from "@/lib/bulk-selection-store";
-import { FILTER_OPTIONS } from "@/lib/constants";
+import { BOOKMARK_BULK_SELECT_OPTIONS, FILTER_OPTIONS } from "@/lib/constants";
 import { type BulkUpdatePayload, useBulkEditBookmarks, useDeleteBookmark } from "@/lib/mutations";
 import type { SortField } from "@/lib/search";
 import { useSettingsStore } from "@/lib/store";
@@ -409,6 +409,8 @@ export default function BookmarkWrapper({
             </Combobox>
 
             <BulkActionBar
+              entityName="bookmark"
+              selectOptions={BOOKMARK_BULK_SELECT_OPTIONS}
               isAlertOpen={isAlertOpen}
               setIsAlertOpen={setIsAlertOpen}
               handleBulkEdit={handleBulkEdit}

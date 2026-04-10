@@ -2,11 +2,14 @@ import { useState } from "react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 import { safeEnsure } from "@/lib/api";
 import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
+import { FOLDER_BULK_SELECT_OPTIONS } from "@/lib/constants";
 import { stopBulkSelectionOnEnterRoute } from "@/lib/loaders";
+import { useDeleteFolder } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store";
 import { EmptyFolders } from "@/routes/(protected)/dashboard/folders/-components/empty-folder";
@@ -34,6 +37,8 @@ function RouteComponent() {
 
   const { data: folders } = useSuspenseQuery(getAllQueryOptions.folders);
 
+  const { mutate: deleteFolder } = useDeleteFolder();
+
   const { selectedIds, bulkAction, clearSelection, setCurrentBulkAction, stopBulkSelection } =
     useBulkSelectionStore(
       useShallow((state) => ({
@@ -57,8 +62,25 @@ function RouteComponent() {
 
   async function handleBulkEdit() {
     if (!bulkAction || selectedIds.size === 0) return;
-    // TODO
+
     try {
+      const promises = Array.from(selectedIds).map((id) => {
+        if (bulkAction === "delete") {
+          return deleteFolder(id);
+        }
+      });
+
+      const batchPromise = Promise.all(promises);
+
+      toast.promise(batchPromise, {
+        loading: `Executing ${bulkAction} on ${selectedIds.size} items...`,
+        success: () => {
+          handlePostBulkAction();
+
+          return "Bulk actions completed!";
+        },
+        error: "Error, something went wrong!",
+      });
     } catch (error) {}
   }
 
@@ -82,6 +104,8 @@ function RouteComponent() {
         </div>
         <div>
           <BulkActionBar
+            entityName="folder"
+            selectOptions={FOLDER_BULK_SELECT_OPTIONS}
             isAlertOpen={isAlertOpen}
             setIsAlertOpen={setIsAlertOpen}
             handleBulkEdit={handleBulkEdit}

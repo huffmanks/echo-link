@@ -150,6 +150,13 @@ export const FILTER_OPTIONS = [
   },
 ] as const;
 
+export const BASE_SELECT_OPTIONS = [
+  {
+    label: "Select action",
+    value: null,
+  },
+];
+
 export const READ_BULK_SELECT_OPTIONS = [
   {
     label: "Mark as read",
@@ -190,13 +197,12 @@ export const DELETE_BULK_SELECT_OPTIONS = [
   },
 ];
 
-export const ALL_BULK_SELECT_OPTIONS = [
-  {
-    label: "Select action",
-    value: null,
-  },
+export const BOOKMARK_BULK_SELECT_OPTIONS = [
+  ...BASE_SELECT_OPTIONS,
   ...READ_BULK_SELECT_OPTIONS,
   ...SHARE_BULK_SELECT_OPTIONS,
   ...ARCHIVE_BULK_SELECT_OPTIONS,
   ...DELETE_BULK_SELECT_OPTIONS,
 ];
+
+export const FOLDER_BULK_SELECT_OPTIONS = [...BASE_SELECT_OPTIONS, ...DELETE_BULK_SELECT_OPTIONS];

@@ -4,51 +4,56 @@ import {
   READ_BULK_SELECT_OPTIONS,
   SHARE_BULK_SELECT_OPTIONS,
 } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import type { EntityName, SelectOption } from "@/types";
 
-import { SelectGroup, SelectItem, SelectLabel, SelectSeparator } from "@/components/ui/select";
+import {
+  SelectGroup as SelectGroupBase,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+} from "@/components/ui/select";
 
-export default function SelectGroups() {
+export default function SelectGroups({ entityName }: { entityName: EntityName }) {
   return (
     <>
-      <SelectGroup>
-        <SelectLabel className="sr-only">Mark as read/unread</SelectLabel>
-        {READ_BULK_SELECT_OPTIONS.map((item) => (
-          <SelectItem key={item.value} value={item.value} className="cursor-pointer">
-            {item.label}
-          </SelectItem>
-        ))}
-      </SelectGroup>
-      <SelectSeparator />
-      <SelectGroup>
-        <SelectLabel className="sr-only">Share/Unshare</SelectLabel>
-        {SHARE_BULK_SELECT_OPTIONS.map((item) => (
-          <SelectItem key={item.value} value={item.value} className="cursor-pointer">
-            {item.label}
-          </SelectItem>
-        ))}
-      </SelectGroup>
-      <SelectSeparator />
-      <SelectGroup>
-        <SelectLabel className="sr-only">Archive/Unarchive</SelectLabel>
-        {ARCHIVE_BULK_SELECT_OPTIONS.map((item) => (
-          <SelectItem key={item.value} value={item.value} className="cursor-pointer">
-            {item.label}
-          </SelectItem>
-        ))}
-      </SelectGroup>
-      <SelectSeparator />
-      <SelectGroup>
-        <SelectLabel className="sr-only">Delete</SelectLabel>
-        {DELETE_BULK_SELECT_OPTIONS.map((item) => (
+      {entityName === "bookmark" && (
+        <SelectGroup label="Mark as read/unread" selectOptions={READ_BULK_SELECT_OPTIONS} />
+      )}
+      {entityName === "bookmark" && (
+        <SelectGroup label="Share/Unshare" selectOptions={SHARE_BULK_SELECT_OPTIONS} />
+      )}
+      {entityName === "bookmark" && (
+        <SelectGroup label="Archive/Unarchive" selectOptions={ARCHIVE_BULK_SELECT_OPTIONS} />
+      )}
+
+      <SelectGroup label="Delete" selectOptions={DELETE_BULK_SELECT_OPTIONS} />
+    </>
+  );
+}
+
+function SelectGroup({
+  label,
+  selectOptions,
+}: {
+  label: string;
+  selectOptions: Array<SelectOption>;
+}) {
+  const isDelete = label === "Delete";
+  return (
+    <>
+      <SelectGroupBase>
+        <SelectLabel className="sr-only">{label}</SelectLabel>
+        {selectOptions.map((item) => (
           <SelectItem
             key={item.value}
             value={item.value}
-            className="text-destructive cursor-pointer">
+            className={cn("cursor-pointer", isDelete && "text-destructive")}>
             {item.label}
           </SelectItem>
         ))}
-      </SelectGroup>
-      <SelectSeparator />
+      </SelectGroupBase>
+      {!isDelete && <SelectSeparator />}
     </>
   );
 }

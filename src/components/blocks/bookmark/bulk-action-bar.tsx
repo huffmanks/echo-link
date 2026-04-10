@@ -9,8 +9,8 @@ import {
 import { useShallow } from "zustand/react/shallow";
 
 import { type BulkAction, useBulkSelectionStore } from "@/lib/bulk-selection-store";
-import { ALL_BULK_SELECT_OPTIONS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import type { EntityName, SelectOption } from "@/types";
 
 import SelectGroups from "@/components/blocks/bookmark/select-groups";
 import {
@@ -30,6 +30,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BulkActionBarProps {
+  entityName: EntityName;
+  selectOptions: Array<SelectOption>;
   isAlertOpen: boolean;
   setIsAlertOpen: Dispatch<SetStateAction<boolean>>;
   handleBulkEdit: () => void;
@@ -37,6 +39,8 @@ interface BulkActionBarProps {
 }
 
 export default function BulkActionBar({
+  entityName,
+  selectOptions,
   isAlertOpen,
   setIsAlertOpen,
   handleBulkEdit,
@@ -134,7 +138,7 @@ export default function BulkActionBar({
             <CollapsibleContent>
               <div className="px-4 pb-4">
                 <Select
-                  items={ALL_BULK_SELECT_OPTIONS}
+                  items={selectOptions}
                   value={bulkAction}
                   onValueChange={(value) => setCurrentBulkAction(value as BulkAction)}>
                   <SelectTrigger className="w-full cursor-pointer">
@@ -144,7 +148,7 @@ export default function BulkActionBar({
                     />
                   </SelectTrigger>
                   <SelectContent alignItemWithTrigger={false} align="end" sideOffset={6}>
-                    <SelectGroups />
+                    <SelectGroups entityName={entityName} />
                   </SelectContent>
                 </Select>
               </div>

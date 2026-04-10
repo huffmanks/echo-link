@@ -17,6 +17,12 @@ export interface SidebarSubNavItem {
   isModal?: boolean;
 }
 
+export interface SelectOption {
+  label: string;
+  value: string | null;
+}
+
+export type EntityName = "bookmark" | "folder" | "tag";
 export type View = "table" | "list" | "grid";
 export type Theme = "light" | "dark" | "system";
 export type DefaultSortDate = "date_added" | "date_modified";
