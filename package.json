@@ -3,7 +3,7 @@
   "description": "Self-hosted client app for Linkding.",
   "private": true,
   "type": "module",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "dev": "vite --port 3000 --host",
     "build": "vite build && tsc",
