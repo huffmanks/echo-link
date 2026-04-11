@@ -7,6 +7,7 @@
 - [ ] [Refactor useEffect](src/providers/background-sync.tsx#L60).
 - [ ] Use cached results for search when offline.
 - [ ] UI flash when visiting (Bookmarks, Folders, Tags pages)
+- [ ] Limit settings/params doesnt optmistic update.
 
 ---
 

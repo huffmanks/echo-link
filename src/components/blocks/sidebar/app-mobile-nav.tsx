@@ -4,6 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 
 import { useKeyboardVisible } from "@/hooks/use-keyboard-visible";
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { DRAWER_MOBILE_NAV } from "@/lib/constants";
 import { getAllQueryOptions } from "@/lib/queries";
 import { checkActive, cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ export default function AppMobileNav() {
 
   const { activeGlobalDrawer, setActiveGlobalDrawer, closeGlobalDrawer } = useGlobalModal();
   const isKeyboardVisible = useKeyboardVisible();
+  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
 
   const { data: folders } = useSuspenseQuery(getAllQueryOptions.folders);
   const { data: tags } = useSuspenseQuery(getAllQueryOptions.tags);
@@ -69,7 +71,7 @@ export default function AppMobileNav() {
     <nav
       className={cn(
         "bg-background/60 fixed right-0 bottom-0 left-0 z-50 h-26 rounded-b-xl border-t pb-10 backdrop-blur-md transition-transform duration-300",
-        isKeyboardVisible || !!activeGlobalDrawer
+        isKeyboardVisible || !!activeGlobalDrawer || isBulkSelecting
           ? "translate-y-full opacity-0"
           : "translate-y-0 opacity-100"
       )}>
@@ -176,14 +178,18 @@ function NavDrawer({
           "pb-[max(0px,calc(var(--drawer-snap-point-offset)+var(--drawer-swipe-movement-y)+var(--bleed)))]!"
         )}>
         <div className="border-b px-4 pb-4">
-          <DrawerTitle className="px-6">
-            <Button
-              className="h-10 w-full cursor-pointer rounded-xl"
-              variant="outline"
-              nativeButton={false}
-              onClick={closeGlobalDrawer}
-              render={<Link to={item.url}>{item.name}</Link>}
-            />
+          <DrawerTitle className="mx-auto max-w-lg px-4">
+            {item.name === "Add" ? (
+              <span>{item.name}</span>
+            ) : (
+              <Button
+                className="h-10 w-full cursor-pointer rounded-xl"
+                variant="outline"
+                nativeButton={false}
+                onClick={closeGlobalDrawer}
+                render={<Link to={item.url}>{item.name}</Link>}
+              />
+            )}
           </DrawerTitle>
           <DrawerDescription className="sr-only">List of options to choose from.</DrawerDescription>
         </div>

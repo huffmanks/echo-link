@@ -46,6 +46,7 @@ export default function BulkActionBar({
   handleBulkEdit,
   handlePostBulkAction,
 }: BulkActionBarProps) {
+  const [isOpen, setIsOpen] = useState(true);
   const [isOnBottom, setIsOnBottom] = useState(true);
 
   const {
@@ -85,10 +86,10 @@ export default function BulkActionBar({
           className={cn(
             "bg-card ring-foreground/10 grid gap-6 rounded-xl text-sm shadow-2xl ring-1 outline-none",
             "fixed right-4 z-100 w-full max-w-[calc(100%-2rem)] sm:max-w-sm",
-            "transition-transform duration-500 ease-in-out",
-            isOnBottom ? "top-0 translate-y-[calc(100vh-110%)]" : "top-6 translate-y-0 sm:top-12"
+            "transition-all duration-300 ease-in-out",
+            isOnBottom ? "bottom-4 pb-[env(safe-area-inset-bottom)]" : "top-4"
           )}>
-          <Collapsible defaultOpen>
+          <Collapsible open={isOpen} onOpenChange={setIsOpen}>
             <div className="flex justify-between gap-2 py-4 pr-4 pl-2">
               <div className="flex gap-1">
                 <Button
@@ -96,11 +97,7 @@ export default function BulkActionBar({
                   size="icon-sm"
                   className="cursor-pointer"
                   onClick={() => setIsOnBottom((prev) => !prev)}>
-                  {isOnBottom ? (
-                    <ArrowUpFromLineIcon className="text-muted-foreground" />
-                  ) : (
-                    <ArrowDownFromLineIcon className="text-muted-foreground" />
-                  )}
+                  {isOnBottom ? <ArrowUpFromLineIcon /> : <ArrowDownFromLineIcon />}
                 </Button>
                 <div>
                   <h2 className="flex items-center gap-2 leading-none font-medium">Bulk edit</h2>

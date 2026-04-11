@@ -42,7 +42,7 @@ export default function TagTable({ initialTags }: { initialTags: PaginatedRespon
               <AllCheckbox allIds={allTagIds} />
             </TableHead>
             <TableHead className="w-10">Id</TableHead>
-            <TableHead className="min-36 w-3/4 truncate">Name</TableHead>
+            <TableHead className="w-64">Name</TableHead>
             <TableHead className="w-48">Date added</TableHead>
             <TableHead className="w-24">Bookmarks</TableHead>
             <TableHead className="w-12"></TableHead>
@@ -73,7 +73,7 @@ export default function TagTable({ initialTags }: { initialTags: PaginatedRespon
               <TableCell>{tag.id}</TableCell>
               <TableCell className="flex gap-0.5">
                 <span className="text-muted-foreground">#</span>
-                <span>{tag.name}</span>
+                <span className="truncate">{tag.name}</span>
               </TableCell>
               <TableCell>{formatToLocalTime(tag.date_added)}</TableCell>
               <TableCell>

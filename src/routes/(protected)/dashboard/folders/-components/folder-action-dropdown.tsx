@@ -1,8 +1,10 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { EllipsisVerticalIcon } from "lucide-react";
 
+import { useBulkSelectionStore } from "@/lib/bulk-selection-store";
 import { useDeleteFolder } from "@/lib/mutations";
 import { useSettingsStore } from "@/lib/store";
+import { cn } from "@/lib/utils";
 
 import {
   AlertDialog,
@@ -36,6 +38,7 @@ export default function FolderActionDropdown({ id, name }: ActionDropdownProps) 
   const { pathname } = useLocation();
 
   const limit = useSettingsStore((state) => state.limit);
+  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
 
   function handleEdit() {
     navigate({ to: "/dashboard/folders/$id/edit", params: { id: String(id) } });
@@ -54,7 +57,12 @@ export default function FolderActionDropdown({ id, name }: ActionDropdownProps) 
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="ghost" size="icon-sm" className="cursor-pointer">
+            <Button
+              tabIndex={isBulkSelecting ? -1 : 0}
+              disabled={isBulkSelecting}
+              variant="ghost"
+              size="icon-sm"
+              className={cn("cursor-pointer", isBulkSelecting && "pointer-events-none")}>
               <EllipsisVerticalIcon className="size-4" />
             </Button>
           }></DropdownMenuTrigger>

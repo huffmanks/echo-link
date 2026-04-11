@@ -14,6 +14,7 @@ import FolderActionDropdown from "@/routes/(protected)/dashboard/folders/-compon
 import type { Folder, PaginatedResponse } from "@/types";
 
 import { AllCheckbox, ItemCheckbox } from "@/components/blocks/bookmark/checkboxes";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableCell,
@@ -72,13 +73,11 @@ export default function FolderTable({
       <Table className={cn("w-full table-fixed", activeId !== null && "select-none")}>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-9 p-0">
-              <div className="flex h-full w-full items-center justify-center">
-                <AllCheckbox allIds={allFolderIds} />
-              </div>
+            <TableHead className={cn("transition-all", isBulkSelecting ? "w-8.5" : "w-12")}>
+              <AllCheckbox allIds={allFolderIds} />
             </TableHead>
             <TableHead className="w-10">Id</TableHead>
-            <TableHead className="min-36 w-3/4 truncate">Name</TableHead>
+            <TableHead className="w-64">Name</TableHead>
             <TableHead className="w-48">Date added</TableHead>
             <TableHead className="w-14">Order</TableHead>
             <TableHead className="w-24">Bookmarks</TableHead>
@@ -125,7 +124,12 @@ interface FolderRowProps {
 
 function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRowProps) {
   const controls = useDragControls();
-  const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
+  const { isBulkSelecting, toggleIdSelection } = useBulkSelectionStore(
+    useShallow((state) => ({
+      isBulkSelecting: state.isBulkSelecting,
+      toggleIdSelection: state.toggleIdSelection,
+    }))
+  );
 
   return (
     <Reorder.Item
@@ -136,28 +140,37 @@ function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRo
       dragControls={controls}
       onDragStart={() => onDragStart({ id: folder.id })}
       onDragEnd={onDragEnd}
+      onClick={() => {
+        if (isBulkSelecting) {
+          toggleIdSelection(folder.id);
+        }
+      }}
       className={cn(
-        "relative border-b transition-colors",
-        activeId === folder.id ? "bg-accent/50 z-50 shadow-lg" : "hover:bg-muted/50 z-0",
-        activeId !== null && activeId !== folder.id && "hover:bg-transparent"
+        "border-muted relative border-b transition-colors outline-none",
+        isBulkSelecting
+          ? "hover:ring-primary/50 cursor-pointer hover:ring-2"
+          : "hover:bg-muted/50 focus:bg-muted",
+        activeId === folder.id && "bg-accent/50 z-50 shadow-lg",
+        activeId !== null && activeId !== folder.id && "hover:bg-transparent",
+        activeId === null && "data-[state=selected]:bg-muted"
       )}
       data-dragging={undefined}>
-      <TableCell className="w-9 p-0">
-        <div className="flex w-9 items-center justify-center">
-          {isBulkSelecting ? (
-            <ItemCheckbox id={folder.id} />
-          ) : (
-            <div
-              className="flex cursor-grab touch-none items-center justify-center p-2 active:cursor-grabbing"
-              onPointerDown={(e) => controls.start(e)}>
-              <GripVerticalIcon className="text-muted-foreground size-5" />
-            </div>
-          )}
-        </div>
+      <TableCell>
+        {isBulkSelecting ? (
+          <ItemCheckbox id={folder.id} />
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="cursor-grab touch-none active:cursor-grabbing"
+            onPointerDown={(e) => controls.start(e)}>
+            <GripVerticalIcon className="text-muted-foreground size-4" />
+          </Button>
+        )}
       </TableCell>
       <TableCell>{folder.id}</TableCell>
 
-      <TableCell>{folder.name}</TableCell>
+      <TableCell className="truncate">{folder.name}</TableCell>
 
       <TableCell>{formatToLocalTime(folder.date_created)}</TableCell>
 
