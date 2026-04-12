@@ -74,7 +74,7 @@ export function transformData<T extends Record<string, any>>(
   }
 
   const paramsPage = params?.page ?? 1;
-  const paramsLimit = limit ?? params?.limit;
+  const paramsLimit = params?.limit ?? limit;
 
   const totalCount = result.length;
   const totalPages = Math.ceil(totalCount / paramsLimit);
