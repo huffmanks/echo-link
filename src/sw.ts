@@ -6,7 +6,12 @@ import { NetworkFirst, NetworkOnly, StaleWhileRevalidate } from "workbox-strateg
 
 const DEFAULT_TTL = 60 * 60 * 24 * 90;
 
-declare const self: ServiceWorkerGlobalScope & { __WB_MANIFEST: any };
+declare const self: ServiceWorkerGlobalScope & {
+  __WB_MANIFEST: any;
+  __WB_DISABLE_DEV_LOGS: boolean;
+};
+
+self.__WB_DISABLE_DEV_LOGS = true;
 
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);

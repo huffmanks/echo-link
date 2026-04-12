@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
@@ -14,6 +14,7 @@ import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store";
 import { EmptyFolders } from "@/routes/(protected)/dashboard/folders/-components/empty-folder";
 import FolderTable from "@/routes/(protected)/dashboard/folders/-components/folder-table";
+import type { Folder, PaginatedResponse } from "@/types";
 
 import BulkActionBar from "@/components/blocks/bookmark/bulk-action-bar";
 
@@ -21,13 +22,12 @@ export const Route = createFileRoute("/(protected)/dashboard/folders/")({
   component: RouteComponent,
   onEnter: stopBulkSelectionOnEnterRoute,
   loader: async ({ context: { queryClient } }) => {
-    try {
-      await safeEnsure(queryClient, getAllQueryOptions.folders);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("404")) {
-        throw notFound();
-      }
-      throw error;
+    const folders = (await safeEnsure(
+      queryClient,
+      getAllQueryOptions.folders
+    )) as PaginatedResponse<Folder>;
+    for (const folder of folders.results) {
+      await safeEnsure(queryClient, getAllQueryOptions.bookmarksByFolderId(String(folder.id)));
     }
   },
 });
