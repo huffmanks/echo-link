@@ -4,11 +4,8 @@
 
 ### Data/Background sync
 
-- [ ] [Refactor useEffect](src/providers/background-sync.tsx#L60).
 - [ ] Use cached results for search when offline.
 - [ ] Change isOnline to isConnected to Linkding API.
-- [ ] Remove logout and just have initial setup.
-- [ ] Fix empty states (offline/no cache, no entity)
 
 ---
 

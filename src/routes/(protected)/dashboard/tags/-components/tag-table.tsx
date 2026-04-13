@@ -5,6 +5,7 @@ import { getAllQueryOptions } from "@/lib/queries";
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { cn, formatToLocalTime } from "@/lib/utils";
 import TagActionDropdown from "@/routes/(protected)/dashboard/tags/-components/tag-action-dropdown";
+import TagCell from "@/routes/(protected)/dashboard/tags/-components/tag-cell";
 import type { PaginatedResponse, Tag } from "@/types";
 
 import { AllCheckbox, ItemCheckbox } from "@/components/blocks/bookmark/checkboxes";
@@ -71,9 +72,8 @@ export default function TagTable({ initialTags }: { initialTags: PaginatedRespon
                 <ItemCheckbox id={tag.id} />
               </TableCell>
               <TableCell>{tag.id}</TableCell>
-              <TableCell className="flex gap-0.5">
-                <span className="text-muted-foreground">#</span>
-                <span className="truncate">{tag.name}</span>
+              <TableCell>
+                <TagCell tag={tag} />
               </TableCell>
               <TableCell>{formatToLocalTime(tag.date_added)}</TableCell>
               <TableCell>

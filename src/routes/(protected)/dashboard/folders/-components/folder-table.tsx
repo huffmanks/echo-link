@@ -11,6 +11,7 @@ import { getAllQueryOptions } from "@/lib/queries";
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { cn, formatToLocalTime } from "@/lib/utils";
 import FolderActionDropdown from "@/routes/(protected)/dashboard/folders/-components/folder-action-dropdown";
+import FolderCell from "@/routes/(protected)/dashboard/folders/-components/folder-cell";
 import type { Folder, PaginatedResponse } from "@/types";
 
 import { AllCheckbox, ItemCheckbox } from "@/components/blocks/bookmark/checkboxes";
@@ -170,7 +171,9 @@ function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRo
       </TableCell>
       <TableCell>{folder.id}</TableCell>
 
-      <TableCell className="truncate">{folder.name}</TableCell>
+      <TableCell className="truncate">
+        <FolderCell folder={folder} />
+      </TableCell>
 
       <TableCell>{formatToLocalTime(folder.date_created)}</TableCell>
 

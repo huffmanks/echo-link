@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { HashIcon } from "lucide-react";
 
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { useSettingsStore } from "@/lib/store/settings";
@@ -52,10 +53,10 @@ export default function TagCell({ tags, handleOpenChange, variant = "secondary" 
               tabIndex={isBulkSelecting ? -1 : 0}
               className={cn(isBulkSelecting && "pointer-events-none opacity-70")}
               onClick={() => handleOpenChange(false)}>
-              <span className="inline-flex gap-px">
-                <span className={cn(variant === "invert" ? "text-muted" : "text-muted-foreground")}>
-                  #
-                </span>
+              <span className="inline-flex items-center gap-px">
+                <HashIcon
+                  className={cn("size-3", variant === "invert" ? "text-muted" : "text-primary")}
+                />
                 <span>{tag}</span>
               </span>
             </Link>
