@@ -3,6 +3,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { getAllQueryOptions } from "@/lib/queries";
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
+import { useSettingsStore } from "@/lib/store/settings";
 import { cn, formatToLocalTime } from "@/lib/utils";
 import TagActionDropdown from "@/routes/(protected)/dashboard/tags/-components/tag-action-dropdown";
 import TagCell from "@/routes/(protected)/dashboard/tags/-components/tag-cell";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/table";
 
 export default function TagTable({ initialTags }: { initialTags: PaginatedResponse<Tag> }) {
+  const showIdColumn = useSettingsStore((state) => state.showIdColumn);
   const { isBulkSelecting, selectedIds, toggleIdSelection } = useBulkSelectionStore(
     useShallow((state) => ({
       isBulkSelecting: state.isBulkSelecting,
@@ -42,7 +44,7 @@ export default function TagTable({ initialTags }: { initialTags: PaginatedRespon
             <TableHead className={cn("transition-all", isBulkSelecting ? "w-8.5 p-2" : "w-0 p-0")}>
               <AllCheckbox allIds={allTagIds} />
             </TableHead>
-            <TableHead className="w-10">Id</TableHead>
+            {showIdColumn && <TableHead className="w-10">Id</TableHead>}
             <TableHead className="w-64">Name</TableHead>
             <TableHead className="w-48">Date added</TableHead>
             <TableHead className="w-24">Bookmarks</TableHead>
@@ -71,7 +73,7 @@ export default function TagTable({ initialTags }: { initialTags: PaginatedRespon
               <TableCell>
                 <ItemCheckbox id={tag.id} />
               </TableCell>
-              <TableCell>{tag.id}</TableCell>
+              {showIdColumn && <TableCell>{tag.id}</TableCell>}
               <TableCell>
                 <TagCell tag={tag} />
               </TableCell>
@@ -88,7 +90,7 @@ export default function TagTable({ initialTags }: { initialTags: PaginatedRespon
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={6} className="text-muted-foreground px-2 py-2.5">
+            <TableCell colSpan={showIdColumn ? 6 : 5} className="text-muted-foreground px-2 py-2.5">
               {isBulkSelecting ? `Selected: ${selectedIds.size}` : `Total: ${items.length}`}
             </TableCell>
           </TableRow>

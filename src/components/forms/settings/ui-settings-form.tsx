@@ -40,11 +40,13 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
     sidebarAddCollapsed,
     defaultSortDate,
     limit,
+    showIdColumn,
     setView,
     setTheme,
     setSidebarAddCollapsed,
     setDefaultSortDate,
     setLimit,
+    setShowIdColumn,
   } = useSettingsStore(
     useShallow((state) => ({
       view: state.view,
@@ -52,11 +54,13 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
       sidebarAddCollapsed: state.sidebarAddCollapsed,
       defaultSortDate: state.defaultSortDate,
       limit: state.limit,
+      showIdColumn: state.showIdColumn,
       setView: state.setView,
       setTheme: state.setTheme,
       setSidebarAddCollapsed: state.setSidebarAddCollapsed,
       setDefaultSortDate: state.setDefaultSortDate,
       setLimit: state.setLimit,
+      setShowIdColumn: state.setShowIdColumn,
     }))
   );
 
@@ -67,6 +71,7 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
       sidebarAddCollapsed,
       defaultSortDate,
       limit,
+      showIdColumn,
     },
     onSubmit: ({ value }) => {
       try {
@@ -75,6 +80,7 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
         setSidebarAddCollapsed(value.sidebarAddCollapsed);
         setDefaultSortDate(value.defaultSortDate);
         setLimit(Number(value.limit));
+        setShowIdColumn(value.showIdColumn);
 
         toast.success("Settings updated!");
       } catch (error: unknown) {
@@ -185,6 +191,35 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
           <FieldLegend className="text-muted-foreground">Results</FieldLegend>
           <FieldGroup>
             <form.Field
+              name="limit"
+              validators={{
+                onChange: z.number().min(10, "Must have a minimum of 10."),
+              }}
+              children={(field) => (
+                <Field data-invalid={!field.state.meta.isValid}>
+                  <FieldLabel htmlFor="limit">Results per page</FieldLabel>
+                  <Input
+                    id="limit"
+                    name={field.name}
+                    type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={field.state.value === 0 ? "" : field.state.value}
+                    aria-invalid={!field.state.meta.isValid}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      field.handleChange(val === "" ? 0 : Number(val));
+                    }}
+                  />
+                  {!field.state.meta.isValid && field.state.value !== 0 && (
+                    <CustomFieldError errors={field.state.meta.errors} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <form.Field
               name="defaultSortDate"
               children={(field) => (
                 <Field>
@@ -214,30 +249,21 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
             />
 
             <form.Field
-              name="limit"
-              validators={{
-                onChange: z.number().min(10, "Must have a minimum of 10."),
-              }}
+              name="showIdColumn"
               children={(field) => (
-                <Field data-invalid={!field.state.meta.isValid}>
-                  <FieldLabel htmlFor="limit">Results per page</FieldLabel>
-                  <Input
-                    id="limit"
-                    name={field.name}
-                    type="number"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={field.state.value === 0 ? "" : field.state.value}
-                    aria-invalid={!field.state.meta.isValid}
+                <Field orientation="horizontal">
+                  <FieldContent>
+                    <FieldLabel htmlFor="showIdColumn">Show ID column</FieldLabel>
+                    <FieldDescription>
+                      Toggle whether the ID column is visible in table views.
+                    </FieldDescription>
+                  </FieldContent>
+                  <Switch
+                    id="showIdColumn"
+                    checked={field.state.value}
                     onBlur={field.handleBlur}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      field.handleChange(val === "" ? 0 : Number(val));
-                    }}
+                    onCheckedChange={(checked) => field.handleChange(checked)}
                   />
-                  {!field.state.meta.isValid && field.state.value !== 0 && (
-                    <CustomFieldError errors={field.state.meta.errors} />
-                  )}
                 </Field>
               )}
             />

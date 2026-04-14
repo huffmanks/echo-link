@@ -21,10 +21,3 @@
 ### Upload assets
 
 - [ ] Support uploading bookmark assets.
-
-### Settings form
-
-- [ ] Hide Id/order column, (optional preference) use settingsStore from:
-  - [ ] [folder-table](<src/routes/(protected)/dashboard/folders/-components/folder-table.tsx>)
-  - [ ] [tag-table](<src/routes/(protected)/dashboard/tags/-components/tag-table.tsx>)
-  - [ ] [bookmark-table](src/components/blocks/bookmark/views/table.tsx)

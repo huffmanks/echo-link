@@ -41,7 +41,12 @@ export default function BookmarkTableView({
     }))
   );
 
-  const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
+  const { defaultSortDate, showIdColumn } = useSettingsStore(
+    useShallow((state) => ({
+      defaultSortDate: state.defaultSortDate,
+      showIdColumn: state.showIdColumn,
+    }))
+  );
 
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
@@ -53,6 +58,7 @@ export default function BookmarkTableView({
             <TableHead className={cn("transition-all", isBulkSelecting ? "w-8.5 p-2" : "w-0 p-0")}>
               <AllCheckbox allIds={allBookmarkIds} />
             </TableHead>
+            {showIdColumn && <TableHead className="w-10">Id</TableHead>}
             <TableHead className="w-8.5"></TableHead>
             <TableHead className="w-64">Title</TableHead>
             <TableHead className="w-64">Link</TableHead>
@@ -92,6 +98,7 @@ export default function BookmarkTableView({
               <TableCell>
                 <ItemCheckbox id={bookmark.id} />
               </TableCell>
+              {showIdColumn && <TableCell>{bookmark.id}</TableCell>}
               <TableCell
                 role="button"
                 className="cursor-pointer"
@@ -156,7 +163,7 @@ export default function BookmarkTableView({
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={7} className="text-muted-foreground px-2 py-2.5">
+            <TableCell colSpan={showIdColumn ? 8 : 7} className="text-muted-foreground px-2 py-2.5">
               {isBulkSelecting ? `Selected: ${selectedIds.size}` : paginationLabel}
             </TableCell>
           </TableRow>

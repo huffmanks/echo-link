@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { GripVerticalIcon } from "lucide-react";
@@ -9,6 +9,7 @@ import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { useEditFolder } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
+import { useSettingsStore } from "@/lib/store/settings";
 import { cn, formatToLocalTime } from "@/lib/utils";
 import FolderActionDropdown from "@/routes/(protected)/dashboard/folders/-components/folder-action-dropdown";
 import FolderCell from "@/routes/(protected)/dashboard/folders/-components/folder-cell";
@@ -37,6 +38,9 @@ export default function FolderTable({
   );
   const [activeId, setActiveId] = useState<number | null>(null);
 
+  const tableBodyRef = useRef<HTMLTableSectionElement | null>(null);
+
+  const showIdColumn = useSettingsStore((state) => state.showIdColumn);
   const { isBulkSelecting, selectedIds } = useBulkSelectionStore(
     useShallow((state) => ({
       isBulkSelecting: state.isBulkSelecting,
@@ -77,7 +81,7 @@ export default function FolderTable({
             <TableHead className={cn("transition-all", isBulkSelecting ? "w-8.5" : "w-12")}>
               <AllCheckbox allIds={allFolderIds} />
             </TableHead>
-            <TableHead className="w-10">Id</TableHead>
+            {showIdColumn && <TableHead className="w-10">Id</TableHead>}
             <TableHead className="w-64">Name</TableHead>
             <TableHead className="w-48">Date added</TableHead>
             <TableHead className="w-14">Order</TableHead>
@@ -88,6 +92,7 @@ export default function FolderTable({
 
         <Reorder.Group
           as="tbody"
+          ref={tableBodyRef}
           axis="y"
           values={items}
           onReorder={handleReorder}
@@ -95,6 +100,7 @@ export default function FolderTable({
           {items.map((folder, index) => (
             <FolderRow
               key={folder.id}
+              constraintsRef={tableBodyRef}
               index={index}
               folder={folder}
               activeId={activeId}
@@ -105,7 +111,7 @@ export default function FolderTable({
         </Reorder.Group>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={7} className="text-muted-foreground px-2 py-2.5">
+            <TableCell colSpan={showIdColumn ? 7 : 6} className="text-muted-foreground px-2 py-2.5">
               {isBulkSelecting ? `Selected: ${selectedIds.size}` : `Total: ${items.length}`}
             </TableCell>
           </TableRow>
@@ -119,12 +125,21 @@ interface FolderRowProps {
   folder: Folder;
   index: number;
   activeId: number | null;
+  constraintsRef: React.RefObject<HTMLTableSectionElement | null>;
   onDragStart: ({ id }: { id: number }) => void;
   onDragEnd: () => void;
 }
 
-function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRowProps) {
+function FolderRow({
+  folder,
+  index,
+  activeId,
+  constraintsRef,
+  onDragStart,
+  onDragEnd,
+}: FolderRowProps) {
   const controls = useDragControls();
+  const showIdColumn = useSettingsStore((state) => state.showIdColumn);
   const { isBulkSelecting, toggleIdSelection } = useBulkSelectionStore(
     useShallow((state) => ({
       isBulkSelecting: state.isBulkSelecting,
@@ -137,6 +152,8 @@ function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRo
       key={folder.id}
       value={folder}
       as="tr"
+      dragConstraints={constraintsRef}
+      dragElastic={0.1}
       dragListener={false}
       dragControls={controls}
       onDragStart={() => onDragStart({ id: folder.id })}
@@ -169,7 +186,7 @@ function FolderRow({ folder, index, activeId, onDragStart, onDragEnd }: FolderRo
           </Button>
         )}
       </TableCell>
-      <TableCell>{folder.id}</TableCell>
+      {showIdColumn && <TableCell>{folder.id}</TableCell>}
 
       <TableCell className="truncate">
         <FolderCell folder={folder} />
