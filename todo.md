@@ -1,14 +1,5 @@
 # Todos
 
-## Issues
-
-### Data/Background sync
-
-- [ ] Use cached results for search when offline.
-- [ ] Change isOnline to include isConnected to Linkding API.
-
----
-
 ## New features
 
 ### Bulk edit
@@ -21,3 +12,7 @@
 ### Upload assets
 
 - [ ] Support uploading bookmark assets.
+
+### Data/Background sync
+
+- [ ] Use cached results when offline for search.

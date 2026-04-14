@@ -9,7 +9,7 @@ import { SIDEBAR_NAV_SECONDARY } from "@/lib/constants";
 import { useSettingsStore } from "@/lib/store/settings";
 import { joinUrlPath } from "@/lib/utils";
 
-import { OnlineStatus } from "@/components/online-status";
+import { IndicatorDot, OnlineStatus } from "@/components/online-status";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +64,7 @@ export function NavUser() {
                 <Avatar className="size-8">
                   <AvatarFallback className="bg-background">{initial}</AvatarFallback>
                 </Avatar>
-                <OnlineStatus />
+                <IndicatorDot />
               </div>
             </Button>
           }></DropdownMenuTrigger>
@@ -82,7 +82,7 @@ export function NavUser() {
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{username}</span>
                 </div>
-                <OnlineStatus justIndicator={false} />
+                <OnlineStatus />
               </div>
             </DropdownMenuLabel>
           </DropdownMenuGroup>
