@@ -2,8 +2,12 @@
 
 ## Fixes
 
-- [ ] Offline reload broken.
-- [ ] Make online indicator be about linkding connected not is online.
+- [x] Offline reload broken.
+- [ ] Make online indicator be about `linkding connected` not is `online`.
+
+## Refactors
+
+- [ ] Linkding now supports tag deletion through API. So make more efficient.
 
 ## New features
 

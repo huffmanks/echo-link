@@ -23,7 +23,7 @@ down profile="development":
 init:
     @for env in development staging production; do \
         if [ ! -f .env.$env ]; then \
-            cp .env.example .env.$env; \
+            cp .example.env.$env .env.$env; \
             echo "Created .env.$env"; \
         else \
             echo ".env.$env already exists, skipping..."; \
@@ -41,7 +41,7 @@ build push="false":
         "-t " + IMAGE_NAME + ":" + VERSION + " " + \
         "-t " + IMAGE_NAME + ":latest --push ." \
     } else { \
-        "docker buildx build -t " + IMAGE_NAME + ":local" + VERSION + " --load ." \
+        "docker buildx build -t " + IMAGE_NAME + ":local" + " --load ." \
     } }}
     @docker buildx rm {{BUILDER}} || true
     @echo "Build complete."

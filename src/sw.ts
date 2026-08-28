@@ -1,6 +1,10 @@
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 import { ExpirationPlugin } from "workbox-expiration";
-import { cleanupOutdatedCaches, precacheAndRoute } from "workbox-precaching";
+import {
+  cleanupOutdatedCaches,
+  createHandlerBoundToURL,
+  precacheAndRoute,
+} from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import { NetworkFirst, NetworkOnly, StaleWhileRevalidate } from "workbox-strategies";
 
@@ -26,18 +30,7 @@ self.addEventListener("message", (event: ExtendableMessageEvent) => {
   }
 });
 
-const networkFirstNavigation = new NetworkFirst({
-  cacheName: "app-navigations",
-  plugins: [
-    {
-      handlerDidError: async () => {
-        return await caches.match(self.registration.scope);
-      },
-    },
-  ],
-});
-
-const navigationRoute = new NavigationRoute(networkFirstNavigation, {
+const navigationRoute = new NavigationRoute(createHandlerBoundToURL("/index.html"), {
   denylist: [/^\/assets\/.*\.html$/],
 });
 

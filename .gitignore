@@ -10,7 +10,7 @@ count.txt
 .output
 
 *.env*
-!.env*.example
+!.example.env*
 *.pem
 data
 .pnpmfile.cjs

@@ -33,7 +33,7 @@ services:
       LD_SUPERUSER_PASSWORD: ${LD_SUPERUSER_PASSWORD}
     restart: unless-stopped
   echo-link:
-    image: huffmanks/echo-link:latest
+    image: huffmanks/echo-link:${ECHOLINK_RELEASE_VERSION:-latest}
     container_name: echo-link
     ports:
       - "${APP_PORT}:${APP_PORT}"
@@ -53,21 +53,21 @@ services:
 
 ```txt
 # --- ECHOLINK ---
-APP_PORT=3000
+APP_PORT=3002
 LINKDING_CONTAINER_URL=http://linkding:9090
 LINKDING_API_TOKEN=
 
 # Optional
-ECHOLINK_USER_NAME=
+ECHOLINK_USER_NAME=admin
 LINKDING_EXTERNAL_URL=http://localhost:9090
+ECHOLINK_RELEASE_VERSION=latest
 
 # --- LINKDING ---
 # see https://linkding.link/options/#ld_csrf_trusted_origins
-LD_CSRF_TRUSTED_ORIGINS=http://localhost:3000,https://echo.lan.domain.com
+LD_CSRF_TRUSTED_ORIGINS=http://localhost:3002,https://echo.lan.domain.com
 
-# Optional
-LD_SUPERUSER_NAME=
-LD_SUPERUSER_PASSWORD=
+LD_SUPERUSER_NAME=admin
+LD_SUPERUSER_PASSWORD=password
 ```
 
 ## Start container
