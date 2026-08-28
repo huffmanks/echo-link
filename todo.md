@@ -1,5 +1,10 @@
 # Todos
 
+## Fixes
+
+- [ ] Offline reload broken.
+- [ ] Make online indicator be about linkding connected not is online.
+
 ## New features
 
 ### Bulk edit
