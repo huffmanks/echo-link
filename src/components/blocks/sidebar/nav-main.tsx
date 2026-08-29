@@ -6,11 +6,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronRightIcon, FolderIcon, HashIcon } from "lucide-react";
 
+import { useGlobalModal } from "@/context/global-modal";
 import { SIDEBAR_NAV_MAIN } from "@/lib/constants";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store/settings";
 import { checkActive } from "@/lib/utils";
-import { useGlobalModal } from "@/providers/global-modal-context";
 import type { SidebarNavItem, SidebarSubNavItem } from "@/types";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";

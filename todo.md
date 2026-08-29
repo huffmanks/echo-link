@@ -3,7 +3,7 @@
 ## Fixes
 
 - [x] Offline reload broken.
-- [ ] Make online indicator be about `linkding connected` not is `online`.
+- [x] Make online indicator be about `linkding connected` not is `online`.
 
 ## Refactors
 

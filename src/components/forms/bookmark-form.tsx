@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useShallow } from "zustand/react/shallow";
 
-import { useBackgroundSync } from "@/hooks/use-background-sync";
+import { useBackgroundSync } from "@/context/background-sync";
 import { useCreateBookmark, useEditBookmark } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store/settings";

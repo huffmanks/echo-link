@@ -3,9 +3,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import z from "zod";
 
+import { useGlobalModal } from "@/context/global-modal";
 import { useCreateTag } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
-import { useGlobalModal } from "@/providers/global-modal-context";
 
 import CustomFieldError from "@/components/forms/custom-field-error";
 import { Button } from "@/components/ui/button";

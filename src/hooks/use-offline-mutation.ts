@@ -1,7 +1,7 @@
 import { type QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
-import { useBackgroundSync } from "@/hooks/use-background-sync";
+import { useBackgroundSync } from "@/context/background-sync";
 import { linkdingFetch } from "@/lib/api";
 import { db } from "@/lib/db";
 

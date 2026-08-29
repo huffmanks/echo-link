@@ -1,4 +1,4 @@
-import { useGlobalModal } from "@/providers/global-modal-context";
+import { useGlobalModal } from "@/context/global-modal";
 
 import { CreateTagForm } from "@/components/forms/create-tag-form";
 import { Dialog, DialogContent } from "@/components/ui/dialog";

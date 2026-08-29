@@ -5,7 +5,7 @@ import ReactDOM from "react-dom/client";
 
 import * as TanStackQueryProvider from "@/integrations/tanstack-query/root-provider.tsx";
 import { BackgroundSyncProvider } from "@/providers/background-sync";
-import { GlobalModalProvider } from "@/providers/global-modal-context";
+import { GlobalModalProvider } from "@/providers/global-modal";
 import ThemeWatcher from "@/providers/theme-watcher";
 import reportWebVitals from "@/reportWebVitals.ts";
 import { routeTree } from "@/routeTree.gen";

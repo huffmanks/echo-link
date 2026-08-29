@@ -58,12 +58,11 @@ _up-staging:
 _up-production:
     {{BASE_COMPOSE}} up -d
 
-_down-base:
+_down-development:
     {{BASE_COMPOSE}} down
 
-_down-development: _down-base
-
-_down-staging: _down-base
+_down-staging:
+    {{BASE_COMPOSE}} down
 
 _down-production:
     {{BASE_COMPOSE}} down

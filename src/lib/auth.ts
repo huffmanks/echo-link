@@ -15,6 +15,10 @@ export function logout() {
 }
 
 export async function validate() {
+  if (typeof navigator !== "undefined" && !navigator.onLine) {
+    return { isValid: true, errorMessage: null, isOffline: true };
+  }
+
   try {
     const res = await fetch("/api/user/profile/", {
       signal: AbortSignal.timeout(5000),
@@ -26,8 +30,13 @@ export async function validate() {
       },
     });
 
+    if (res.status === 401 || res.status === 403) {
+      logout();
+      return { isValid: false, errorMessage: "Invalid API token or credentials." };
+    }
+
     if (!res.ok) {
-      throw new Error("Could not validate the API token.");
+      return { isValid: true, errorMessage: `Server error (${res.status})` };
     }
 
     return {
@@ -35,11 +44,16 @@ export async function validate() {
       errorMessage: null,
     };
   } catch (error: unknown) {
-    logout();
     const errorMessage = getErrorMessage(error);
 
+    const { isSetupComplete } = useSettingsStore.getState();
+
+    if (isSetupComplete) {
+      return { isValid: true, isOffline: true, errorMessage };
+    }
+
     return {
-      isValid: false,
+      isValid: true,
       errorMessage,
     };
   }

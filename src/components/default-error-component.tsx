@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { DatabaseZapIcon } from "lucide-react";
 
-import { useBackgroundSync } from "@/hooks/use-background-sync";
+import { useBackgroundSync } from "@/context/background-sync";
 import { cn } from "@/lib/utils";
 
 import FullScreenWrapper from "@/components/full-screen-wrapper";

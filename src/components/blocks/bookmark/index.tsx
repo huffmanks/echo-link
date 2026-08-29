@@ -16,7 +16,8 @@ import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
-import { useBackgroundSync } from "@/hooks/use-background-sync";
+import { useBackgroundSync } from "@/context/background-sync";
+import { useGlobalModal } from "@/context/global-modal";
 import { usePagination } from "@/hooks/use-pagination";
 import { type AppRouteId, useSearchState } from "@/hooks/use-search-state";
 import { BOOKMARK_BULK_SELECT_OPTIONS, FILTER_OPTIONS } from "@/lib/constants";
@@ -25,7 +26,6 @@ import type { SortField } from "@/lib/search";
 import { type BulkAction, useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { useSettingsStore } from "@/lib/store/settings";
 import { getPaginationLabel } from "@/lib/utils";
-import { useGlobalModal } from "@/providers/global-modal-context";
 import type { Bookmark, View } from "@/types";
 
 import BulkActionBar from "@/components/blocks/bookmark/bulk-action-bar";

@@ -1,31 +1,28 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
 
+import { BackgroundSyncContext } from "@/context/background-sync";
 import { linkdingFetch } from "@/lib/api";
 import { db } from "@/lib/db";
 import type { CacheName } from "@/types";
 
-interface BackgroundSyncContextType {
-  isSyncing: boolean;
-  isOnline: boolean;
-  purgeAssets: (cacheName: CacheName) => void;
-}
-
-export const BackgroundSyncContext = createContext<BackgroundSyncContextType | undefined>(
-  undefined
-);
-
 export function BackgroundSyncProvider({ children }: { children: React.ReactNode }) {
   const [isSyncing, setIsSyncing] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
 
   const queryClient = useQueryClient();
 
   const clientIdRef = useRef<string | null>(null);
   if (!clientIdRef.current) clientIdRef.current = nanoid();
+
+  const isOnlineRef = useRef(isOnline);
+  const isConnectedRef = useRef(isConnected);
+
+  const isInitializedRef = useRef(false);
 
   function purgeAssets(cacheName: CacheName) {
     if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
@@ -36,30 +33,86 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
     }
   }
 
-  useEffect(() => {
-    function updateStatus() {
-      const newStatus = navigator.onLine;
-      setIsOnline(newStatus);
+  const checkApiHealth = useCallback(async () => {
+    const currentOnline = navigator.onLine;
+    const prevOnline = isOnlineRef.current;
+    const prevConnected = isConnectedRef.current;
+    const isInitial = !isInitializedRef.current;
 
-      if (newStatus) {
-        toast.success("Back online", { description: "Connection restored." });
-      } else {
-        toast.error("Offline mode", { description: "Changes will be synced later." });
+    let toastedThisCheck = false;
+
+    if (currentOnline !== prevOnline) {
+      isOnlineRef.current = currentOnline;
+      setIsOnline(currentOnline);
+
+      if (!isInitial) {
+        if (currentOnline) {
+          toast.success("Back online", { description: "Internet connection restored." });
+        } else {
+          toast.error("Offline mode", { description: "No internet connection." });
+        }
+        toastedThisCheck = true;
       }
     }
 
-    window.addEventListener("online", updateStatus);
-    window.addEventListener("offline", updateStatus);
+    if (!currentOnline) {
+      if (prevConnected) {
+        isConnectedRef.current = false;
+        setIsConnected(false);
+      }
+      isInitializedRef.current = true;
+      return false;
+    }
 
-    return () => {
-      window.removeEventListener("online", updateStatus);
-      window.removeEventListener("offline", updateStatus);
-    };
+    try {
+      await linkdingFetch("bookmarks", { params: { limit: "1" } });
+
+      if (!prevConnected) {
+        isConnectedRef.current = true;
+        setIsConnected(true);
+
+        if (!isInitial && !toastedThisCheck) {
+          toast.success("API Connected", { description: "Connected to Linkding instance." });
+        }
+      }
+      isInitializedRef.current = true;
+      return true;
+    } catch {
+      if (prevConnected) {
+        isConnectedRef.current = false;
+        setIsConnected(false);
+
+        if (!isInitial && !toastedThisCheck) {
+          toast.error("API Unreachable", { description: "Cannot connect to Linkding instance." });
+        }
+      }
+      isInitializedRef.current = true;
+      return false;
+    }
   }, []);
 
   useEffect(() => {
+    checkApiHealth();
+
+    const handleNetworkChange = () => checkApiHealth();
+
+    window.addEventListener("online", handleNetworkChange);
+    window.addEventListener("offline", handleNetworkChange);
+    window.addEventListener("focus", handleNetworkChange);
+
+    const intervalId = setInterval(checkApiHealth, 30_000);
+
+    return () => {
+      window.removeEventListener("online", handleNetworkChange);
+      window.removeEventListener("offline", handleNetworkChange);
+      window.removeEventListener("focus", handleNetworkChange);
+      clearInterval(intervalId);
+    };
+  }, [checkApiHealth]);
+
+  useEffect(() => {
     async function flushOutbox() {
-      if (!isOnline || isSyncing) return;
+      if (!isConnected || isSyncing) return;
 
       setIsSyncing(true);
 
@@ -198,6 +251,9 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
               purgeAssets("linkding-api-cache");
             } catch (e) {}
           } catch (error) {
+            isConnectedRef.current = false;
+            setIsConnected(false);
+
             try {
               if (item.id) {
                 await db.outbox.update(item.id, {
@@ -211,6 +267,8 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
             toast.error("Syncing failed for an item", {
               description: String((error as any)?.message || error),
             });
+
+            break;
           }
         }
 
@@ -218,6 +276,9 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
           toast.success("Offline changes synced successfully!");
         }
       } catch (err) {
+        isConnectedRef.current = false;
+        setIsConnected(false);
+
         try {
           toast.error("Background sync failed", {
             description: String((err as any)?.message || err),
@@ -229,16 +290,11 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
       }
     }
 
-    window.addEventListener("online", flushOutbox);
     flushOutbox();
-
-    return () => {
-      window.removeEventListener("online", flushOutbox);
-    };
-  }, [queryClient, isOnline]);
+  }, [queryClient, isConnected]);
 
   return (
-    <BackgroundSyncContext.Provider value={{ isSyncing, isOnline, purgeAssets }}>
+    <BackgroundSyncContext.Provider value={{ isSyncing, isOnline, isConnected, purgeAssets }}>
       {children}
     </BackgroundSyncContext.Provider>
   );
