@@ -19,7 +19,7 @@ A self-hosted client app for Linkding, designed for a fast, clean and modern boo
 ```yaml
 services:
   linkding:
-    image: sissbruecker/linkding:latest
+    image: sissbruecker/linkding:latest-alpine
     container_name: linkding
     ports:
       - "9090:9090"

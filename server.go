@@ -32,10 +32,10 @@ func serveIndex(w http.ResponseWriter, staticDir string) {
 	html := string(content)
 
 	userName := os.Getenv("ECHOLINK_USER_NAME")
-    html = strings.ReplaceAll(html, "__ECHOLINK_USER_NAME__", userName)
+	html = strings.ReplaceAll(html, "__ECHOLINK_USER_NAME__", userName)
 
 	linkdingUrl := os.Getenv("LINKDING_EXTERNAL_URL")
-    html = strings.ReplaceAll(html, "__LINKDING_EXTERNAL_URL__", linkdingUrl)
+	html = strings.ReplaceAll(html, "__LINKDING_EXTERNAL_URL__", linkdingUrl)
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprint(w, html)
@@ -75,7 +75,7 @@ func main() {
 			}
 
 			if apiToken == "" {
-				sendError(w, http.StatusUnauthorized, "API_TOKEN_MISSING",fmt.Errorf("api token missing from .env file"))
+				sendError(w, http.StatusUnauthorized, "API_TOKEN_MISSING", fmt.Errorf("api token missing from .env file"))
 				return
 			}
 
