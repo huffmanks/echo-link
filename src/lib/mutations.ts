@@ -19,10 +19,7 @@ export function useEditBookmark() {
 }
 
 export type BulkUpdatePayload =
-  | { delete: null }
-  | { unread: boolean }
-  | { is_archived: boolean }
-  | { shared: boolean };
+  { delete: null } | { unread: boolean } | { is_archived: boolean } | { shared: boolean };
 
 export function useBulkEditBookmarks() {
   return useOfflineMutation<BulkUpdatePayload & { id: number }, Bookmark>({
@@ -100,5 +97,14 @@ export function useCreateTag() {
     queryKey: ["tags"],
     url: "tags",
     method: "POST",
+  });
+}
+
+export function useDeleteTag() {
+  return useOfflineMutation<number>({
+    queryKey: ["tags"],
+    url: "tags",
+    method: "DELETE",
+    idField: "id",
   });
 }
