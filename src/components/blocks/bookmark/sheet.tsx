@@ -255,7 +255,55 @@ function Content({
         <h3 className="font-medium">Notes</h3>
         {bookmark.notes ? (
           <div className="prose prose-neutral prose-sm prose-pre:overflow-x-auto prose-pre:max-w-full dark:prose-invert bg-input/30 max-w-none rounded-md p-4">
-            <Markdown>{bookmark.notes}</Markdown>
+            <Markdown
+              children={bookmark.notes}
+              options={{
+                overrides: {
+                  a: {
+                    props: {
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                      className: "text-primary font-medium",
+                    },
+                  },
+                  h2: {
+                    props: {
+                      className: "mt-0 mb-4",
+                    },
+                  },
+                  h4: {
+                    props: {
+                      className: "mt-0 mb-2",
+                    },
+                  },
+                  blockquote: {
+                    props: {
+                      className: "mt-0 mb-9",
+                    },
+                  },
+                  table: {
+                    props: {
+                      className: "mb-8",
+                    },
+                  },
+                  ul: {
+                    props: {
+                      className: "mt-0 mb-8",
+                    },
+                  },
+                  ol: {
+                    props: {
+                      className: "mt-0 mb-8",
+                    },
+                  },
+                  p: {
+                    props: {
+                      className: "mt-0 mb-8",
+                    },
+                  },
+                },
+              }}
+            />
           </div>
         ) : (
           <Textarea
