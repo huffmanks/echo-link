@@ -41,12 +41,7 @@ export default function BookmarkTableView({
     }))
   );
 
-  const { defaultSortDate, showIdColumn } = useSettingsStore(
-    useShallow((state) => ({
-      defaultSortDate: state.defaultSortDate,
-      showIdColumn: state.showIdColumn,
-    }))
-  );
+  const showIdColumn = useSettingsStore((state) => state.showIdColumn);
 
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
@@ -63,9 +58,8 @@ export default function BookmarkTableView({
             <TableHead className="w-64">Title</TableHead>
             <TableHead className="w-64">Link</TableHead>
             <TableHead className="w-64">Tags</TableHead>
-            <TableHead className="w-48">
-              {defaultSortDate === "date_added" ? "Created" : "Updated"}
-            </TableHead>
+            <TableHead className="w-48">Created</TableHead>
+            <TableHead className="w-48">Updated</TableHead>
             <TableHead className="w-12"></TableHead>
           </TableRow>
         </TableHeader>
@@ -145,11 +139,17 @@ export default function BookmarkTableView({
                     handleOpenSheet(bookmark);
                   }
                 }}>
-                <span>
-                  {defaultSortDate === "date_added"
-                    ? formatToLocalTime(bookmark.date_added)
-                    : formatToLocalTime(bookmark.date_modified)}
-                </span>
+                <span>{formatToLocalTime(bookmark.date_added)}</span>
+              </TableCell>
+              <TableCell
+                role="button"
+                className="cursor-pointer truncate"
+                onClick={() => {
+                  if (!isBulkSelecting) {
+                    handleOpenSheet(bookmark);
+                  }
+                }}>
+                <span>{formatToLocalTime(bookmark.date_modified)}</span>
               </TableCell>
               <TableCell className="flex items-center justify-end">
                 <ActionDropdown
@@ -163,7 +163,7 @@ export default function BookmarkTableView({
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={showIdColumn ? 8 : 7} className="text-muted-foreground px-2 py-2.5">
+            <TableCell colSpan={showIdColumn ? 9 : 8} className="text-muted-foreground px-2 py-2.5">
               {isBulkSelecting ? `Selected: ${selectedIds.size}` : paginationLabel}
             </TableCell>
           </TableRow>

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useSettingsStore } from "@/lib/store/settings";
 import type { PaginatedResponse } from "@/types";
 
-const { limit } = useSettingsStore.getState();
+const { limit, defaultSortType } = useSettingsStore.getState();
 
 export const SearchSchema = z.object({
   q: z.string().optional().catch(""),
@@ -21,8 +21,6 @@ export const SearchSchema = z.object({
 });
 
 export type SearchParams = z.infer<typeof SearchSchema>;
-
-export type SortField = "title" | "date_added" | "date_modified";
 
 export function transformData<T extends Record<string, any>>(
   rawData: PaginatedResponse<T>,
@@ -50,28 +48,27 @@ export function transformData<T extends Record<string, any>>(
     return true;
   });
 
-  if (params.sort) {
-    const { sort, order } = params;
-    const mod = order === "desc" ? -1 : 1;
+  const activeSort = params?.sort ?? defaultSortType;
+  const activeOrder = params?.order ?? (activeSort === "title" ? "asc" : "desc");
+  const mod = activeOrder === "desc" ? -1 : 1;
 
-    result.sort((a, b) => {
-      let aVal = a[sort];
-      let bVal = b[sort];
+  result.sort((a, b) => {
+    let aVal = a[activeSort];
+    let bVal = b[activeSort];
 
-      if (sort === "date_modified" || sort === "date_added") {
-        aVal = new Date(aVal || 0).getTime();
-        bVal = new Date(bVal || 0).getTime();
-      }
+    if (activeSort === "date_modified" || activeSort === "date_added") {
+      aVal = new Date(aVal || 0).getTime();
+      bVal = new Date(bVal || 0).getTime();
+    }
 
-      if (typeof aVal === "string" && typeof bVal === "string") {
-        return aVal.localeCompare(bVal) * mod;
-      }
+    if (typeof aVal === "string" && typeof bVal === "string") {
+      return aVal.localeCompare(bVal) * mod;
+    }
 
-      if (aVal > bVal) return mod;
-      if (aVal < bVal) return -mod;
-      return 0;
-    });
-  }
+    if (aVal > bVal) return mod;
+    if (aVal < bVal) return -mod;
+    return 0;
+  });
 
   const paramsPage = params?.page ?? 1;
   const paramsLimit = params?.limit ?? limit;

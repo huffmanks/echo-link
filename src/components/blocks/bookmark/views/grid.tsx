@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
-import { ImageIcon } from "lucide-react";
+import { CalendarClockIcon, CalendarPlusIcon, ImageIcon } from "lucide-react";
 import { getDomain } from "tldts";
 import { useShallow } from "zustand/react/shallow";
 
@@ -46,8 +46,6 @@ export default function BookmarkGridView({
       toggleIdSelection: state.toggleIdSelection,
     }))
   );
-
-  const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
 
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
@@ -108,11 +106,24 @@ export default function BookmarkGridView({
                   </p>
                 )}
                 {bookmark?.date_added && (
-                  <p className={cn("text-foreground text-xs", !bookmark?.description && "mt-2")}>
-                    {defaultSortDate === "date_added"
-                      ? getRelativeTimeString(new Date(bookmark.date_added))
-                      : getRelativeTimeString(new Date(bookmark.date_modified))}
-                  </p>
+                  <div
+                    className={cn(
+                      "justify-content flex items-center gap-1",
+                      !bookmark?.description && "mt-2"
+                    )}>
+                    <CalendarPlusIcon className="size-3" />
+                    <span className="text-foreground text-xs">
+                      {getRelativeTimeString(new Date(bookmark.date_added))}
+                    </span>
+                  </div>
+                )}
+                {bookmark?.date_modified && (
+                  <div className="justify-content flex items-center gap-1">
+                    <CalendarClockIcon className="size-3" />
+                    <span className="text-foreground text-xs">
+                      {getRelativeTimeString(new Date(bookmark.date_modified))}
+                    </span>
+                  </div>
                 )}
               </CardDescription>
               <CardAction>

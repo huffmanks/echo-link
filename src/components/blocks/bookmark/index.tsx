@@ -1,14 +1,13 @@
 import { useMemo, useState } from "react";
 
 import {
-  ArrowDownAzIcon,
-  ArrowUpAzIcon,
-  CalendarArrowDownIcon,
-  CalendarArrowUpIcon,
-  CalendarIcon,
+  CalendarClockIcon,
+  CalendarPlusIcon,
   FunnelIcon,
   LayoutGridIcon,
   ListIcon,
+  MoveDownIcon,
+  MoveUpIcon,
   SearchXIcon,
   Table2Icon,
 } from "lucide-react";
@@ -22,11 +21,10 @@ import { usePagination } from "@/hooks/use-pagination";
 import { type AppRouteId, useSearchState } from "@/hooks/use-search-state";
 import { BOOKMARK_BULK_SELECT_OPTIONS, FILTER_OPTIONS } from "@/lib/constants";
 import { type BulkUpdatePayload, useBulkEditBookmarks, useDeleteBookmark } from "@/lib/mutations";
-import type { SortField } from "@/lib/search";
 import { type BulkAction, useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { useSettingsStore } from "@/lib/store/settings";
 import { getPaginationLabel } from "@/lib/utils";
-import type { Bookmark, View } from "@/types";
+import type { Bookmark, DefaultSortType, View } from "@/types";
 
 import BulkActionBar from "@/components/blocks/bookmark/bulk-action-bar";
 import BookmarkSheet from "@/components/blocks/bookmark/sheet";
@@ -65,6 +63,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface BookmarkWrapperProps {
@@ -111,12 +110,12 @@ export default function BookmarkWrapper({
       }))
     );
 
-  const { limit, view, defaultSortDate, continueBulkEdit, keepBulkSelection, setView } =
+  const { limit, view, defaultSortType, continueBulkEdit, keepBulkSelection, setView } =
     useSettingsStore(
       useShallow((state) => ({
         limit: state.limit,
         view: state.view,
-        defaultSortDate: state.defaultSortDate,
+        defaultSortType: state.defaultSortType,
         continueBulkEdit: state.continueBulkEdit,
         keepBulkSelection: state.keepBulkSelection,
         setView: state.setView,
@@ -196,26 +195,36 @@ export default function BookmarkWrapper({
     });
   }
 
-  function handleSortChange(field: Array<SortField>) {
+  const activeSort = search.sort ?? defaultSortType;
+  const activeOrder = search.order ?? (activeSort === "title" ? "asc" : "desc");
+
+  function toggleOrder() {
+    setParams((prev) => ({
+      ...prev,
+      sort: activeSort,
+      order: activeOrder === "asc" ? "desc" : "asc",
+    }));
+  }
+
+  function handleSortChange(field: Array<DefaultSortType>) {
     const clickedField = field[0];
 
     setParams((prev) => {
-      if (!clickedField) {
+      const isSameField = !clickedField || clickedField === activeSort;
+
+      if (isSameField) {
         return {
           ...prev,
-          order: prev.order === "asc" ? "desc" : "asc",
+          sort: activeSort,
+          order: activeOrder === "asc" ? "desc" : "asc",
         };
       }
 
-      if (clickedField !== prev.sort) {
-        return {
-          ...prev,
-          sort: clickedField,
-          order: "asc",
-        };
-      }
-
-      return prev;
+      return {
+        ...prev,
+        sort: clickedField,
+        order: activeOrder,
+      };
     });
   }
 
@@ -285,7 +294,6 @@ export default function BookmarkWrapper({
   const hasResults = bookmarkItems.length > 0;
 
   const paginationLabel = getPaginationLabel({ count: totalCount, limit, currentPage });
-  const activeDateKey = defaultSortDate ?? "date_modified";
 
   if (!isOnline && !hasResults) {
     return <EmptyCache />;
@@ -307,48 +315,40 @@ export default function BookmarkWrapper({
 
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
-            <ToggleGroup
-              variant="outline"
-              multiple={false}
-              value={search.sort ? [search.sort] : []}
-              onValueChange={(val) => handleSortChange(val as Array<SortField>)}>
-              <ToggleGroupItem value="title" aria-label="Sort by title">
-                {search.sort === "title" ? (
-                  search.order === "asc" ? (
-                    <ArrowUpAzIcon />
-                  ) : (
-                    <ArrowDownAzIcon />
-                  )
+            <div className="flex items-center">
+              <ToggleGroup
+                variant="outline"
+                multiple={false}
+                value={[activeSort]}
+                onValueChange={(val) => handleSortChange(val as Array<DefaultSortType>)}>
+                <ToggleGroupItem value="title" aria-label="Sort by title">
+                  <div className="mt-0.75 flex h-4 w-4 items-center justify-center">
+                    <span className="font-mono text-sm leading-none font-semibold">AZ</span>
+                  </div>
+                </ToggleGroupItem>
+                <ToggleGroupItem value="date_added" aria-label="Sort by created date">
+                  <CalendarPlusIcon />
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  className="rounded-none!"
+                  value="date_modified"
+                  aria-label="Sort by modified date">
+                  <CalendarClockIcon />
+                </ToggleGroupItem>
+              </ToggleGroup>
+              <Toggle
+                variant="outline"
+                pressed={true}
+                className="-ml-px cursor-pointer rounded-l-none"
+                aria-label="Sort direction"
+                onPressedChange={toggleOrder}>
+                {activeOrder === "asc" ? (
+                  <MoveUpIcon className="size-3 stroke-4" />
                 ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round">
-                    <path d="M14.5 5.75h7l-7 10h7" />
-                    <path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16" />
-                    <path d="M3.304 13h6.392" />
-                  </svg>
+                  <MoveDownIcon className="size-3 stroke-4" />
                 )}
-              </ToggleGroupItem>
-
-              <ToggleGroupItem value={activeDateKey} aria-label="Sort by date">
-                {search.sort === activeDateKey ? (
-                  search.order === "asc" ? (
-                    <CalendarArrowUpIcon />
-                  ) : (
-                    <CalendarArrowDownIcon />
-                  )
-                ) : (
-                  <CalendarIcon />
-                )}
-              </ToggleGroupItem>
-            </ToggleGroup>
+              </Toggle>
+            </div>
             <ToggleGroup
               variant="outline"
               multiple={false}

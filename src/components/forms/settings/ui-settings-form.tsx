@@ -6,7 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { useSettingsStore } from "@/lib/store/settings";
 import { cn, getErrorMessage } from "@/lib/utils";
-import type { DefaultSortDate, Theme, View } from "@/types";
+import type { DefaultSortType, Theme, View } from "@/types";
 
 import CustomFieldError from "@/components/forms/custom-field-error";
 import { Button } from "@/components/ui/button";
@@ -38,13 +38,13 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
     view,
     theme,
     sidebarAddCollapsed,
-    defaultSortDate,
+    defaultSortType,
     limit,
     showIdColumn,
     setView,
     setTheme,
     setSidebarAddCollapsed,
-    setDefaultSortDate,
+    setDefaultSortType,
     setLimit,
     setShowIdColumn,
   } = useSettingsStore(
@@ -52,13 +52,13 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
       view: state.view,
       theme: state.theme,
       sidebarAddCollapsed: state.sidebarAddCollapsed,
-      defaultSortDate: state.defaultSortDate,
+      defaultSortType: state.defaultSortType,
       limit: state.limit,
       showIdColumn: state.showIdColumn,
       setView: state.setView,
       setTheme: state.setTheme,
       setSidebarAddCollapsed: state.setSidebarAddCollapsed,
-      setDefaultSortDate: state.setDefaultSortDate,
+      setDefaultSortType: state.setDefaultSortType,
       setLimit: state.setLimit,
       setShowIdColumn: state.setShowIdColumn,
     }))
@@ -69,7 +69,7 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
       view,
       theme,
       sidebarAddCollapsed,
-      defaultSortDate,
+      defaultSortType,
       limit,
       showIdColumn,
     },
@@ -78,7 +78,7 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
         setView(value.view);
         setTheme(value.theme);
         setSidebarAddCollapsed(value.sidebarAddCollapsed);
-        setDefaultSortDate(value.defaultSortDate);
+        setDefaultSortType(value.defaultSortType);
         setLimit(Number(value.limit));
         setShowIdColumn(value.showIdColumn);
 
@@ -220,27 +220,30 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
             />
 
             <form.Field
-              name="defaultSortDate"
+              name="defaultSortType"
               children={(field) => (
                 <Field>
-                  <FieldLabel htmlFor="defaultSortDate">Default sort date</FieldLabel>
+                  <FieldLabel htmlFor="defaultSortType">Default sort type</FieldLabel>
                   <Select
                     name={field.name}
                     value={field.state.value}
-                    onValueChange={(val) => field.handleChange(val as DefaultSortDate)}>
-                    <SelectTrigger id="defaultSortDate">
+                    onValueChange={(val) => field.handleChange(val as DefaultSortType)}>
+                    <SelectTrigger id="defaultSortType">
                       <SelectValue>
                         {field.state.value === "date_added" ? (
-                          <span>Created</span>
+                          <span className="normal-case">Date created</span>
+                        ) : field.state.value === "date_modified" ? (
+                          <span className="normal-case">Date updated</span>
                         ) : (
-                          <span>Updated</span>
+                          <span className="normal-case">Title</span>
                         )}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="date_added">Created</SelectItem>
-                        <SelectItem value="date_modified">Updated</SelectItem>
+                        <SelectItem value="title">Title</SelectItem>
+                        <SelectItem value="date_added">Date created</SelectItem>
+                        <SelectItem value="date_modified">Date updated</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>

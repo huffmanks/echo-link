@@ -2,7 +2,7 @@ import z from "zod";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import type { DefaultSortDate, SettingsTab, Theme, View } from "@/types";
+import type { DefaultSortType, SettingsTab, Theme, View } from "@/types";
 
 export const UrlSchema = z
   .url({ error: "Url is not valid." })
@@ -16,7 +16,7 @@ type SettingsStoreState = {
   view: View;
   theme: Theme;
   sidebarAddCollapsed: boolean;
-  defaultSortDate: DefaultSortDate;
+  defaultSortType: DefaultSortType;
   limit: number;
   showIdColumn: boolean;
   continueBulkEdit: boolean;
@@ -35,7 +35,7 @@ type SettingsStoreActions = {
   setView: (view: View) => void;
   setTheme: (theme: Theme) => void;
   setSidebarAddCollapsed: (sidebarAddCollapsed: boolean) => void;
-  setDefaultSortDate: (defaultSortDate: DefaultSortDate) => void;
+  setDefaultSortType: (defaultSortType: DefaultSortType) => void;
   setLimit: (limit: number) => void;
   setShowIdColumn: (showIdColumn: boolean) => void;
   setContinueBulkEdit: (continueBulkEdit: boolean) => void;
@@ -55,7 +55,7 @@ const initialSettingsStoreState: SettingsStoreState = {
   view: "grid",
   theme: "system",
   sidebarAddCollapsed: false,
-  defaultSortDate: "date_modified",
+  defaultSortType: "date_modified",
   limit: 10,
   showIdColumn: false,
   continueBulkEdit: false,
@@ -77,7 +77,7 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
       setView: (view) => set({ view }),
       setTheme: (theme) => set({ theme }),
       setSidebarAddCollapsed: (sidebarAddCollapsed) => set({ sidebarAddCollapsed }),
-      setDefaultSortDate: (defaultSortDate) => set({ defaultSortDate }),
+      setDefaultSortType: (defaultSortType) => set({ defaultSortType }),
       setLimit: (limit) => set({ limit }),
       setShowIdColumn: (showIdColumn) => set({ showIdColumn }),
       setContinueBulkEdit: (continueBulkEdit) => set({ continueBulkEdit }),

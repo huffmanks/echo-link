@@ -25,7 +25,7 @@ export interface SelectOption {
 export type EntityName = "bookmark" | "folder" | "tag";
 export type View = "table" | "list" | "grid";
 export type Theme = "light" | "dark" | "system";
-export type DefaultSortDate = "date_added" | "date_modified";
+export type DefaultSortType = "title" | "date_added" | "date_modified";
 
 export type SettingsTab = "user" | "ui" | "bookmark" | "cache";
 

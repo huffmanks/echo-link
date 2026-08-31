@@ -1,8 +1,8 @@
+import { CalendarClockIcon, CalendarPlusIcon } from "lucide-react";
 import { getDomain } from "tldts";
 import { useShallow } from "zustand/react/shallow";
 
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
-import { useSettingsStore } from "@/lib/store/settings";
 import { cn, getRelativeTimeString } from "@/lib/utils";
 import type { Bookmark } from "@/types";
 
@@ -33,8 +33,6 @@ export default function BookmarkListView({
       toggleIdSelection: state.toggleIdSelection,
     }))
   );
-
-  const defaultSortDate = useSettingsStore((state) => state.defaultSortDate);
 
   const allBookmarkIds = bookmarks.map((bookmark) => bookmark.id);
 
@@ -127,13 +125,24 @@ export default function BookmarkListView({
                   {bookmark.description}
                 </p>
               )}
-              {bookmark?.date_added && (
-                <p className={cn("text-xs", !bookmark?.description && "mt-2")}>
-                  {defaultSortDate === "date_added"
-                    ? getRelativeTimeString(new Date(bookmark.date_added))
-                    : getRelativeTimeString(new Date(bookmark.date_modified))}
-                </p>
-              )}
+              <div className="justify-content flex items-center gap-3">
+                <div
+                  className={cn(
+                    "justify-content flex items-center gap-1",
+                    !bookmark?.description && "mt-2"
+                  )}>
+                  <CalendarPlusIcon className="text-muted-foreground size-3" />
+                  <span className="text-xs">
+                    {getRelativeTimeString(new Date(bookmark.date_added))}
+                  </span>
+                </div>
+                <div className="justify-content flex items-center gap-1">
+                  <CalendarClockIcon className="text-muted-foreground size-3" />
+                  <span className="text-xs">
+                    {getRelativeTimeString(new Date(bookmark.date_modified))}
+                  </span>
+                </div>
+              </div>
             </section>
             <section className="mb-2 flex items-center gap-1">
               <SharedButton
