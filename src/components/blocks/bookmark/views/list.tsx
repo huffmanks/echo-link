@@ -64,7 +64,8 @@ export default function BookmarkListView({
           <div
             className={cn(
               "relative block w-full min-w-0 flex-1 rounded-md p-2 text-left transition-colors",
-              bookmark.unread && "bg-primary/15",
+              bookmark.unread && "bg-primary/10",
+              selectedIds.has(bookmark.id) && "bg-primary/15 hover:bg-primary/20",
               isBulkSelecting && "hover:ring-primary/50 cursor-pointer hover:ring-2"
             )}
             onClick={() => {

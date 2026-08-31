@@ -74,6 +74,7 @@ export default function BookmarkTableView({
               className={cn(
                 "border-muted relative transition-all outline-none",
                 bookmark.unread && "bg-primary/10",
+                selectedIds.has(bookmark.id) && "bg-primary/15 hover:bg-primary/20",
                 isBulkSelecting
                   ? "hover:ring-primary/50 cursor-pointer hover:ring-2"
                   : "hover:bg-muted/50 focus:bg-muted"
@@ -91,7 +92,7 @@ export default function BookmarkTableView({
                   handleOpenSheet(bookmark);
                 }
               }}>
-              <TableCell>
+              <TableCell onClick={(e) => e.stopPropagation()}>
                 <ItemCheckbox id={bookmark.id} />
               </TableCell>
               {showIdColumn && <TableCell>{bookmark.id}</TableCell>}

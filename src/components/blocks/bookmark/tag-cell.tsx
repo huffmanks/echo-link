@@ -4,6 +4,7 @@ import { HashIcon } from "lucide-react";
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { useSettingsStore } from "@/lib/store/settings";
 import { cn } from "@/lib/utils";
+import type { View } from "@/types";
 
 import { Badge, type BadgeVariants } from "@/components/ui/badge";
 import {
@@ -17,9 +18,15 @@ interface TagCellProps {
   tags: Array<string>;
   handleOpenChange: (open: boolean) => void;
   variant?: BadgeVariants["variant"];
+  view?: View;
 }
 
-export default function TagCell({ tags, handleOpenChange, variant = "secondary" }: TagCellProps) {
+export default function TagCell({
+  tags,
+  handleOpenChange,
+  variant = "secondary",
+  view,
+}: TagCellProps) {
   const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
   const limit = useSettingsStore((state) => state.limit);
 
@@ -36,8 +43,14 @@ export default function TagCell({ tags, handleOpenChange, variant = "secondary" 
     );
   }
 
-  const visibleTags = tags.slice(0, 2);
-  const remainingTags = tags.slice(2);
+  const isGridView = view === "grid";
+
+  const visibleTags = isGridView ? [] : tags.slice(0, 1);
+  const remainingTags = isGridView ? tags : tags.slice(1);
+
+  const triggerText = isGridView
+    ? `${tags.length} ${tags.length === 1 ? "tag" : "tags"}`
+    : `+${remainingTags.length} more`;
 
   return (
     <div className="flex flex-wrap items-center gap-1">
@@ -79,13 +92,14 @@ export default function TagCell({ tags, handleOpenChange, variant = "secondary" 
                     : "hover:bg-secondary/80",
                   isBulkSelecting && "pointer-events-none opacity-70"
                 )}>
-                +{remainingTags.length} more
+                {triggerText}
               </Badge>
             }></DropdownMenuTrigger>
           <DropdownMenuContent>
             {remainingTags.map((tag) => (
               <DropdownMenuItem
                 key={tag}
+                className="group"
                 render={
                   <Link
                     to="/dashboard/tags/$tagName"
@@ -94,7 +108,7 @@ export default function TagCell({ tags, handleOpenChange, variant = "secondary" 
                     className="w-full cursor-pointer"
                     onClick={() => handleOpenChange(false)}>
                     <span className="inline-flex gap-px">
-                      <span className="text-muted-foreground">#</span>
+                      <span className="text-primary group-hover:text-primary/90!">#</span>
                       <span>{tag}</span>
                     </span>
                   </Link>

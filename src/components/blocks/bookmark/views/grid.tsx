@@ -71,6 +71,7 @@ export default function BookmarkGridView({
             className={cn(
               "gap-4 pt-0 pb-4",
               bookmark.unread && "bg-primary/10",
+              selectedIds.has(bookmark.id) && "bg-primary/15 hover:bg-primary/20",
               isBulkSelecting && "hover:ring-primary/50 cursor-pointer hover:ring-2"
             )}
             onClick={() => {
@@ -78,7 +79,11 @@ export default function BookmarkGridView({
                 toggleIdSelection(bookmark.id);
               }
             }}>
-            <CardImage bookmark={bookmark} handleOpenSheet={handleOpenSheet} />
+            <CardImage
+              bookmark={bookmark}
+              handleOpenSheet={handleOpenSheet}
+              isSelected={selectedIds.has(bookmark.id)}
+            />
             <CardHeader className="pr-1 pl-3.5">
               <CardTitle className="flex min-w-0 items-center gap-2">
                 <BookmarkFavicon bookmark={bookmark} />
@@ -150,6 +155,7 @@ export default function BookmarkGridView({
                   tags={bookmark.tag_names}
                   handleOpenChange={handleOpenChange}
                   variant="invert"
+                  view="grid"
                 />
               </section>
             </CardContent>
@@ -163,9 +169,11 @@ export default function BookmarkGridView({
 function CardImage({
   bookmark,
   handleOpenSheet,
+  isSelected = false,
 }: {
   bookmark: Bookmark;
   handleOpenSheet: (bookmark: Bookmark) => void;
+  isSelected?: boolean;
 }) {
   const [hasError, setHasError] = useState(false);
 
@@ -200,20 +208,26 @@ function CardImage({
   return (
     <button
       tabIndex={isBulkSelecting ? -1 : 0}
-      className={cn("relative cursor-pointer", isBulkSelecting && "pointer-events-none")}
+      className="group relative cursor-pointer"
       aria-label="toggle expand sheet"
       onClick={() => {
         if (!isBulkSelecting) {
           handleOpenSheet(bookmark);
         }
       }}>
-      {bookmark.unread && (
-        <div className="bg-primary/5 absolute inset-0">
-          <div className="bg-primary absolute top-2 left-2 size-2 rounded-full"></div>
+      {(isSelected || bookmark.unread) && (
+        <div
+          className={cn(
+            "absolute inset-0 transition-colors",
+            isSelected ? "bg-primary/15 group-hover:bg-primary/20" : "bg-primary/10"
+          )}>
+          {bookmark.unread && (
+            <div className="bg-primary absolute top-2 left-2 size-2 rounded-full" />
+          )}
         </div>
       )}
 
-      <div className="absolute top-2 right-2">
+      <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
         <div
           className={cn(
             "overflow-hidden transition-[width] [interpolate-size:allow-keywords]",

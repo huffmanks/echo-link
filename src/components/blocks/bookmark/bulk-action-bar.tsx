@@ -84,7 +84,8 @@ export default function BulkActionBar({
       {isBulkSelecting && (
         <div
           className={cn(
-            "bg-card ring-foreground/10 grid gap-6 rounded-xl text-sm shadow-2xl ring-1 outline-none",
+            "bg-card/80 backdrop-blur-sm",
+            "ring-foreground/10 grid gap-6 rounded-xl text-sm shadow-2xl ring-1 outline-none",
             "fixed right-4 z-100 w-full max-w-[calc(100%-2rem)] sm:max-w-sm",
             "transition-all duration-300 ease-in-out",
             isOnBottom ? "bottom-4 pb-[env(safe-area-inset-bottom)]" : "top-4"

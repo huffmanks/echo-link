@@ -1,9 +1,5 @@
 # Todos
 
-## Fixes
-
-- [ ] Bulk selection better color bg if selected.
-
 ## New features
 
 ### Bulk edit
