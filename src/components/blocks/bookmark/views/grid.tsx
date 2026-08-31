@@ -70,8 +70,9 @@ export default function BookmarkGridView({
             key={bookmark.id}
             className={cn(
               "gap-4 pt-0 pb-4",
-              bookmark.unread && "bg-primary/10",
-              selectedIds.has(bookmark.id) && "bg-primary/15 hover:bg-primary/20",
+              selectedIds.has(bookmark.id)
+                ? "bg-primary/15 hover:bg-primary/20"
+                : !isBulkSelecting && bookmark.unread && "bg-primary/10",
               isBulkSelecting && "hover:ring-primary/50 cursor-pointer hover:ring-2"
             )}
             onClick={() => {
@@ -123,7 +124,11 @@ export default function BookmarkGridView({
                   </div>
                 )}
                 {bookmark?.date_modified && (
-                  <div className="justify-content flex items-center gap-1">
+                  <div
+                    className={cn(
+                      "justify-content flex items-center gap-1",
+                      !bookmark?.description && "mt-2"
+                    )}>
                     <CalendarClockIcon className="size-3" />
                     <span className="text-foreground text-xs">
                       {getRelativeTimeString(new Date(bookmark.date_modified))}
@@ -215,16 +220,13 @@ function CardImage({
           handleOpenSheet(bookmark);
         }
       }}>
-      {(isSelected || bookmark.unread) && (
-        <div
-          className={cn(
-            "absolute inset-0 transition-colors",
-            isSelected ? "bg-primary/15 group-hover:bg-primary/20" : "bg-primary/10"
-          )}>
-          {bookmark.unread && (
-            <div className="bg-primary absolute top-2 left-2 size-2 rounded-full" />
-          )}
+      {!isBulkSelecting && bookmark.unread && (
+        <div className="bg-primary/10 absolute inset-0 transition-colors">
+          <div className="bg-primary absolute top-2 left-2 size-2 rounded-full" />
         </div>
+      )}
+      {isSelected && (
+        <div className="bg-primary/15 group-hover:bg-primary/20 absolute inset-0 transition-colors" />
       )}
 
       <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>

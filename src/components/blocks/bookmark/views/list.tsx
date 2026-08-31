@@ -64,8 +64,9 @@ export default function BookmarkListView({
           <div
             className={cn(
               "relative block w-full min-w-0 flex-1 rounded-md p-2 text-left transition-colors",
-              bookmark.unread && "bg-primary/10",
-              selectedIds.has(bookmark.id) && "bg-primary/15 hover:bg-primary/20",
+              selectedIds.has(bookmark.id)
+                ? "bg-primary/15 hover:bg-primary/20"
+                : !isBulkSelecting && bookmark.unread && "bg-primary/10",
               isBulkSelecting && "hover:ring-primary/50 cursor-pointer hover:ring-2"
             )}
             onClick={() => {
@@ -73,7 +74,7 @@ export default function BookmarkListView({
                 toggleIdSelection(bookmark.id);
               }
             }}>
-            {bookmark.unread && (
+            {!isBulkSelecting && bookmark.unread && (
               <div className="bg-primary absolute top-1/2 right-5 size-2 -translate-y-1/2 rounded-full" />
             )}
             <section className="-mb-1 flex min-w-0 items-center justify-between gap-2">
@@ -121,28 +122,38 @@ export default function BookmarkListView({
                 <p
                   className={cn(
                     "line-clamp-2 text-xs",
-                    bookmark.unread ? "text-foreground/80" : "text-muted-foreground"
+                    !isBulkSelecting && bookmark.unread
+                      ? "text-foreground/80"
+                      : "text-muted-foreground"
                   )}>
                   {bookmark.description}
                 </p>
               )}
               <div className="justify-content flex items-center gap-3">
-                <div
-                  className={cn(
-                    "justify-content flex items-center gap-1",
-                    !bookmark?.description && "mt-2"
-                  )}>
-                  <CalendarPlusIcon className="text-muted-foreground size-3" />
-                  <span className="text-xs">
-                    {getRelativeTimeString(new Date(bookmark.date_added))}
-                  </span>
-                </div>
-                <div className="justify-content flex items-center gap-1">
-                  <CalendarClockIcon className="text-muted-foreground size-3" />
-                  <span className="text-xs">
-                    {getRelativeTimeString(new Date(bookmark.date_modified))}
-                  </span>
-                </div>
+                {bookmark?.date_added && (
+                  <div
+                    className={cn(
+                      "justify-content flex items-center gap-1",
+                      !bookmark?.description && "mt-2"
+                    )}>
+                    <CalendarPlusIcon className="text-muted-foreground size-3" />
+                    <span className="text-xs">
+                      {getRelativeTimeString(new Date(bookmark.date_added))}
+                    </span>
+                  </div>
+                )}
+                {bookmark?.date_modified && (
+                  <div
+                    className={cn(
+                      "justify-content flex items-center gap-1",
+                      !bookmark?.description && "mt-2"
+                    )}>
+                    <CalendarClockIcon className="text-muted-foreground size-3" />
+                    <span className="text-xs">
+                      {getRelativeTimeString(new Date(bookmark.date_modified))}
+                    </span>
+                  </div>
+                )}
               </div>
             </section>
             <section className="mb-2 flex items-center gap-1">

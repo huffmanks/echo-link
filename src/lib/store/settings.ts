@@ -57,7 +57,7 @@ const initialSettingsStoreState: SettingsStoreState = {
   view: "grid",
   theme: "system",
   sidebarAddCollapsed: false,
-  defaultSortType: "date_modified",
+  defaultSortType: "date_added",
   limit: 10,
   showArchived: false,
   showIdColumn: false,
