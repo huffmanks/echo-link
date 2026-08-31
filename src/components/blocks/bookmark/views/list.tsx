@@ -152,7 +152,7 @@ export default function BookmarkListView({
                 isShared={bookmark.shared}
               />
 
-              {bookmark.is_archived && <Badge variant="secondary">Archived</Badge>}
+              {bookmark.is_archived && <Badge variant="warning">Archived</Badge>}
 
               <TagCell tags={bookmark.tag_names} handleOpenChange={handleOpenChange} />
             </section>

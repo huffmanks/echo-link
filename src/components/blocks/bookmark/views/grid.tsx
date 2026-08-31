@@ -144,7 +144,7 @@ export default function BookmarkGridView({
                   isShared={bookmark.shared}
                 />
 
-                {bookmark.is_archived && <Badge variant="secondary">Archived</Badge>}
+                {bookmark.is_archived && <Badge variant="warning">Archived</Badge>}
 
                 <TagCell
                   tags={bookmark.tag_names}

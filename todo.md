@@ -2,7 +2,7 @@
 
 ## Fixes
 
-- [ ] Don't show archived by default. Only if filter is archived.
+- [ ] Bulk selection better color bg if selected.
 
 ## New features
 

@@ -18,6 +18,7 @@ type SettingsStoreState = {
   sidebarAddCollapsed: boolean;
   defaultSortType: DefaultSortType;
   limit: number;
+  showArchived: boolean;
   showIdColumn: boolean;
   continueBulkEdit: boolean;
   keepBulkSelection: boolean;
@@ -37,6 +38,7 @@ type SettingsStoreActions = {
   setSidebarAddCollapsed: (sidebarAddCollapsed: boolean) => void;
   setDefaultSortType: (defaultSortType: DefaultSortType) => void;
   setLimit: (limit: number) => void;
+  setShowArchived: (showArchived: boolean) => void;
   setShowIdColumn: (showIdColumn: boolean) => void;
   setContinueBulkEdit: (continueBulkEdit: boolean) => void;
   setKeepBulkSelection: (keepBulkSelection: boolean) => void;
@@ -57,6 +59,7 @@ const initialSettingsStoreState: SettingsStoreState = {
   sidebarAddCollapsed: false,
   defaultSortType: "date_modified",
   limit: 10,
+  showArchived: false,
   showIdColumn: false,
   continueBulkEdit: false,
   keepBulkSelection: false,
@@ -79,6 +82,7 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
       setSidebarAddCollapsed: (sidebarAddCollapsed) => set({ sidebarAddCollapsed }),
       setDefaultSortType: (defaultSortType) => set({ defaultSortType }),
       setLimit: (limit) => set({ limit }),
+      setShowArchived: (showArchived) => set({ showArchived }),
       setShowIdColumn: (showIdColumn) => set({ showIdColumn }),
       setContinueBulkEdit: (continueBulkEdit) => set({ continueBulkEdit }),
       setKeepBulkSelection: (keepBulkSelection) => set({ keepBulkSelection }),

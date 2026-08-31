@@ -10,6 +10,7 @@ import ActionDropdown from "@/components/blocks/bookmark/action-dropdown";
 import BookmarkFavicon from "@/components/blocks/bookmark/bookmark-favicon";
 import { AllCheckbox, ItemCheckbox } from "@/components/blocks/bookmark/checkboxes";
 import TagCell from "@/components/blocks/bookmark/tag-cell";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -57,6 +58,7 @@ export default function BookmarkTableView({
             <TableHead className="w-8.5"></TableHead>
             <TableHead className="w-64">Title</TableHead>
             <TableHead className="w-64">Link</TableHead>
+            <TableHead className="w-21.5">Status</TableHead>
             <TableHead className="w-64">Tags</TableHead>
             <TableHead className="w-48">Created</TableHead>
             <TableHead className="w-48">Updated</TableHead>
@@ -128,6 +130,18 @@ export default function BookmarkTableView({
                   {getDomain(bookmark.url)}
                 </a>
               </TableCell>
+              <TableCell
+                role="button"
+                className="cursor-pointer truncate"
+                onClick={() => {
+                  if (!isBulkSelecting) {
+                    handleOpenSheet(bookmark);
+                  }
+                }}>
+                <Badge variant={bookmark.is_archived ? "warning" : "primary"}>
+                  {bookmark.is_archived ? "Archived" : "Active"}
+                </Badge>
+              </TableCell>
               <TableCell className="min-w-0">
                 <TagCell tags={bookmark.tag_names} handleOpenChange={handleOpenChange} />
               </TableCell>
@@ -163,7 +177,9 @@ export default function BookmarkTableView({
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={showIdColumn ? 9 : 8} className="text-muted-foreground px-2 py-2.5">
+            <TableCell
+              colSpan={showIdColumn ? 10 : 9}
+              className="text-muted-foreground px-2 py-2.5">
               {isBulkSelecting ? `Selected: ${selectedIds.size}` : paginationLabel}
             </TableCell>
           </TableRow>

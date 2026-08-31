@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useSettingsStore } from "@/lib/store/settings";
 import type { PaginatedResponse } from "@/types";
 
-const { limit, defaultSortType } = useSettingsStore.getState();
+const { limit } = useSettingsStore.getState();
 
 export const SearchSchema = z.object({
   q: z.string().optional().catch(""),
@@ -26,6 +26,8 @@ export function transformData<T extends Record<string, any>>(
   rawData: PaginatedResponse<T>,
   params: SearchParams
 ) {
+  const { defaultSortType, showArchived } = useSettingsStore.getState();
+
   let result = [...rawData.results];
 
   result = result.filter((item) => {
@@ -33,6 +35,10 @@ export function transformData<T extends Record<string, any>>(
 
     if (archived === true && item.is_archived !== true) return false;
     if (active === true && item.is_archived !== false) return false;
+
+    if (archived === undefined && active === undefined) {
+      if (!showArchived && item.is_archived === true) return false;
+    }
 
     if (read === true && item.unread !== false) return false;
     if (unread === true && item.unread !== true) return false;

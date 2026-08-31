@@ -40,12 +40,14 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
     sidebarAddCollapsed,
     defaultSortType,
     limit,
+    showArchived,
     showIdColumn,
     setView,
     setTheme,
     setSidebarAddCollapsed,
     setDefaultSortType,
     setLimit,
+    setShowArchived,
     setShowIdColumn,
   } = useSettingsStore(
     useShallow((state) => ({
@@ -54,12 +56,14 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
       sidebarAddCollapsed: state.sidebarAddCollapsed,
       defaultSortType: state.defaultSortType,
       limit: state.limit,
+      showArchived: state.showArchived,
       showIdColumn: state.showIdColumn,
       setView: state.setView,
       setTheme: state.setTheme,
       setSidebarAddCollapsed: state.setSidebarAddCollapsed,
       setDefaultSortType: state.setDefaultSortType,
       setLimit: state.setLimit,
+      setShowArchived: state.setShowArchived,
       setShowIdColumn: state.setShowIdColumn,
     }))
   );
@@ -71,6 +75,7 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
       sidebarAddCollapsed,
       defaultSortType,
       limit,
+      showArchived,
       showIdColumn,
     },
     onSubmit: ({ value }) => {
@@ -80,6 +85,7 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
         setSidebarAddCollapsed(value.sidebarAddCollapsed);
         setDefaultSortType(value.defaultSortType);
         setLimit(Number(value.limit));
+        setShowArchived(value.showArchived);
         setShowIdColumn(value.showIdColumn);
 
         toast.success("Settings updated!");
@@ -247,6 +253,26 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                </Field>
+              )}
+            />
+
+            <form.Field
+              name="showArchived"
+              children={(field) => (
+                <Field orientation="horizontal">
+                  <FieldContent>
+                    <FieldLabel htmlFor="showArchived">Show archived</FieldLabel>
+                    <FieldDescription>
+                      Toggle whether to show archived bookmarks in results.
+                    </FieldDescription>
+                  </FieldContent>
+                  <Switch
+                    id="showArchived"
+                    checked={field.state.value}
+                    onBlur={field.handleBlur}
+                    onCheckedChange={(checked) => field.handleChange(checked)}
+                  />
                 </Field>
               )}
             />
