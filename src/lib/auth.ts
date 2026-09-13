@@ -1,5 +1,7 @@
+import { linkdingFetch } from "@/lib/api";
+import { VALIDATION_STALE_TIME } from "@/lib/constants";
 import { type Url, useSettingsStore } from "@/lib/store/settings";
-import { getErrorMessage } from "@/lib/utils";
+import { getErrorMessage, isHttpError } from "@/lib/utils";
 
 export function handleSetup({ username, linkdingUrl }: { username: string; linkdingUrl: Url }) {
   const { setUsername, setLinkdingUrl, setIsSetupComplete } = useSettingsStore.getState();
@@ -10,50 +12,48 @@ export function handleSetup({ username, linkdingUrl }: { username: string; linkd
 }
 
 export function logout() {
-  const { setIsSetupComplete } = useSettingsStore.getState();
+  const { setIsSetupComplete, setLastValidatedAt } = useSettingsStore.getState();
+  setLastValidatedAt(0);
   setIsSetupComplete(false);
 }
 
-export async function validate() {
+export async function validate(options: { force?: boolean } = {}) {
+  const { isSetupComplete, lastValidatedAt, setLastValidatedAt } = useSettingsStore.getState();
+
+  const isStale = Date.now() - lastValidatedAt > VALIDATION_STALE_TIME;
+  if (!options.force && lastValidatedAt > 0 && !isStale) {
+    return { isValid: true, errorMessage: null };
+  }
+
   if (typeof navigator !== "undefined" && !navigator.onLine) {
+    if (isSetupComplete) setLastValidatedAt(Date.now());
     return { isValid: true, errorMessage: null, isOffline: true };
   }
 
   try {
-    const res = await fetch("/api/user/profile/", {
-      signal: AbortSignal.timeout(5000),
-      headers: {
-        ...(import.meta.env.DEV && {
-          Authorization: `Token ${import.meta.env.VITE_LINKDING_API_TOKEN}`,
-        }),
-        "Content-Type": "application/json",
-      },
-    });
+    await linkdingFetch("user/profile/");
 
-    if (res.status === 401 || res.status === 403) {
-      logout();
-      return { isValid: false, errorMessage: "Invalid API token or credentials." };
-    }
-
-    if (!res.ok) {
-      return { isValid: true, errorMessage: `Server error (${res.status})` };
-    }
+    setLastValidatedAt(Date.now());
 
     return {
       isValid: true,
       errorMessage: null,
     };
   } catch (error: unknown) {
+    if (isHttpError(error) && (error.status === 401 || error.status === 403)) {
+      logout();
+      return { isValid: false, errorMessage: "Invalid API token or credentials." };
+    }
+
     const errorMessage = getErrorMessage(error);
 
-    const { isSetupComplete } = useSettingsStore.getState();
-
-    if (isSetupComplete) {
+    if (typeof navigator !== "undefined" && !navigator.onLine && isSetupComplete) {
+      setLastValidatedAt(Date.now());
       return { isValid: true, isOffline: true, errorMessage };
     }
 
     return {
-      isValid: true,
+      isValid: false,
       errorMessage,
     };
   }

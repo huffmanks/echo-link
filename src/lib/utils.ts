@@ -204,6 +204,19 @@ export function getErrorMessage(error: unknown) {
   }
 }
 
+type HttpError = Error & {
+  status: number;
+};
+
+export function isHttpError(error: unknown): error is HttpError {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    typeof (error as Record<string, unknown>).status === "number"
+  );
+}
+
 export function getPaginationLabel({
   count,
   limit,

@@ -11,9 +11,13 @@ export const Route = createFileRoute("/(protected)")({
   component: RouteComponent,
   beforeLoad: async () => {
     const { isSetupComplete } = useSettingsStore.getState();
+    if (!isSetupComplete) {
+      throw redirect({ to: "/", replace: true });
+    }
+
     const { isValid } = await validate();
 
-    if (!isValid || !isSetupComplete) {
+    if (!isValid) {
       throw redirect({ to: "/", replace: true });
     }
   },

@@ -16,6 +16,7 @@ export const APP_TITLE = "EchoLink";
 export const APP_DESCRIPTION = "Self-hosted client app for Linkding.";
 
 export const DEFAULT_TTL = 60 * 60 * 24 * 90;
+export const VALIDATION_STALE_TIME = 1000 * 60 * 15;
 
 export const SIDEBAR_NAV_MAIN = [
   {

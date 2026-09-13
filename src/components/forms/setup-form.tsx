@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
@@ -8,7 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { handleSetup, validate } from "@/lib/auth";
 import { UrlSchema, useSettingsStore } from "@/lib/store/settings";
-import { cn, joinUrlPath } from "@/lib/utils";
+import { cn, getErrorMessage, joinUrlPath } from "@/lib/utils";
 
 import CustomFieldError from "@/components/forms/custom-field-error";
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,7 @@ import { Input } from "@/components/ui/input";
 type SetupFormProps = React.ComponentProps<"div">;
 
 export function SetupForm({ className, ...props }: SetupFormProps) {
-  const [isValid, setIsValid] = useState(false);
-  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>("");
   const navigate = useNavigate();
 
@@ -40,28 +39,31 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
       username: isDev ? username : config?.ECHOLINK_USER_NAME || username,
       linkdingUrl: isDev ? linkdingUrl : config?.LINKDING_EXTERNAL_URL || linkdingUrl,
     },
-    onSubmit: ({ value }) => {
-      if (!isValid && errorMessage) {
-        toast.error(errorMessage);
-        return;
-      }
+    onSubmit: async ({ value }) => {
+      setIsSubmitting(true);
+      setErrorMessage(null);
 
-      handleSetup({ ...value });
-      navigate({ to: "/dashboard", search: { limit } });
+      try {
+        handleSetup({ ...value });
+
+        const { isValid, errorMessage: authError } = await validate({ force: true });
+
+        setIsSubmitting(false);
+
+        if (!isValid) {
+          throw new Error(authError || "Invalid API token or connection failed.");
+        }
+
+        navigate({ to: "/dashboard", search: { limit } });
+      } catch (error: unknown) {
+        const errorMsg = getErrorMessage(error);
+        setErrorMessage(errorMsg);
+        toast.error(errorMsg);
+      } finally {
+        setIsSubmitting(false);
+      }
     },
   });
-
-  useEffect(() => {
-    async function checkAuth() {
-      const { isValid: initialIsValid, errorMessage: initialErrorMessage } = await validate();
-
-      setIsValid(initialIsValid);
-      setErrorMessage(initialErrorMessage);
-      setHasCheckedAuth(true);
-    }
-
-    checkAuth();
-  }, []);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -133,7 +135,10 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
                       aria-invalid={!field.state.meta.isValid}
                       placeholder="http://localhost:9090"
                       onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => {
+                        if (errorMessage) setErrorMessage(null);
+                        field.handleChange(e.target.value);
+                      }}
                     />
                     {!field.state.meta.isValid && (
                       <CustomFieldError errors={field.state.meta.errors} />
@@ -142,7 +147,7 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
                 )}
               />
 
-              {hasCheckedAuth && !isValid && (
+              {errorMessage && (
                 <div>
                   <h2 className="text-destructive font-medium">LINKDING_API_TOKEN</h2>
                   <p className="text-sm">
@@ -167,7 +172,7 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
               )}
 
               <Field>
-                <Button className="cursor-pointer" type="submit" disabled={!isValid}>
+                <Button className="cursor-pointer" type="submit" disabled={isSubmitting}>
                   Finish
                 </Button>
               </Field>

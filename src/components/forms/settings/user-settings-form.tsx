@@ -1,8 +1,11 @@
+import { useState } from "react";
+
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useShallow } from "zustand/react/shallow";
 
+import { validate } from "@/lib/auth";
 import { UrlSchema, useSettingsStore } from "@/lib/store/settings";
 import { cn, getErrorMessage } from "@/lib/utils";
 
@@ -14,6 +17,8 @@ import { Input } from "@/components/ui/input";
 type UserSettingsFormProps = React.ComponentProps<"div">;
 
 export function UserSettingsForm({ className, ...props }: UserSettingsFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { username, linkdingUrl, setUsername, setLinkdingUrl } = useSettingsStore(
     useShallow((state) => ({
       username: state.username,
@@ -28,15 +33,32 @@ export function UserSettingsForm({ className, ...props }: UserSettingsFormProps)
       username,
       linkdingUrl,
     },
-    onSubmit: ({ value }) => {
+    onSubmit: async ({ value }) => {
+      setIsSubmitting(true);
+
       try {
+        const urlChanged = value.linkdingUrl !== linkdingUrl;
         setUsername(value.username);
-        setLinkdingUrl(value.linkdingUrl);
+
+        if (urlChanged) {
+          const previousUrl = linkdingUrl;
+          setLinkdingUrl(value.linkdingUrl);
+
+          const { isValid, errorMessage } = await validate({ force: true });
+
+          if (!isValid) {
+            setLinkdingUrl(previousUrl);
+            toast.error(errorMessage || "Failed to connect to the new Linkding URL.");
+            return;
+          }
+        }
 
         toast.success("Settings updated!");
       } catch (error: unknown) {
         const errorMessage = getErrorMessage(error);
         toast.error(errorMessage);
+      } finally {
+        setIsSubmitting(false);
       }
     },
   });
@@ -101,7 +123,7 @@ export function UserSettingsForm({ className, ...props }: UserSettingsFormProps)
         </FieldSet>
 
         <FieldGroup className="mt-8">
-          <Button className="text-foreground cursor-pointer" type="submit">
+          <Button className="text-foreground cursor-pointer" type="submit" disabled={isSubmitting}>
             Update
           </Button>
         </FieldGroup>

@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { validate } from "@/lib/auth";
 import { useSettingsStore } from "@/lib/store/settings";
 
 import { SetupForm } from "@/components/forms/setup-form";
@@ -11,11 +10,7 @@ export const Route = createFileRoute("/")({
   beforeLoad: async () => {
     const { isSetupComplete, limit } = useSettingsStore.getState();
 
-    if (!isSetupComplete) return;
-
-    const { isValid } = await validate();
-
-    if (isValid) {
+    if (isSetupComplete) {
       throw redirect({ to: "/dashboard", search: { limit } });
     }
   },

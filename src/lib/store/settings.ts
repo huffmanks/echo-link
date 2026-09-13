@@ -27,6 +27,7 @@ type SettingsStoreState = {
   sharedDefault: boolean;
   autoMarkRead: boolean;
   isSetupComplete: boolean;
+  lastValidatedAt: number;
   lastActiveTab: SettingsTab;
 };
 
@@ -47,6 +48,7 @@ type SettingsStoreActions = {
   setSharedDefault: (sharedDefault: boolean) => void;
   setAutoMarkRead: (autoMarkRead: boolean) => void;
   setIsSetupComplete: (isSetupComplete: boolean) => void;
+  setLastValidatedAt: (lastValidatedAt: number) => void;
   setLastActiveTab: (lastActiveTab: SettingsTab) => void;
   reset: () => void;
 };
@@ -68,6 +70,7 @@ const initialSettingsStoreState: SettingsStoreState = {
   sharedDefault: false,
   autoMarkRead: true,
   isSetupComplete: false,
+  lastValidatedAt: 0,
   lastActiveTab: "user",
 };
 
@@ -91,6 +94,7 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
       setSharedDefault: (sharedDefault) => set({ sharedDefault }),
       setAutoMarkRead: (autoMarkRead) => set({ autoMarkRead }),
       setIsSetupComplete: (isSetupComplete) => set({ isSetupComplete }),
+      setLastValidatedAt: (lastValidatedAt) => set({ lastValidatedAt }),
       setLastActiveTab: (lastActiveTab) => set({ lastActiveTab }),
       reset: () => set(initialSettingsStoreState),
     }),
