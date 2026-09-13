@@ -8,7 +8,7 @@ import {
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import { NetworkFirst, NetworkOnly, StaleWhileRevalidate } from "workbox-strategies";
 
-const DEFAULT_TTL = 60 * 60 * 24 * 90;
+const DEFAULT_TTL = 60 * 60 * 24 * 7;
 
 declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: any;
@@ -47,6 +47,7 @@ registerRoute(
       new ExpirationPlugin({
         maxEntries: 5000,
         maxAgeSeconds: DEFAULT_TTL,
+        purgeOnQuotaError: true,
       }),
     ],
   })
@@ -60,10 +61,17 @@ registerRoute(
       new ExpirationPlugin({
         maxEntries: 1000,
         maxAgeSeconds: DEFAULT_TTL,
+        purgeOnQuotaError: true,
       }),
       {
-        handlerDidError: async () => {
-          return new Response(JSON.stringify({ offline: true, results: [] }), {
+        handlerDidError: async ({ request }) => {
+          const cacheResponse = await caches.match(request);
+          if (cacheResponse) {
+            return cacheResponse;
+          }
+
+          return new Response(JSON.stringify({ offline: true, error: "API Unreachable" }), {
+            status: 503,
             headers: { "Content-Type": "application/json" },
           });
         },
@@ -77,9 +85,13 @@ registerRoute(
   new StaleWhileRevalidate({
     cacheName: "app-assets",
     plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
       new ExpirationPlugin({
         maxEntries: 500,
         maxAgeSeconds: DEFAULT_TTL,
+        purgeOnQuotaError: true,
       }),
     ],
   })

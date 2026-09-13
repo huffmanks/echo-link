@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useQueryClient } from "@tanstack/react-query";
+import { onlineManager, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
 
@@ -21,6 +21,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
 
   const isOnlineRef = useRef(isOnline);
   const isConnectedRef = useRef(isConnected);
+  const prevConnectedRef = useRef(false);
 
   const isInitializedRef = useRef(false);
 
@@ -292,6 +293,17 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
 
     flushOutbox();
   }, [queryClient, isConnected]);
+
+  useEffect(() => {
+    onlineManager.setOnline(isConnected);
+  }, [isConnected]);
+
+  useEffect(() => {
+    if (isConnected && !prevConnectedRef.current) {
+      queryClient.invalidateQueries();
+    }
+    prevConnectedRef.current = isConnected;
+  }, [isConnected, queryClient]);
 
   return (
     <BackgroundSyncContext.Provider value={{ isSyncing, isOnline, isConnected, purgeAssets }}>
