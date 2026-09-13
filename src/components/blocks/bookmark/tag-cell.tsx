@@ -44,40 +44,34 @@ export default function TagCell({
   }
 
   const isGridView = view === "grid";
+  const hasMultipleTags = tags.length > 1;
 
-  const visibleTags = isGridView ? [] : tags.slice(0, 1);
-  const remainingTags = isGridView ? tags : tags.slice(1);
-
-  const triggerText = isGridView
-    ? `${tags.length} ${tags.length === 1 ? "tag" : "tags"}`
-    : `+${remainingTags.length} more`;
+  const hideFirstTagOnDesktop = isGridView && hasMultipleTags;
 
   return (
     <div className="flex flex-wrap items-center gap-1">
-      {visibleTags.map((tag) => (
-        <Badge
-          key={tag}
-          variant={variant}
-          render={
-            <Link
-              to="/dashboard/tags/$tagName"
-              params={{ tagName: tag }}
-              search={{ limit }}
-              tabIndex={isBulkSelecting ? -1 : 0}
-              className={cn(isBulkSelecting && "pointer-events-none opacity-70")}
-              onClick={() => handleOpenChange(false)}>
-              <span className="inline-flex items-center gap-px">
-                <HashIcon
-                  className={cn("size-3", variant === "invert" ? "text-muted" : "text-primary")}
-                />
-                <span>{tag}</span>
-              </span>
-            </Link>
-          }
-        />
-      ))}
+      <Badge
+        variant={variant}
+        className={cn(hideFirstTagOnDesktop && "sm:hidden")}
+        render={
+          <Link
+            to="/dashboard/tags/$tagName"
+            params={{ tagName: tags[0] }}
+            search={{ limit }}
+            tabIndex={isBulkSelecting ? -1 : 0}
+            className={cn(isBulkSelecting && "pointer-events-none opacity-70")}
+            onClick={() => handleOpenChange(false)}>
+            <span className="inline-flex items-center gap-px">
+              <HashIcon
+                className={cn("size-3", variant === "invert" ? "text-muted" : "text-primary")}
+              />
+              <span>{tags[0]}</span>
+            </span>
+          </Link>
+        }
+      />
 
-      {remainingTags.length > 0 && (
+      {hasMultipleTags && (
         <DropdownMenu>
           <DropdownMenuTrigger
             nativeButton={false}
@@ -92,28 +86,42 @@ export default function TagCell({
                     : "hover:bg-secondary/80",
                   isBulkSelecting && "pointer-events-none opacity-70"
                 )}>
-                {triggerText}
+                {isGridView ? (
+                  <>
+                    <span className="sm:hidden">+{tags.length - 1} more</span>
+                    <span className="hidden sm:inline">
+                      {tags.length} {tags.length === 1 ? "tag" : "tags"}
+                    </span>
+                  </>
+                ) : (
+                  `+${tags.length - 1} more`
+                )}
               </Badge>
             }></DropdownMenuTrigger>
           <DropdownMenuContent>
-            {remainingTags.map((tag) => (
-              <DropdownMenuItem
-                key={tag}
-                className="group"
-                render={
-                  <Link
-                    to="/dashboard/tags/$tagName"
-                    params={{ tagName: tag }}
-                    search={{ limit }}
-                    className="w-full cursor-pointer"
-                    onClick={() => handleOpenChange(false)}>
-                    <span className="inline-flex gap-px">
-                      <span className="text-primary group-hover:text-primary/90!">#</span>
-                      <span>{tag}</span>
-                    </span>
-                  </Link>
-                }></DropdownMenuItem>
-            ))}
+            {tags.map((tag, index) => {
+              if (index === 0 && !isGridView) return null;
+
+              return (
+                <DropdownMenuItem
+                  key={tag}
+                  className="group"
+                  render={
+                    <Link
+                      to="/dashboard/tags/$tagName"
+                      params={{ tagName: tag }}
+                      search={{ limit }}
+                      className="w-full cursor-pointer"
+                      onClick={() => handleOpenChange(false)}>
+                      <span className="inline-flex gap-px">
+                        <span className="text-primary group-hover:text-primary/90!">#</span>
+                        <span>{tag}</span>
+                      </span>
+                    </Link>
+                  }
+                />
+              );
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
