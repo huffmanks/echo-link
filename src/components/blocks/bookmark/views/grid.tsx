@@ -188,7 +188,7 @@ function CardImage({
   });
 
   const isBulkSelecting = useBulkSelectionStore((state) => state.isBulkSelecting);
-  const linkdingUrl = useSettingsStore((state) => state.linkdingUrl);
+  const linkdingExternalUrl = useSettingsStore((state) => state.linkdingExternalUrl);
 
   const assets = useMemo(() => {
     if (isLoading || !data?.results) return null;
@@ -201,7 +201,7 @@ function CardImage({
         .sort((a, b) => b.date_created.localeCompare(a.date_created))[0];
 
       if (latestImage) {
-        image = joinUrlPath(linkdingUrl, `/assets/${latestImage.id}`);
+        image = joinUrlPath(linkdingExternalUrl, `/assets/${latestImage.id}`);
       }
     }
 

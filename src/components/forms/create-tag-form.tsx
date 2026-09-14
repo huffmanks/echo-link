@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import z from "zod";
 
+import { useBackgroundSync } from "@/context/background-sync";
 import { useGlobalModal } from "@/context/global-modal";
 import { useCreateTag } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
@@ -23,6 +24,7 @@ export function CreateTagForm() {
   const { mutateAsync, isPending } = useCreateTag();
   const { closeGlobalDialog } = useGlobalModal();
   const { data } = useSuspenseQuery(getAllQueryOptions.tags);
+  const { isConnected } = useBackgroundSync();
 
   const form = useForm({
     defaultValues: {
@@ -31,7 +33,7 @@ export function CreateTagForm() {
     onSubmit: async ({ value }) => {
       const result = await mutateAsync(value);
 
-      if ("offline" in result && result.offline) {
+      if (("offline" in result && result.offline) || !isConnected) {
         toast.info("Added to queue. Will be created once connection is restored.");
       } else {
         toast.success("Tag created.");

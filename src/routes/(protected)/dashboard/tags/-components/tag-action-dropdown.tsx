@@ -34,9 +34,9 @@ interface ActionDropdownProps {
 }
 
 export default function TagActionDropdown({ tag }: ActionDropdownProps) {
-  const { linkdingUrl, limit } = useSettingsStore(
+  const { linkdingExternalUrl, limit } = useSettingsStore(
     useShallow((state) => ({
-      linkdingUrl: state.linkdingUrl,
+      linkdingExternalUrl: state.linkdingExternalUrl,
       limit: state.limit,
     }))
   );
@@ -72,7 +72,7 @@ export default function TagActionDropdown({ tag }: ActionDropdownProps) {
               nativeButton={false}
               render={
                 <a
-                  href={joinUrlPath(linkdingUrl, "/admin/bookmarks/tag/")}
+                  href={joinUrlPath(linkdingExternalUrl, "/admin/bookmarks/tag/")}
                   target="_blank"
                   rel="noopener noreferrer">
                   Edit

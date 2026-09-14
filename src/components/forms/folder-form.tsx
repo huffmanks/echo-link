@@ -4,6 +4,7 @@ import { useCanGoBack, useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
 
+import { useBackgroundSync } from "@/context/background-sync";
 import { useCreateFolder, useEditFolder } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store/settings";
@@ -31,6 +32,7 @@ export function FolderForm({ folder, className, ...props }: FolderFormProps) {
   const canGoBack = useCanGoBack();
   const { mutateAsync: createFolder, isPending } = useCreateFolder();
   const { mutate: editFolder } = useEditFolder();
+  const { isConnected } = useBackgroundSync();
 
   const { data } = useSuspenseQuery(getAllQueryOptions.tags);
   const { data: folders } = useSuspenseQuery(getAllQueryOptions.folders);
@@ -78,7 +80,7 @@ export function FolderForm({ folder, className, ...props }: FolderFormProps) {
 
           form.reset();
 
-          if ("offline" in result && result.offline) {
+          if (("offline" in result && result.offline) || !isConnected) {
             toast.info("Added to queue. Will be created once connection is restored.");
           } else {
             toast.success("Folder created.");

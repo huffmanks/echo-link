@@ -23,16 +23,16 @@ export function NavSecondary({
 }: {} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   const { pathname } = useLocation();
   const { isMobile, setOpenMobile } = useSidebar();
-  const linkdingUrl = useSettingsStore((state) => state.linkdingUrl);
+  const linkdingExternalUrl = useSettingsStore((state) => state.linkdingExternalUrl);
 
   const items = React.useMemo(() => {
     return SIDEBAR_NAV_SECONDARY.map((item) => {
       const newItem = { ...item };
 
-      if (!linkdingUrl) return newItem;
+      if (!linkdingExternalUrl) return newItem;
 
       if (newItem.isExternal) {
-        newItem.url = joinUrlPath(linkdingUrl, newItem.url || null);
+        newItem.url = joinUrlPath(linkdingExternalUrl, newItem.url || null);
       } else {
         return {
           ...newItem,
@@ -42,7 +42,7 @@ export function NavSecondary({
 
       return newItem;
     });
-  }, [linkdingUrl, pathname]);
+  }, [linkdingExternalUrl, pathname]);
 
   function handleCloseSidebar(isExternal: boolean) {
     if (isExternal || !isMobile) return;

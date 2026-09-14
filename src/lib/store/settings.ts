@@ -12,7 +12,7 @@ export type Url = z.infer<typeof UrlSchema>;
 
 type SettingsStoreState = {
   username: string;
-  linkdingUrl: Url;
+  linkdingExternalUrl: Url;
   view: View;
   theme: Theme;
   sidebarAddCollapsed: boolean;
@@ -33,7 +33,7 @@ type SettingsStoreState = {
 
 type SettingsStoreActions = {
   setUsername: (username: string) => void;
-  setLinkdingUrl: (linkdingUrl: Url) => void;
+  setLinkdingExternalUrl: (linkdingExternalUrl: Url) => void;
   setView: (view: View) => void;
   setTheme: (theme: Theme) => void;
   setSidebarAddCollapsed: (sidebarAddCollapsed: boolean) => void;
@@ -55,7 +55,7 @@ type SettingsStoreActions = {
 
 const initialSettingsStoreState: SettingsStoreState = {
   username: "Default user",
-  linkdingUrl: "http://localhost:9090",
+  linkdingExternalUrl: "http://localhost:9090",
   view: "grid",
   theme: "system",
   sidebarAddCollapsed: false,
@@ -79,7 +79,7 @@ export const useSettingsStore = create<SettingsStoreState & SettingsStoreActions
     (set) => ({
       ...initialSettingsStoreState,
       setUsername: (username) => set({ username }),
-      setLinkdingUrl: (linkdingUrl) => set({ linkdingUrl }),
+      setLinkdingExternalUrl: (linkdingExternalUrl) => set({ linkdingExternalUrl }),
       setView: (view) => set({ view }),
       setTheme: (theme) => set({ theme }),
       setSidebarAddCollapsed: (sidebarAddCollapsed) => set({ sidebarAddCollapsed }),

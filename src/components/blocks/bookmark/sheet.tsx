@@ -103,9 +103,9 @@ function Content({
     queryFn: () => linkdingFetch<{ results: Array<Asset> }>(`bookmarks/${bookmark.id}/assets`),
   });
 
-  const { linkdingUrl, autoMarkRead } = useSettingsStore(
+  const { linkdingExternalUrl, autoMarkRead } = useSettingsStore(
     useShallow((state) => ({
-      linkdingUrl: state.linkdingUrl,
+      linkdingExternalUrl: state.linkdingExternalUrl,
       autoMarkRead: state.autoMarkRead,
     }))
   );
@@ -126,7 +126,7 @@ function Content({
       .sort((a, b) => b.date_created.localeCompare(a.date_created))
       .map((item) => {
         return {
-          url: joinUrlPath(linkdingUrl, `/assets/${item.id}`),
+          url: joinUrlPath(linkdingExternalUrl, `/assets/${item.id}`),
           displayName: `Created: ${formatToLocalTime(item.date_created)}`,
         };
       });
@@ -139,7 +139,7 @@ function Content({
         .sort((a, b) => b.date_created.localeCompare(a.date_created))[0];
 
       if (latestImage) {
-        image = joinUrlPath(linkdingUrl, `/assets/${latestImage.id}`);
+        image = joinUrlPath(linkdingExternalUrl, `/assets/${latestImage.id}`);
       }
     }
 

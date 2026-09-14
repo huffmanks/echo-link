@@ -24,10 +24,10 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
   const [tokenErrorMessage, setTokenErrorMessage] = useState<string | null>("");
   const navigate = useNavigate();
 
-  const { username, linkdingUrl, limit } = useSettingsStore(
+  const { username, linkdingExternalUrl, limit } = useSettingsStore(
     useShallow((state) => ({
       username: state.username,
-      linkdingUrl: state.linkdingUrl,
+      linkdingExternalUrl: state.linkdingExternalUrl,
       limit: state.limit,
     }))
   );
@@ -38,7 +38,9 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
   const form = useForm({
     defaultValues: {
       username: isDev ? username : config?.ECHOLINK_USER_NAME || username,
-      linkdingUrl: isDev ? linkdingUrl : config?.LINKDING_EXTERNAL_URL || linkdingUrl,
+      linkdingExternalUrl: isDev
+        ? linkdingExternalUrl
+        : config?.LINKDING_EXTERNAL_URL || linkdingExternalUrl,
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
@@ -54,7 +56,7 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
           return;
         }
 
-        const result = await verifyUrlHealth(value.linkdingUrl);
+        const result = await verifyUrlHealth(value.linkdingExternalUrl);
 
         if (!result.reachable) {
           toast.error("Unable to connect. Please verify the URL.");
@@ -133,15 +135,15 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
               />
 
               <form.Field
-                name="linkdingUrl"
+                name="linkdingExternalUrl"
                 validators={{
                   onBlur: UrlSchema,
                 }}
                 children={(field) => (
                   <Field data-invalid={!field.state.meta.isValid}>
-                    <FieldLabel htmlFor="linkdingUrl">Linkding external URL</FieldLabel>
+                    <FieldLabel htmlFor="linkdingExternalUrl">Linkding external URL</FieldLabel>
                     <Input
-                      id="linkdingUrl"
+                      id="linkdingExternalUrl"
                       type="text"
                       autoComplete="off"
                       value={field.state.value}
@@ -166,10 +168,10 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
                   <p className="text-sm">
                     <span>{tokenErrorMessage}</span>
                     <span> </span>
-                    <form.Subscribe selector={(state) => state.values.linkdingUrl}>
-                      {(linkdingUrlInput) => (
+                    <form.Subscribe selector={(state) => state.values.linkdingExternalUrl}>
+                      {(linkdingExternalUrlInput) => (
                         <a
-                          href={joinUrlPath(linkdingUrlInput, "/settings/integrations")}
+                          href={joinUrlPath(linkdingExternalUrlInput, "/settings/integrations")}
                           className="text-primary text-sm underline-offset-4 outline-none focus-within:underline hover:underline"
                           target="_blank"
                           rel="noopener noreferrer">

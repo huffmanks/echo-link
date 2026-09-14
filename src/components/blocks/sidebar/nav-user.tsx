@@ -25,9 +25,9 @@ import {
 export function NavUser() {
   const navigate = useNavigate();
 
-  const { linkdingUrl, username } = useSettingsStore(
+  const { linkdingExternalUrl, username } = useSettingsStore(
     useShallow((state) => ({
-      linkdingUrl: state.linkdingUrl,
+      linkdingExternalUrl: state.linkdingExternalUrl,
       username: state.username,
     }))
   );
@@ -37,15 +37,15 @@ export function NavUser() {
     return SIDEBAR_NAV_SECONDARY.map((item) => {
       const newItem = { ...item };
 
-      if (!linkdingUrl) return newItem;
+      if (!linkdingExternalUrl) return newItem;
 
       if (newItem.isExternal) {
-        newItem.url = joinUrlPath(linkdingUrl, newItem.url || null);
+        newItem.url = joinUrlPath(linkdingExternalUrl, newItem.url || null);
       }
 
       return newItem;
     });
-  }, [linkdingUrl]);
+  }, [linkdingExternalUrl]);
 
   function handleLogout() {
     logout();

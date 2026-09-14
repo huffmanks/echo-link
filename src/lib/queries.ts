@@ -3,6 +3,8 @@ import { queryOptions } from "@tanstack/react-query";
 import { linkdingFetch } from "@/lib/api";
 import type { Bookmark, BookmarkCheck, Folder, PaginatedResponse, Tag } from "@/types";
 
+import { useSettingsStore } from "./store/settings";
+
 export const getAllQueryOptions = {
   bookmarks: queryOptions({
     queryKey: ["bookmarks"],
@@ -56,15 +58,19 @@ export const getAllQueryOptions = {
 };
 
 async function fetchAllBookmarks(params?: Record<string, string>) {
+  const { showArchived } = useSettingsStore.getState();
+
   const [regular, archived] = await Promise.all([
     linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks", { params }),
-    linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks/archived", { params }),
+    showArchived
+      ? linkdingFetch<PaginatedResponse<Bookmark>>("bookmarks/archived", { params })
+      : null,
   ]);
 
   return {
-    count: regular.count + archived.count,
+    count: regular.count + (archived?.count ?? 0),
     next: null,
     previous: null,
-    results: [...regular.results, ...archived.results],
+    results: archived ? [...regular.results, ...archived.results] : regular.results,
   };
 }

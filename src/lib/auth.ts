@@ -3,11 +3,17 @@ import { VALIDATION_STALE_TIME } from "@/lib/constants";
 import { type Url, useSettingsStore } from "@/lib/store/settings";
 import { getErrorMessage, isHttpError } from "@/lib/utils";
 
-export function handleSetup({ username, linkdingUrl }: { username: string; linkdingUrl: Url }) {
-  const { setUsername, setLinkdingUrl, setIsSetupComplete } = useSettingsStore.getState();
+export function handleSetup({
+  username,
+  linkdingExternalUrl,
+}: {
+  username: string;
+  linkdingExternalUrl: Url;
+}) {
+  const { setUsername, setLinkdingExternalUrl, setIsSetupComplete } = useSettingsStore.getState();
 
   setUsername(username);
-  setLinkdingUrl(linkdingUrl);
+  setLinkdingExternalUrl(linkdingExternalUrl);
   setIsSetupComplete(true);
 }
 

@@ -19,28 +19,30 @@ type UserSettingsFormProps = React.ComponentProps<"div">;
 export function UserSettingsForm({ className, ...props }: UserSettingsFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { username, linkdingUrl, setUsername, setLinkdingUrl } = useSettingsStore(
+  const { username, linkdingExternalUrl, setUsername, setLinkdingExternalUrl } = useSettingsStore(
     useShallow((state) => ({
       username: state.username,
-      linkdingUrl: state.linkdingUrl,
+      linkdingExternalUrl: state.linkdingExternalUrl,
       setUsername: state.setUsername,
-      setLinkdingUrl: state.setLinkdingUrl,
+      setLinkdingExternalUrl: state.setLinkdingExternalUrl,
     }))
   );
 
   const form = useForm({
     defaultValues: {
       username,
-      linkdingUrl,
+      linkdingExternalUrl,
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
 
       try {
-        const changedUrl = linkdingUrl !== value.linkdingUrl;
+        let hasWarning = false;
+
+        const changedUrl = linkdingExternalUrl !== value.linkdingExternalUrl;
 
         if (changedUrl) {
-          const result = await verifyUrlHealth(value.linkdingUrl);
+          const result = await verifyUrlHealth(value.linkdingExternalUrl);
 
           if (!result.reachable) {
             toast.error("Unable to connect. Please verify the URL.");
@@ -48,14 +50,17 @@ export function UserSettingsForm({ className, ...props }: UserSettingsFormProps)
           }
 
           if (result.warning) {
+            hasWarning = true;
             toast.warning(result.message || "Saved localhost URL without verification.");
           }
 
-          setLinkdingUrl(value.linkdingUrl);
+          setLinkdingExternalUrl(value.linkdingExternalUrl);
         }
         setUsername(value.username);
 
-        toast.success("Settings updated!");
+        if (!hasWarning) {
+          toast.success("Settings updated!");
+        }
       } catch (error) {
         const errorMessage = getErrorMessage(error);
         toast.error(errorMessage);
@@ -100,15 +105,15 @@ export function UserSettingsForm({ className, ...props }: UserSettingsFormProps)
             />
 
             <form.Field
-              name="linkdingUrl"
+              name="linkdingExternalUrl"
               validators={{
                 onBlur: UrlSchema,
               }}
               children={(field) => (
                 <Field data-invalid={!field.state.meta.isValid}>
-                  <FieldLabel htmlFor="linkdingUrl">Linkding URL</FieldLabel>
+                  <FieldLabel htmlFor="linkdingExternalUrl">Linkding external URL</FieldLabel>
                   <Input
-                    id="linkdingUrl"
+                    id="linkdingExternalUrl"
                     type="text"
                     value={field.state.value}
                     aria-invalid={!field.state.meta.isValid}

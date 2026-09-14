@@ -78,23 +78,21 @@ func proxyLinkding(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	proxy := httputil.NewSingleHostReverseProxy(target)
-
-	proxy.Director = func(req *http.Request) {
-		req.URL.Scheme = target.Scheme
-		req.URL.Host = target.Host
-		req.Host = target.Host
-
-		req.Header.Set("Authorization", "Token "+apiToken)
-	}
-
-	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
-		sendError(
-			w,
-			http.StatusBadGateway,
-			"API_TARGET_UNREACHABLE",
-			err,
-		)
+	proxy := &httputil.ReverseProxy{
+		Rewrite: func(pr *httputil.ProxyRequest) {
+			pr.Out.URL.Scheme = target.Scheme
+			pr.Out.URL.Host = target.Host
+			pr.Out.Host = target.Host
+			pr.Out.Header.Set("Authorization", "Token "+apiToken)
+		},
+		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err error) {
+			sendError(
+				w,
+				http.StatusBadGateway,
+				"API_TARGET_UNREACHABLE",
+				err,
+			)
+		},
 	}
 
 	proxy.ServeHTTP(w, r)
@@ -155,7 +153,7 @@ func handleCheckURL(w http.ResponseWriter, r *http.Request) {
 		if isLocalhost {
 			reachable = true
 			warning = true
-			message = "Localhost URL cannot be verified from inside Docker. Saved at your own risk."
+			message = "Localhost URL cannot be verified. The URL will still be saved and may work normally."
 		}
 	}
 

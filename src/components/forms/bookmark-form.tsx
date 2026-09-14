@@ -33,7 +33,7 @@ type BookmarkFormProps = React.ComponentProps<"div"> & {
 export function BookmarkForm({ bookmark, className, ...props }: BookmarkFormProps) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const { isOnline } = useBackgroundSync();
+  const { isOnline, isConnected } = useBackgroundSync();
 
   const queryClient = useQueryClient();
   const { mutateAsync: createBookmark, isPending } = useCreateBookmark();
@@ -104,7 +104,7 @@ export function BookmarkForm({ bookmark, className, ...props }: BookmarkFormProp
 
           form.reset();
 
-          if ("offline" in result && result.offline) {
+          if (("offline" in result && result.offline) || !isConnected) {
             toast.info("Added to queue. Will be created once connection is restored.");
           } else {
             toast.success("Bookmark created.");
