@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { BackgroundSyncContext } from "@/context/background-sync";
 import { linkdingFetch } from "@/lib/api";
 import { db } from "@/lib/db";
+import { useSettingsStore } from "@/lib/store/settings";
 import type { CacheName } from "@/types";
 
 export function BackgroundSyncProvider({ children }: { children: React.ReactNode }) {
@@ -40,6 +41,8 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
     const prevConnected = isConnectedRef.current;
     const isInitial = !isInitializedRef.current;
 
+    const { isSetupComplete } = useSettingsStore.getState();
+
     let toastedThisCheck = false;
 
     if (currentOnline !== prevOnline) {
@@ -72,7 +75,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
         isConnectedRef.current = true;
         setIsConnected(true);
 
-        if (!isInitial && !toastedThisCheck) {
+        if (!isInitial && !toastedThisCheck && isSetupComplete) {
           toast.success("API Connected", { description: "Connected to Linkding instance." });
         }
       }
@@ -83,7 +86,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
         isConnectedRef.current = false;
         setIsConnected(false);
 
-        if (!isInitial && !toastedThisCheck) {
+        if (!isInitial && !toastedThisCheck && isSetupComplete) {
           toast.error("API Unreachable", { description: "Cannot connect to Linkding instance." });
         }
       }
