@@ -44,14 +44,11 @@ export function UserSettingsForm({ className, ...props }: UserSettingsFormProps)
         if (changedUrl) {
           const result = await verifyUrlHealth(value.linkdingExternalUrl);
 
-          if (!result.reachable) {
-            toast.error("Unable to connect. Please verify the URL.");
-            return;
-          }
-
-          if (result.warning) {
+          if (!result.reachable || result.warning) {
             hasWarning = true;
-            toast.warning(result.message || "Saved localhost URL without verification.");
+            toast.warning(
+              "Unable to connect. Saved the Linkding external URL without verification."
+            );
           }
 
           setLinkdingExternalUrl(value.linkdingExternalUrl);

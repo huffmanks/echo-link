@@ -58,13 +58,8 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
 
         const result = await verifyUrlHealth(value.linkdingExternalUrl);
 
-        if (!result.reachable) {
-          toast.error("Unable to connect. Please verify the URL.");
-          return;
-        }
-
-        if (result.warning) {
-          toast.warning(result.message || "Saved localhost URL without verification.");
+        if (!result.reachable || result.warning) {
+          toast.warning("Unable to connect. Saved the Linkding external URL without verification.");
         }
 
         handleSetup({ ...value });
