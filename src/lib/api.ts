@@ -37,18 +37,16 @@ export async function linkdingFetch<T>(
   }
 
   if (!response.ok) {
-    const errorData = await response.json().catch(async () => {
-      try {
-        const text = await response.text();
-        return { detail: text };
-      } catch {
-        return {};
-      }
-    });
+    const errorData = await response.json().catch(() => ({}));
 
-    const error = new Error(errorData.detail || `API Error: ${response.status}`) as any;
+    const error = new Error(errorData.detail || `API Error: ${response.status}`) as Error & {
+      status: number;
+      response: Response;
+    };
+
     error.status = response.status;
     error.response = response;
+
     throw error;
   }
 
@@ -74,5 +72,26 @@ export async function safeEnsure(queryClient: QueryClient, options: any) {
     const fallback = { count: 0, next: null, previous: null, results: [], offline: true };
     queryClient.setQueryData(options.queryKey, fallback);
     return fallback;
+  }
+}
+
+export interface CheckUrlResult {
+  reachable: boolean;
+  warning?: boolean;
+  message?: string;
+}
+
+export async function verifyUrlHealth(url: string): Promise<CheckUrlResult> {
+  try {
+    const res = await fetch("/app/check-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    });
+
+    if (!res.ok) return { reachable: false };
+    return await res.json();
+  } catch {
+    return { reachable: false };
   }
 }

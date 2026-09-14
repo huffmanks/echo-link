@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useShallow } from "zustand/react/shallow";
 
-import { validate } from "@/lib/auth";
+import { verifyUrlHealth } from "@/lib/api";
 import { UrlSchema, useSettingsStore } from "@/lib/store/settings";
 import { cn, getErrorMessage } from "@/lib/utils";
 
@@ -37,24 +37,26 @@ export function UserSettingsForm({ className, ...props }: UserSettingsFormProps)
       setIsSubmitting(true);
 
       try {
-        const urlChanged = value.linkdingUrl !== linkdingUrl;
-        setUsername(value.username);
+        const changedUrl = linkdingUrl !== value.linkdingUrl;
 
-        if (urlChanged) {
-          const previousUrl = linkdingUrl;
-          setLinkdingUrl(value.linkdingUrl);
+        if (changedUrl) {
+          const result = await verifyUrlHealth(value.linkdingUrl);
 
-          const { isValid, errorMessage } = await validate({ force: true });
-
-          if (!isValid) {
-            setLinkdingUrl(previousUrl);
-            toast.error(errorMessage || "Failed to connect to the new Linkding URL.");
+          if (!result.reachable) {
+            toast.error("Unable to connect. Please verify the URL.");
             return;
           }
+
+          if (result.warning) {
+            toast.warning(result.message || "Saved localhost URL without verification.");
+          }
+
+          setLinkdingUrl(value.linkdingUrl);
         }
+        setUsername(value.username);
 
         toast.success("Settings updated!");
-      } catch (error: unknown) {
+      } catch (error) {
         const errorMessage = getErrorMessage(error);
         toast.error(errorMessage);
       } finally {

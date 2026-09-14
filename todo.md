@@ -1,5 +1,11 @@
 # Todos
 
+## Fixes
+
+- [ ] On setup form dont show toast for disconnected or connected to API.
+- [ ] If show archived false in settings still get an API hit and error in console. Should skip the call.
+- [ ] Fix verifyUrlHealth for prod not getting valid localhost url to pass on go server if docker doesnt use extra_hosts. This is expected but need to test and cleanup up error messages. [src/lib/api.ts](src/lib/api.ts), [src/components/forms/settings/user-settings-form.tsx](src/components/forms/settings/user-settings-form.tsx), [src/components/forms/setup-form.tsx](src/components/forms/setup-form.tsx), [handleCheckURL](server.go)
+
 ## New features
 
 ### Bulk edit

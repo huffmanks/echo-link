@@ -41,8 +41,11 @@ export async function validate(options: { force?: boolean } = {}) {
     };
   } catch (error: unknown) {
     if (isHttpError(error) && (error.status === 401 || error.status === 403)) {
-      logout();
-      return { isValid: false, errorMessage: "Invalid API token or credentials." };
+      return {
+        isValid: false,
+        errorMessage: "Invalid API token or credentials.",
+        status: error.status,
+      };
     }
 
     const errorMessage = getErrorMessage(error);
@@ -55,6 +58,7 @@ export async function validate(options: { force?: boolean } = {}) {
     return {
       isValid: false,
       errorMessage,
+      status: isHttpError(error) ? error.status : undefined,
     };
   }
 }

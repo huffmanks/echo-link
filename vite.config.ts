@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { type Plugin, defineConfig } from "vite";
 
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
@@ -8,6 +8,38 @@ import { URL, fileURLToPath } from "node:url";
 import { VitePWA } from "vite-plugin-pwa";
 
 import pkg from "./package.json";
+
+function urlCheckPlugin(): Plugin {
+  return {
+    name: "url-check-api",
+    configureServer(server) {
+      server.middlewares.use("/app/check-url", async (req, res) => {
+        if (req.method !== "POST") {
+          res.statusCode = 405;
+          return res.end(JSON.stringify({ error: "Method not allowed" }));
+        }
+
+        let body = "";
+        req.on("data", (chunk) => {
+          body += chunk;
+        });
+        req.on("end", async () => {
+          try {
+            const { url } = JSON.parse(body);
+
+            const targetRes = await fetch(url, { method: "HEAD" });
+
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ reachable: targetRes.ok }));
+          } catch {
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ reachable: false }));
+          }
+        });
+      });
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -33,6 +65,7 @@ export default defineConfig(({ mode }) => {
       }),
       viteReact(),
       tailwindcss(),
+      urlCheckPlugin(),
       VitePWA({
         disable: mode === "development",
         devOptions: {

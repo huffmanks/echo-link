@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import z from "zod";
 import { useShallow } from "zustand/react/shallow";
 
+import { verifyUrlHealth } from "@/lib/api";
 import { handleSetup, validate } from "@/lib/auth";
 import { UrlSchema, useSettingsStore } from "@/lib/store/settings";
 import { cn, getErrorMessage, joinUrlPath } from "@/lib/utils";
@@ -20,7 +21,7 @@ type SetupFormProps = React.ComponentProps<"div">;
 
 export function SetupForm({ className, ...props }: SetupFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>("");
+  const [tokenErrorMessage, setTokenErrorMessage] = useState<string | null>("");
   const navigate = useNavigate();
 
   const { username, linkdingUrl, limit } = useSettingsStore(
@@ -41,23 +42,35 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
     },
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
-      setErrorMessage(null);
+      setTokenErrorMessage(null);
 
       try {
-        handleSetup({ ...value });
+        const { isValid, status } = await validate({ force: true });
 
-        const { isValid, errorMessage: authError } = await validate({ force: true });
-
-        setIsSubmitting(false);
-
-        if (!isValid) {
-          throw new Error(authError || "Invalid API token or connection failed.");
+        if ((!isValid && status === 401) || status === 403) {
+          setTokenErrorMessage(
+            "API token is invalid or missing. Provide a valid token in your .env to continue."
+          );
+          return;
         }
+
+        const result = await verifyUrlHealth(value.linkdingUrl);
+
+        if (!result.reachable) {
+          toast.error("Unable to connect. Please verify the URL.");
+          return;
+        }
+
+        if (result.warning) {
+          toast.warning(result.message || "Saved localhost URL without verification.");
+        }
+
+        handleSetup({ ...value });
 
         navigate({ to: "/dashboard", search: { limit } });
       } catch (error: unknown) {
         const errorMsg = getErrorMessage(error);
-        setErrorMessage(errorMsg);
+        setTokenErrorMessage(errorMsg);
         toast.error(errorMsg);
       } finally {
         setIsSubmitting(false);
@@ -136,7 +149,7 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
                       placeholder="http://localhost:9090"
                       onBlur={field.handleBlur}
                       onChange={(e) => {
-                        if (errorMessage) setErrorMessage(null);
+                        if (tokenErrorMessage) setTokenErrorMessage(null);
                         field.handleChange(e.target.value);
                       }}
                     />
@@ -147,14 +160,11 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
                 )}
               />
 
-              {errorMessage && (
+              {tokenErrorMessage && (
                 <div>
                   <h2 className="text-destructive font-medium">LINKDING_API_TOKEN</h2>
                   <p className="text-sm">
-                    <span>
-                      API token is invalid or missing. Provide a valid token in your .env to
-                      continue.
-                    </span>
+                    <span>{tokenErrorMessage}</span>
                     <span> </span>
                     <form.Subscribe selector={(state) => state.values.linkdingUrl}>
                       {(linkdingUrlInput) => (
