@@ -9,7 +9,7 @@ import { useShallow } from "zustand/react/shallow";
 import { verifyUrlHealth } from "@/lib/api";
 import { handleSetup, validate } from "@/lib/auth";
 import { UrlSchema, useSettingsStore } from "@/lib/store/settings";
-import { cn, getErrorMessage, joinUrlPath } from "@/lib/utils";
+import { cn, getError, joinUrlPath } from "@/lib/utils";
 
 import CustomFieldError from "@/components/forms/custom-field-error";
 import { Button } from "@/components/ui/button";
@@ -66,9 +66,9 @@ export function SetupForm({ className, ...props }: SetupFormProps) {
 
         navigate({ to: "/dashboard", search: { limit } });
       } catch (error: unknown) {
-        const errorMsg = getErrorMessage(error);
-        setTokenErrorMessage(errorMsg);
-        toast.error(errorMsg);
+        const { message } = getError(error);
+        setTokenErrorMessage(message);
+        toast.error(message);
       } finally {
         setIsSubmitting(false);
       }

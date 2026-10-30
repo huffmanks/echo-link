@@ -1,13 +1,14 @@
 import {
-  type ErrorComponentProps,
+  
   useCanGoBack,
   useLocation,
-  useRouter,
+  useRouter
 } from "@tanstack/react-router";
+import type {ErrorComponentProps} from "@tanstack/react-router";
 import { DatabaseZapIcon } from "lucide-react";
 
 import { useBackgroundSync } from "@/context/background-sync";
-import { cn } from "@/lib/utils";
+import { cn, getError } from "@/lib/utils";
 
 import FullScreenWrapper from "@/components/full-screen-wrapper";
 import { Button } from "@/components/ui/button";
@@ -58,10 +59,13 @@ export function EmptyCache() {
 function ErrorDisplay(props: ErrorComponentProps) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
+
+  const error = getError(props.error);
+
   return (
     <>
-      <h1 className="mb-3 font-mono text-2xl">{props.error.name}</h1>
-      <p className="text-muted-foreground mb-6">{props.error.message}</p>
+      <h1 className="mb-3 font-mono text-2xl">{error.name}</h1>
+      <p className="text-muted-foreground mb-6">{error.message}</p>
       <div className="flex items-center gap-4">
         {canGoBack && (
           <Button

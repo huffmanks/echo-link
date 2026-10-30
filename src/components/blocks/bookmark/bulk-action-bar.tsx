@@ -1,4 +1,5 @@
-import { type Dispatch, type SetStateAction, useState } from "react";
+import {   useState } from "react";
+import type {Dispatch, SetStateAction} from "react";
 
 import {
   ArrowDownFromLineIcon,
@@ -8,7 +9,7 @@ import {
 } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 
-import { type BulkAction, useBulkSelectionStore } from "@/lib/store/bulk-selection";
+import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { cn } from "@/lib/utils";
 import type { EntityName, SelectOption } from "@/types";
 
@@ -138,7 +139,7 @@ export default function BulkActionBar({
                 <Select
                   items={selectOptions}
                   value={bulkAction}
-                  onValueChange={(value) => setCurrentBulkAction(value as BulkAction)}>
+                  onValueChange={(value) => setCurrentBulkAction(value)}>
                   <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue
                       placeholder="Select Action"

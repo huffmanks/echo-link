@@ -1,12 +1,13 @@
-import { type ComponentProps, createContext, use } from "react";
+import {  createContext, use } from "react";
+import type {ComponentProps} from "react";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 
 import { cn } from "@/lib/utils";
 
-function resolveClassName<S>(
-  className: string | ((state: S) => string | undefined) | undefined,
-  state: S
+function resolveClassName<TState>(
+  className: string | ((state: TState) => string | undefined) | undefined,
+  state: TState
 ): string | undefined {
   return typeof className === "function" ? className(state) : className;
 }

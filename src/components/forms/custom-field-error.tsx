@@ -1,5 +1,5 @@
 import type { ValidationError } from "@tanstack/react-form";
-import { z } from "zod";
+import type { z } from "zod";
 
 import { FieldError } from "@/components/ui/field";
 

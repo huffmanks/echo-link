@@ -1,10 +1,11 @@
 import { useState } from "react";
 
 import {
-  type ActiveGlobalDialog,
-  type ActiveGlobalDrawer,
-  GlobalModalContext,
+  
+  
+  GlobalModalContext
 } from "@/context/global-modal";
+import type {ActiveGlobalDialog, ActiveGlobalDrawer} from "@/context/global-modal";
 
 export function GlobalModalProvider({ children }: { children: React.ReactNode }) {
   const [activeGlobalDialog, setActiveGlobalDialog] = useState<ActiveGlobalDialog>(null);

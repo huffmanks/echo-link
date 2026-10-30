@@ -125,7 +125,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
         const MAX_BATCH = 10;
         const clientId = clientIdRef.current!;
 
-        let claimed: Array<any> = [];
+        const claimed: Array<any> = [];
         await db.transaction("rw", db.outbox, async () => {
           const all = await db.outbox.orderBy("timestamp").toArray();
           const now = Date.now();
@@ -162,7 +162,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
             try {
               const mergeIntoCache = async () => {
                 const replaceInQuery = (
-                  queryKey: string[],
+                  queryKey: Array<string>,
                   matcher: (it: any) => boolean,
                   replacement: any
                 ) => {
@@ -245,7 +245,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
               };
 
               await mergeIntoCache();
-            } catch (e) {
+            } catch (_error) {
               try {
                 queryClient.invalidateQueries();
               } catch {}
@@ -253,7 +253,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
 
             try {
               purgeAssets("linkding-api-cache");
-            } catch (e) {}
+            } catch (_error) {}
           } catch (error) {
             isConnectedRef.current = false;
             setIsConnected(false);
@@ -266,7 +266,7 @@ export function BackgroundSyncProvider({ children }: { children: React.ReactNode
                   lockedAt: null,
                 });
               }
-            } catch (e) {}
+            } catch (_error) {}
 
             toast.error("Syncing failed for an item", {
               description: String((error as any)?.message || error),

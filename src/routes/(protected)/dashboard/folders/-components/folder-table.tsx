@@ -50,7 +50,7 @@ export default function FolderTable({
 
   const { mutate: editFolder } = useEditFolder();
 
-  const debouncedSave = useDebouncedCallback((newOrder: Folder[]) => {
+  const debouncedSave = useDebouncedCallback((newOrder: Array<Folder>) => {
     newOrder.forEach((item, index) => {
       if (item.order !== index) {
         editFolder({ ...item, id: item.id, order: index });
@@ -58,7 +58,7 @@ export default function FolderTable({
     });
   }, 500);
 
-  function handleReorder(newOrder: Folder[]) {
+  function handleReorder(newOrder: Array<Folder>) {
     setItems(newOrder);
   }
 

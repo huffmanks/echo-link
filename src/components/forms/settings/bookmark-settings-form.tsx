@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 import { useSettingsStore } from "@/lib/store/settings";
-import { cn, getErrorMessage } from "@/lib/utils";
+import { cn, getError } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -72,8 +72,8 @@ export function BookmarkSettingsForm({ className, ...props }: BookmarkSettingsFo
 
         toast.success("Settings updated!");
       } catch (error: unknown) {
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+        const { message } = getError(error);
+        toast.error(message);
       }
     },
   });

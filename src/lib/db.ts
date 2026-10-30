@@ -1,4 +1,5 @@
-import Dexie, { type Table } from "dexie";
+import Dexie from "dexie";
+import type {Table} from "dexie";
 
 export interface OutboxItem {
   id?: number;

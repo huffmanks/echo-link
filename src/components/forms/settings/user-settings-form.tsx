@@ -7,7 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { verifyUrlHealth } from "@/lib/api";
 import { UrlSchema, useSettingsStore } from "@/lib/store/settings";
-import { cn, getErrorMessage } from "@/lib/utils";
+import { cn, getError } from "@/lib/utils";
 
 import CustomFieldError from "@/components/forms/custom-field-error";
 import { Button } from "@/components/ui/button";
@@ -59,8 +59,8 @@ export function UserSettingsForm({ className, ...props }: UserSettingsFormProps)
           toast.success("Settings updated!");
         }
       } catch (error) {
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+        const { message } = getError(error);
+        toast.error(message);
       } finally {
         setIsSubmitting(false);
       }

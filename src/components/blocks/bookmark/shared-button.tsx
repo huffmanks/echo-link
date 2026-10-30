@@ -4,7 +4,7 @@ import { LockIcon, Share2Icon } from "lucide-react";
 import { toast } from "sonner";
 
 import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
-import { cn, getErrorMessage } from "@/lib/utils";
+import { cn, getError } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,8 +36,8 @@ export default function SharedButton({ title, text, url, isShared }: SharedButto
       }
     } catch (error) {
       if (error instanceof Error && error.name !== "AbortError") {
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+        const { message } = getError(error);
+        toast.error(message);
       }
     } finally {
       setIsSharing(false);

@@ -8,7 +8,7 @@ import { useBackgroundSync } from "@/context/background-sync";
 import { useCreateFolder, useEditFolder } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store/settings";
-import { cn, getErrorMessage, processValue, stringToStringArray } from "@/lib/utils";
+import { cn, getError, processValue, stringToStringArray } from "@/lib/utils";
 import type { Folder } from "@/types";
 
 import { ComboboxCreate } from "@/components/forms/combobox-create";
@@ -93,8 +93,8 @@ export function FolderForm({ folder, className, ...props }: FolderFormProps) {
           router.navigate({ to: "/dashboard", search: { limit } });
         }
       } catch (error) {
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+        const { message } = getError(error);
+        toast.error(message);
       }
     },
   });

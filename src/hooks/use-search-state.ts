@@ -1,9 +1,5 @@
-import {
-  type RegisteredRouter,
-  type RouteIds,
-  useNavigate,
-  useSearch,
-} from "@tanstack/react-router";
+import type { RegisteredRouter, RouteIds } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 import type { SearchParams } from "@/lib/search";
 
@@ -16,7 +12,7 @@ export function useSearchState<TID extends AppRouteId>(routeId: TID) {
   const setParams = (updater: (prev: SearchParams) => Partial<SearchParams>) => {
     navigate({
       search: (prev: any) => {
-        const next = updater(prev as SearchParams);
+        const next = updater(prev);
         return {
           ...prev,
           ...next,
@@ -24,11 +20,13 @@ export function useSearchState<TID extends AppRouteId>(routeId: TID) {
         };
       },
       replace: true,
-    } as any);
+    } as never);
   };
 
   const toggleArrayValue = (key: keyof SearchParams, value: string) => {
-    const current = (search[key] as Array<string>) || [];
+    const current = search[key];
+    if (!Array.isArray(current)) return;
+
     const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
 
     setParams((prev) => ({ ...prev, [key]: next, page: 1 }));

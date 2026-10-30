@@ -81,7 +81,7 @@ function RouteComponent() {
         },
         error: "Error, something went wrong!",
       });
-    } catch (error) {}
+    } catch (_error) {}
   }
 
   function handlePostBulkAction() {

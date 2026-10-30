@@ -8,12 +8,12 @@ export interface UseDebouncedCallbackOptions {
   leading?: boolean;
 }
 
-export type UseDebouncedCallbackReturnValue<T extends (...args: any[]) => any> = ((
-  ...args: Parameters<T>
+export type UseDebouncedCallbackReturnValue<TCallback extends (...args: Array<any>) => any> = ((
+  ...args: Parameters<TCallback>
 ) => void) & { flush: () => void; cancel: () => void };
 
-export function useDebouncedCallback<T extends (...args: any[]) => any>(
-  callback: T,
+export function useDebouncedCallback<TCallback extends (...args: Array<any>) => any>(
+  callback: TCallback,
   options: number | UseDebouncedCallbackOptions
 ) {
   const { delay, flushOnUnmount, leading } =
@@ -26,7 +26,7 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
 
   const lastCallback = useMemo(() => {
     const currentCallback = Object.assign(
-      (...args: Parameters<T>) => {
+      (...args: Parameters<TCallback>) => {
         window.clearTimeout(debounceTimerRef.current);
 
         const isFirstCall = currentCallback._isFirstCall;
@@ -120,9 +120,4 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
   );
 
   return lastCallback;
-}
-
-export namespace useDebouncedCallback {
-  export type Options = UseDebouncedCallbackOptions;
-  export type ReturnValue<T extends (...args: any[]) => any> = UseDebouncedCallbackReturnValue<T>;
 }

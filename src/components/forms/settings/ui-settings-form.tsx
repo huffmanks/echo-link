@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useShallow } from "zustand/react/shallow";
 
 import { useSettingsStore } from "@/lib/store/settings";
-import { cn, getErrorMessage } from "@/lib/utils";
+import { cn, getError } from "@/lib/utils";
 import type { DefaultSortType, Theme, View } from "@/types";
 
 import CustomFieldError from "@/components/forms/custom-field-error";
@@ -90,8 +90,8 @@ export function UiSettingsForm({ className, ...props }: UiSettingsFormProps) {
 
         toast.success("Settings updated!");
       } catch (error: unknown) {
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+        const { message } = getError(error);
+        toast.error(message);
       }
     },
   });

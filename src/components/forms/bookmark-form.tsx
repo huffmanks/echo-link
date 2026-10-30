@@ -9,7 +9,7 @@ import { useBackgroundSync } from "@/context/background-sync";
 import { useCreateBookmark, useEditBookmark } from "@/lib/mutations";
 import { getAllQueryOptions } from "@/lib/queries";
 import { useSettingsStore } from "@/lib/store/settings";
-import { cn, getErrorMessage } from "@/lib/utils";
+import { cn, getError } from "@/lib/utils";
 import type { Bookmark } from "@/types";
 
 import { ComboboxCreate } from "@/components/forms/combobox-create";
@@ -117,8 +117,8 @@ export function BookmarkForm({ bookmark, className, ...props }: BookmarkFormProp
           router.navigate({ to: "/dashboard", search: { limit } });
         }
       } catch (error) {
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage);
+        const { message } = getError(error);
+        toast.error(message);
       }
     },
   });

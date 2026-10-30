@@ -1,12 +1,12 @@
-import { QueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 
 import { logout } from "@/lib/auth";
 import { cleanUrl } from "@/lib/utils";
 
-export async function linkdingFetch<T>(
+export async function linkdingFetch<TResponse>(
   endpoint: string,
   { params, ...options }: RequestInit & { params?: Record<string, string> } = {}
-): Promise<T> {
+): Promise<TResponse> {
   const cleanEndpoint = endpoint.replace(/^\//, "");
   const normalizedPath = cleanEndpoint.endsWith("/") ? cleanEndpoint : `${cleanEndpoint}/`;
 
@@ -28,7 +28,7 @@ export async function linkdingFetch<T>(
         Authorization: `Token ${import.meta.env.VITE_LINKDING_API_TOKEN}`,
       }),
       "Content-Type": "application/json",
-      ...options?.headers,
+      ...options.headers,
     },
   });
 
@@ -50,7 +50,7 @@ export async function linkdingFetch<T>(
     throw error;
   }
 
-  if (response.status === 204) return {} as T;
+  if (response.status === 204) return {} as TResponse;
 
   const data = await response.json();
 

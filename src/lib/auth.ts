@@ -1,7 +1,8 @@
 import { linkdingFetch } from "@/lib/api";
 import { VALIDATION_STALE_TIME } from "@/lib/constants";
-import { type Url, useSettingsStore } from "@/lib/store/settings";
-import { getErrorMessage, isHttpError } from "@/lib/utils";
+import {  useSettingsStore } from "@/lib/store/settings";
+import type {Url} from "@/lib/store/settings";
+import { getError, isHttpError } from "@/lib/utils";
 
 export function handleSetup({
   username,
@@ -54,7 +55,7 @@ export async function validate(options: { force?: boolean } = {}) {
       };
     }
 
-    const errorMessage = getErrorMessage(error);
+    const { message: errorMessage } = getError(error);
 
     if (typeof navigator !== "undefined" && !navigator.onLine && isSetupComplete) {
       setLastValidatedAt(Date.now());

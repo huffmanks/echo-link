@@ -1,4 +1,5 @@
-import { type QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { QueryKey } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
 import { useBackgroundSync } from "@/context/background-sync";
@@ -19,7 +20,7 @@ interface OfflineMutationOptions<TVariables> {
   idField?: string;
 }
 
-type OfflineResult<T = unknown> = { offline: true } | T;
+type OfflineResult<TData = unknown> = { offline: true } | TData;
 
 export function useOfflineMutation<
   TVariables extends BaseEntity | string | number,
@@ -34,15 +35,13 @@ export function useOfflineMutation<
     unknown,
     TVariables,
     {
-      previousData: [QueryKey, unknown][];
+      previousData: Array<[QueryKey, unknown]>;
     }
   >({
     mutationFn: async (variables: TVariables) => {
       let resourcePath = options.url;
       const idValue =
-        typeof variables === "object" && variables !== null
-          ? (variables as BaseEntity)[idField]
-          : variables;
+        typeof variables === "object" && variables !== null ? variables[idField] : variables;
 
       if (["PUT", "PATCH", "DELETE"].includes(options.method) && idValue) {
         resourcePath = resourcePath.endsWith("/")
@@ -95,7 +94,7 @@ export function useOfflineMutation<
         if (options.method === "DELETE") {
           const targetId =
             typeof newVariables === "object" && newVariables !== null
-              ? (newVariables as BaseEntity)[idField]
+              ? newVariables[idField]
               : newVariables;
 
           if (Array.isArray(old)) {
@@ -156,7 +155,7 @@ export function useOfflineMutation<
 
       return { previousData };
     },
-    onError: (_err, _var, context) => {
+    onError: (_error, _var, context) => {
       if (context?.previousData) {
         context?.previousData?.forEach(([key, data]) => {
           queryClient.setQueryData(key, data);

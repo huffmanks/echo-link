@@ -22,8 +22,8 @@ export const SearchSchema = z.object({
 
 export type SearchParams = z.infer<typeof SearchSchema>;
 
-export function transformData<T extends Record<string, any>>(
-  rawData: PaginatedResponse<T>,
+export function transformData<TRecord extends Record<string, any>>(
+  rawData: PaginatedResponse<TRecord>,
   params: SearchParams
 ) {
   const { defaultSortType, showArchived } = useSettingsStore.getState();
@@ -46,7 +46,7 @@ export function transformData<T extends Record<string, any>>(
     if (shared === true && item.shared !== true) return false;
     if (isPrivate === true && item.shared !== false) return false;
 
-    if (tags && tags.length > 0) {
+    if (tags !== undefined && tags.length > 0) {
       const itemTags = (item.tag_names as Array<string>) || [];
       if (!tags.every((t) => itemTags.includes(t))) return false;
     }
@@ -54,8 +54,8 @@ export function transformData<T extends Record<string, any>>(
     return true;
   });
 
-  const activeSort = params?.sort ?? defaultSortType;
-  const activeOrder = params?.order ?? (activeSort === "title" ? "asc" : "desc");
+  const activeSort = params.sort ?? defaultSortType;
+  const activeOrder = params.order ?? (activeSort === "title" ? "asc" : "desc");
   const mod = activeOrder === "desc" ? -1 : 1;
 
   result.sort((a, b) => {
@@ -76,8 +76,8 @@ export function transformData<T extends Record<string, any>>(
     return 0;
   });
 
-  const paramsPage = params?.page ?? 1;
-  const paramsLimit = params?.limit ?? limit;
+  const paramsPage = params.page ?? 1;
+  const paramsLimit = params.limit ?? limit;
 
   const totalCount = result.length;
   const totalPages = Math.ceil(totalCount / paramsLimit);

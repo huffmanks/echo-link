@@ -138,16 +138,16 @@ function RouteComponent() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {typeof item?.stat === "number" && (
+            {typeof item.stat === "number" && (
               <>
                 <h2 className="mb-1 text-2xl font-bold">{item.stat}</h2>
                 <p className="text-muted-foreground text-xs tracking-wider uppercase">
-                  {item?.note}
+                  {item.note}
                 </p>
               </>
             )}
 
-            {item?.list && (
+            {item.list && (
               <ol className="marker:text-primary list-outside list-decimal space-y-1.5 pr-px pl-6">
                 {item.list.map((subItem) => (
                   <li key={subItem.name}>

@@ -1,4 +1,5 @@
-import { type Plugin, defineConfig } from "vite";
+import {  defineConfig } from "vite";
+import type {Plugin} from "vite";
 
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";

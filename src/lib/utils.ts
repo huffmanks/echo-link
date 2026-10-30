@@ -1,10 +1,11 @@
-import { type ClassValue, clsx } from "clsx";
+import type { ClassValue } from "clsx";
+import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { getDomain } from "tldts";
 
 import type { Bookmark } from "@/types";
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs));
 }
 
@@ -14,17 +15,21 @@ interface Value {
 
 type ReturnType = "string" | "string_array";
 
-type ProcessedValue<T, R extends ReturnType> = {
-  [K in keyof T]: R extends "string" ? (T[K] extends Array<string> ? string : T[K]) : T[K];
+type ProcessedValue<TData, TResult extends ReturnType> = {
+  [TKey in keyof TData]: TResult extends "string"
+    ? TData[TKey] extends Array<string>
+      ? string
+      : TData[TKey]
+    : TData[TKey];
 };
 
-export function processValue<T extends Value, R extends ReturnType>({
+export function processValue<TValue extends Value, TReturnType extends ReturnType>({
   value,
   returnType,
 }: {
-  value: T;
-  returnType: R;
-}): ProcessedValue<T, R> {
+  value: TValue;
+  returnType: TReturnType;
+}): ProcessedValue<TValue, TReturnType> {
   const result = {} as any;
 
   for (const key in value) {
@@ -46,7 +51,7 @@ export function processValue<T extends Value, R extends ReturnType>({
     }
   }
 
-  return result as ProcessedValue<T, R>;
+  return result as ProcessedValue<TValue, TReturnType>;
 }
 
 export function getRelativeTimeString(
@@ -62,7 +67,7 @@ export function getRelativeTimeString(
   const diff = timeMs - Date.now();
   const absDiff = Math.abs(diff);
 
-  const units: { unit: Intl.RelativeTimeFormatUnit; ms: number }[] = [
+  const units: Array<{ unit: Intl.RelativeTimeFormatUnit; ms: number }> = [
     { unit: "year", ms: 31536000000 },
     { unit: "month", ms: 2592000000 },
     { unit: "day", ms: 86400000 },
@@ -105,7 +110,7 @@ export function getPageNumbers(current: number, total: number) {
     return Array.from({ length: total }, (_, i) => i + 1);
   }
 
-  const pages: (number | string)[] = [];
+  const pages: Array<number | string> = [];
   pages.push(1);
 
   if (current > 3) {
@@ -139,7 +144,7 @@ export function joinUrlPath(url: string | null, path: string | null) {
   let cleanPath = path;
 
   if (cleanPath.startsWith("http://localhost") || cleanPath.startsWith("http://127.0.0.1")) {
-    cleanPath = cleanPath.replace(/^http?:\/\/[^\/]+/, "");
+    cleanPath = cleanPath.replace(/^http?:\/\/[^/]+/, "");
   }
 
   if (cleanPath.startsWith("http")) return cleanPath;
@@ -152,7 +157,7 @@ export function joinUrlPath(url: string | null, path: string | null) {
 
 export function cleanUrl(url: string | null | undefined) {
   if (!url) return "";
-  return url.replace(/^https?:\/\/[^\/]+/, "");
+  return url.replace(/^https?:\/\/[^/]+/, "");
 }
 
 export function checkActive({
@@ -175,33 +180,37 @@ export function checkActive({
   return pathname === url;
 }
 
-export function getErrorMessage(error: unknown) {
+export function getError(error: unknown) {
   if (!(error instanceof Error)) {
-    return String(error);
+    return { name: "Error", message: String(error) };
   }
+
+  let message: string;
 
   switch (error.name) {
     case "TimeoutError":
-      return "The request took too long. Please check your connection.";
-
+      message = "The request took too long. Please check your connection.";
+      break;
     case "AbortError":
-      return "The request was cancelled.";
-
+      message = "The request was cancelled.";
+      break;
     case "TypeError":
-      if (error.message.includes("fetch")) {
-        return "Network error: check your internet or CORS settings.";
-      }
-      return "A system type error occurred.";
-
+      message = error.message.includes("fetch")
+        ? "Network error: check your internet or CORS settings."
+        : "A system type error occurred.";
+      break;
     case "SyntaxError":
-      return "Failed to parse the server response (Invalid JSON).";
-
+      message = "Failed to parse the server response (Invalid JSON).";
+      break;
     case "NotAllowedError":
-      return "Permissions were denied for this operation.";
-
+      message = "Permissions were denied for this operation.";
+      break;
     default:
-      return error.message || "An unexpected error occurred.";
+      message = error.message || "An unexpected error occurred.";
+      break;
   }
+
+  return { name: error.name, message };
 }
 
 type HttpError = Error & {
@@ -245,19 +254,19 @@ export function getActiveHashSegment(value: string, cursorPos: number): [number,
   return [start, end];
 }
 
-export function getUnreadCount(bookmarks: Bookmark[]) {
+export function getUnreadCount(bookmarks: Array<Bookmark>) {
   return bookmarks.reduce((count, bookmark) => {
     return bookmark.unread ? count + 1 : count;
   }, 0);
 }
 
-export function getSharedCount(bookmarks: Bookmark[]) {
+export function getSharedCount(bookmarks: Array<Bookmark>) {
   return bookmarks.reduce((count, bookmark) => {
     return bookmark.shared ? count + 1 : count;
   }, 0);
 }
 
-export function getMonthlyCount(bookmarks: Bookmark[]) {
+export function getMonthlyCount(bookmarks: Array<Bookmark>) {
   const now = new Date();
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
@@ -271,7 +280,7 @@ export function getMonthlyCount(bookmarks: Bookmark[]) {
   }, 0);
 }
 
-export function getTopTenDomains(bookmarks: Bookmark[]) {
+export function getTopTenDomains(bookmarks: Array<Bookmark>) {
   const domainCounts: Record<string, number> = {};
 
   for (const bookmark of bookmarks) {
@@ -293,7 +302,7 @@ export function getTopTenDomains(bookmarks: Bookmark[]) {
     .slice(0, 10);
 }
 
-export function getTopTenTags(bookmarks: Bookmark[]) {
+export function getTopTenTags(bookmarks: Array<Bookmark>) {
   const tagCounts: Record<string, number> = {};
 
   for (const bookmark of bookmarks) {

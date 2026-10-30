@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
-import { type AppRouteId, useSearchState } from "@/hooks/use-search-state";
+import {  useSearchState } from "@/hooks/use-search-state";
+import type {AppRouteId} from "@/hooks/use-search-state";
 
 interface UsePaginationProps {
   appRouteId: AppRouteId;

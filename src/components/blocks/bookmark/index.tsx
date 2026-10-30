@@ -18,10 +18,13 @@ import { useShallow } from "zustand/react/shallow";
 import { useBackgroundSync } from "@/context/background-sync";
 import { useGlobalModal } from "@/context/global-modal";
 import { usePagination } from "@/hooks/use-pagination";
-import { type AppRouteId, useSearchState } from "@/hooks/use-search-state";
+import type { AppRouteId } from "@/hooks/use-search-state";
+import { useSearchState } from "@/hooks/use-search-state";
 import { BOOKMARK_BULK_SELECT_OPTIONS, FILTER_OPTIONS } from "@/lib/constants";
-import { type BulkUpdatePayload, useBulkEditBookmarks, useDeleteBookmark } from "@/lib/mutations";
-import { type BulkAction, useBulkSelectionStore } from "@/lib/store/bulk-selection";
+import type { BulkUpdatePayload } from "@/lib/mutations";
+import { useBulkEditBookmarks, useDeleteBookmark } from "@/lib/mutations";
+import type { BulkAction } from "@/lib/store/bulk-selection";
+import { useBulkSelectionStore } from "@/lib/store/bulk-selection";
 import { useSettingsStore } from "@/lib/store/settings";
 import { getPaginationLabel } from "@/lib/utils";
 import type { Bookmark, DefaultSortType, View } from "@/types";
@@ -275,7 +278,7 @@ export default function BookmarkWrapper({
         },
         error: "Error, something went wrong!",
       });
-    } catch (error) {}
+    } catch (_error) {}
   }
 
   function handlePostBulkAction() {
@@ -371,7 +374,7 @@ export default function BookmarkWrapper({
               autoHighlight
               items={FILTER_OPTIONS}
               value={activeFilters}
-              onValueChange={(val) => handleComboboxChange(val as Array<string>)}>
+              onValueChange={(val) => handleComboboxChange(val)}>
               <div className="relative">
                 <ComboboxTrigger
                   render={
