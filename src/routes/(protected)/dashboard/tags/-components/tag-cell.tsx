@@ -6,8 +6,8 @@ import { useSettingsStore } from "@/lib/store/settings";
 import { cn } from "@/lib/utils";
 import type { Tag } from "@/types";
 
-import { Badge  } from "@/components/ui/badge";
-import type {BadgeVariants} from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
+import type { BadgeVariants } from "@/components/ui/badge";
 
 interface TagCellProps {
   tag: Tag;

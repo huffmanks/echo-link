@@ -1,25 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#15ba81" />
+    <meta name="background-color" content="#0a0a0a" />
+    <meta name="description" content="Self-hosted client app for Linkding." />
+    <title>EchoLink</title>
+    <script>
+      window.RUNTIME_CONFIG = {
+        ECHOLINK_USER_NAME: "__ECHOLINK_USER_NAME__",
+        LINKDING_EXTERNAL_URL: "__LINKDING_EXTERNAL_URL__",
+      };
+    </script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#15ba81" />
-  <meta name="background-color" content="#0a0a0a" />
-  <meta name="description" content="Self-hosted client app for Linkding." />
-  <title>EchoLink</title>
-  <script>
-    window.RUNTIME_CONFIG = {
-      ECHOLINK_USER_NAME: "__ECHOLINK_USER_NAME__",
-      LINKDING_EXTERNAL_URL: "__LINKDING_EXTERNAL_URL__"
-    };
-  </script>
-</head>
-
-<body>
-  <div id="app"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
-
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

@@ -1,7 +1,7 @@
 import { linkdingFetch } from "@/lib/api";
 import { VALIDATION_STALE_TIME } from "@/lib/constants";
-import {  useSettingsStore } from "@/lib/store/settings";
-import type {Url} from "@/lib/store/settings";
+import { useSettingsStore } from "@/lib/store/settings";
+import type { Url } from "@/lib/store/settings";
 import { getError, isHttpError } from "@/lib/utils";
 
 export function handleSetup({

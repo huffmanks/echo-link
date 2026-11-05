@@ -1,10 +1,5 @@
-import {
-  
-  useCanGoBack,
-  useLocation,
-  useRouter
-} from "@tanstack/react-router";
-import type {ErrorComponentProps} from "@tanstack/react-router";
+import { useCanGoBack, useLocation, useRouter } from "@tanstack/react-router";
+import type { ErrorComponentProps } from "@tanstack/react-router";
 import { DatabaseZapIcon } from "lucide-react";
 
 import { useBackgroundSync } from "@/context/background-sync";

@@ -1,13 +1,7 @@
 import { create } from "zustand";
 
 export type BulkAction =
-  | "read"
-  | "unread"
-  | "share"
-  | "unshare"
-  | "archive"
-  | "unarchive"
-  | "delete";
+  "read" | "unread" | "share" | "unshare" | "archive" | "unarchive" | "delete";
 
 type BulkSelectionStoreState = {
   isBulkSelecting: boolean;

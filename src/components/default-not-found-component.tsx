@@ -1,5 +1,5 @@
-import { Link,  useCanGoBack, useRouter } from "@tanstack/react-router";
-import type {NotFoundRouteProps} from "@tanstack/react-router";
+import { Link, useCanGoBack, useRouter } from "@tanstack/react-router";
+import type { NotFoundRouteProps } from "@tanstack/react-router";
 
 import { useSettingsStore } from "@/lib/store/settings";
 import { cn } from "@/lib/utils";

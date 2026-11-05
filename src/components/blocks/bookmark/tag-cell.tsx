@@ -6,8 +6,8 @@ import { useSettingsStore } from "@/lib/store/settings";
 import { cn } from "@/lib/utils";
 import type { View } from "@/types";
 
-import { Badge  } from "@/components/ui/badge";
-import type {BadgeVariants} from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
+import type { BadgeVariants } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
